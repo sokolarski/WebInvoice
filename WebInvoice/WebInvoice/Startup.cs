@@ -13,7 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebInvoice.Data;
 using WebInvoice.Data.AppData.Models;
+using WebInvoice.Data.AppData.Repo;
 using WebInvoice.Data.Repository;
+using WebInvoice.Data.Repository.Repositories;
 
 namespace WebInvoice
 {
@@ -36,6 +38,11 @@ namespace WebInvoice
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();
+
+            // Data repositories
+            services.AddScoped(typeof(IAppDeletableEntityRepository<>), typeof(AppDeletableEntityRepository<>));
+            services.AddScoped(typeof(IAppRepository<>), typeof(AppRepository<>));
+            services.AddScoped<IDbQueryRunner, DbQueryRunner>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

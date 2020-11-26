@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using WebInvoice.Data.Repository.Models;
 
-    public interface IDeletableEntityRepository<TEntity> : IRepository<TEntity>
+    public interface IAppDeletableEntityRepository<TEntity> : IAppRepository<TEntity>
         where TEntity : class, IDeletableEntity
     {
         IQueryable<TEntity> AllWithDeleted();

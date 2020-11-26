@@ -7,10 +7,10 @@
     using Microsoft.EntityFrameworkCore;
     using WebInvoice.Data.Repository.Repositories;
 
-    public class EfRepository<TEntity> : IRepository<TEntity>
+    public class AppRepository<TEntity> : IAppRepository<TEntity>
         where TEntity : class
     {
-        public EfRepository(ApplicationDbContext context)
+        public AppRepository(ApplicationDbContext context)
         {
             this.Context = context ?? throw new ArgumentNullException(nameof(context));
             this.DbSet = this.Context.Set<TEntity>();

@@ -9,10 +9,10 @@
     using WebInvoice.Data.Repository.Models;
     using WebInvoice.Data.Repository.Repositories;
 
-    public class EfDeletableEntityRepository<TEntity> : EfRepository<TEntity>, IDeletableEntityRepository<TEntity>
+    public class AppDeletableEntityRepository<TEntity> : AppRepository<TEntity>, IAppDeletableEntityRepository<TEntity>
         where TEntity : class, IDeletableEntity
     {
-        public EfDeletableEntityRepository(ApplicationDbContext context)
+        public AppDeletableEntityRepository(ApplicationDbContext context)
             : base(context)
         {
         }

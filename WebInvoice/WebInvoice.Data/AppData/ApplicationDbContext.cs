@@ -25,6 +25,9 @@ namespace WebInvoice.Data
         {
         }
 
+        public DbSet<CompanyApp> CompanyApps { get; set; }
+
+        public DbSet<SettingApp> SettingApps { get; set; }
 
 
         public override int SaveChanges() => this.SaveChanges(true);
