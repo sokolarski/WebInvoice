@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebInvoice", "WebInvoice\WebInvoice.csproj", "{3AC2034C-32C2-4510-B018-A56B3C0096E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{0B0DF5DC-7A4E-44F8-A1FA-81E696661B45}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C9ABDEDB-4F34-44A0-B3CE-DF0B9B2BDDBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0E477199-397B-400B-A958-CFAD06EDBBF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebInvoice.Data", "WebInvoice.Data\WebInvoice.Data.csproj", "{50C5A668-D085-4A12-8790-51C7EC32281A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AC2034C-32C2-4510-B018-A56B3C0096E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AC2034C-32C2-4510-B018-A56B3C0096E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AC2034C-32C2-4510-B018-A56B3C0096E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AC2034C-32C2-4510-B018-A56B3C0096E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C5A668-D085-4A12-8790-51C7EC32281A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C5A668-D085-4A12-8790-51C7EC32281A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C5A668-D085-4A12-8790-51C7EC32281A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C5A668-D085-4A12-8790-51C7EC32281A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3AC2034C-32C2-4510-B018-A56B3C0096E6} = {0B0DF5DC-7A4E-44F8-A1FA-81E696661B45}
+		{50C5A668-D085-4A12-8790-51C7EC32281A} = {C9ABDEDB-4F34-44A0-B3CE-DF0B9B2BDDBE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33741B87-2DF6-4DFA-8576-0FA4EAF859EA}
+	EndGlobalSection
+EndGlobal
