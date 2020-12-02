@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebInvoice", "WebInvoice\WebInvoice.csproj", "{3AC2034C-32C2-4510-B018-A56B3C0096E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebInvoice", "WebInvoice\WebInvoice.csproj", "{3AC2034C-32C2-4510-B018-A56B3C0096E6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{0B0DF5DC-7A4E-44F8-A1FA-81E696661B45}"
 EndProject
@@ -11,7 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{C9ABDEDB-4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0E477199-397B-400B-A958-CFAD06EDBBF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebInvoice.Data", "WebInvoice.Data\WebInvoice.Data.csproj", "{50C5A668-D085-4A12-8790-51C7EC32281A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebInvoice.Data", "WebInvoice.Data\WebInvoice.Data.csproj", "{50C5A668-D085-4A12-8790-51C7EC32281A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{61F93A85-5B58-460C-ADEE-DC5F72C1783B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,10 @@ Global
 		{50C5A668-D085-4A12-8790-51C7EC32281A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50C5A668-D085-4A12-8790-51C7EC32281A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50C5A668-D085-4A12-8790-51C7EC32281A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{3AC2034C-32C2-4510-B018-A56B3C0096E6} = {0B0DF5DC-7A4E-44F8-A1FA-81E696661B45}
 		{50C5A668-D085-4A12-8790-51C7EC32281A} = {C9ABDEDB-4F34-44A0-B3CE-DF0B9B2BDDBE}
+		{C7FA06B8-61F6-4C7B-89FF-D95E58C6F534} = {61F93A85-5B58-460C-ADEE-DC5F72C1783B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33741B87-2DF6-4DFA-8576-0FA4EAF859EA}
