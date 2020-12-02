@@ -18,8 +18,8 @@ namespace ConsoleApp
 
             //}
 
-            var seeder = new SeedData();
-            await seeder.SeedAsync();
+            //var seeder = new SeedData();
+            //await seeder.SeedAsync();
         }
     }
 }

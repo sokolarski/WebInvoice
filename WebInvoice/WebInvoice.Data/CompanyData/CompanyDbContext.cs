@@ -150,6 +150,30 @@ namespace WebInvoice.Data
             builder.Entity<NonVatDocument>()
                 .HasOne(e => e.RecipientEmployee)
                 .WithMany(d => d.NonVatDocumentsRecipient);
+
+            builder.Entity<CompanyObject>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<PaymentType>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<Reason>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<VatType>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<QuantityType>()
+                .HasIndex(e => e.Type).IsUnique();
+
+            builder.Entity<Product>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<Company>()
+                .HasIndex(e => e.Name).IsUnique();
+
+            builder.Entity<Partner>()
+                .HasIndex(e => e.Name).IsUnique();
         }
 
         private static void SetIsDeletedQueryFilter<T>(ModelBuilder builder)

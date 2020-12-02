@@ -45,7 +45,7 @@ namespace WebInvoice.Data.SeedData
             var types = new[] {
                 new VatType(){ Name="А", Description="Група А", Percantage= 0, IsActive=false},
                 new VatType(){ Name="Б", Description="Група Б", Percantage= 20, IsActive=true},
-                new VatType(){ Name="В", Description="Група В", Percantage= 20, IsActive=false},
+                new VatType(){ Name="В", Description="Група В течни горива", Percantage= 20, IsActive=false},
                 new VatType(){ Name="Г", Description="Група Г", Percantage= 9, IsActive=false},
             };
             await companyDbContext.VatTypes.AddRangeAsync(types);
@@ -58,6 +58,7 @@ namespace WebInvoice.Data.SeedData
             new PaymentType(){ Name="Брой", Description="Брой в лева", IsActiv=true },
             new PaymentType(){ Name="Банка", Description="Превод по сметка", IsActiv=false },
             new PaymentType(){ Name="Карта", Description="Дебитна или кредитна карта", IsActiv=false },
+            new PaymentType(){ Name="Прихващане", Description="Прихващане", IsActiv=false },
             };
             await companyDbContext.PaymentTypes.AddRangeAsync(types);
             await companyDbContext.SaveChangesAsync();
