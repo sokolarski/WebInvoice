@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using WebInvoice.Data;
 using WebInvoice.Data.AppData.Models;
 using WebInvoice.Data.AppData.Repo;
+using WebInvoice.Data.CompanyData;
 using WebInvoice.Data.Repository;
 using WebInvoice.Data.Repository.Repositories;
 
@@ -39,6 +41,7 @@ namespace WebInvoice
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews();
 
+            services.AddDbContext<CompanyDbContext>();
             // Data repositories
             services.AddScoped(typeof(IAppDeletableEntityRepository<>), typeof(AppDeletableEntityRepository<>));
             services.AddScoped(typeof(IAppRepository<>), typeof(AppRepository<>));

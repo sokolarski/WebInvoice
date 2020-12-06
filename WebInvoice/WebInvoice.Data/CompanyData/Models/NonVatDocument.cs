@@ -22,6 +22,10 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public decimal Tottal { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime VatReasonDate { get; set; }
+
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 
@@ -34,11 +38,11 @@ namespace WebInvoice.Data.CompanyData.Models
         public CompanyObject CompanyObject { get; set; }
 
         public int? WriterEmployeeId { get; set; }
-        //[ForeignKey(nameof(WriterEmployeeId))]
+       
         public Employee WriterEmployee { get; set; }
 
         public int? RecipientEmployeeId { get; set; }
-        //[ForeignKey(nameof(RecipientEmployeeId))]
+      
         public Employee RecipientEmployee { get; set; }
 
         public int PaymentTypeId { get; set; }

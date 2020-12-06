@@ -17,6 +17,8 @@ namespace WebInvoice.Data.AppData.Models
 
         public string Description { get; set; }
 
+        public string GUID { get; set; }
+
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
     }

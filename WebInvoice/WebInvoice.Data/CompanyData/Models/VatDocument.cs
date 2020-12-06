@@ -22,6 +22,10 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public decimal Tottal { get; set; }
 
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime VatReasonDate { get; set; }
+
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 

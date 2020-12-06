@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebInvoice.Data;
 
 namespace WebInvoice.Data.Migrations.CompanyDb
 {
     [DbContext(typeof(CompanyDbContext))]
-    partial class CompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201206092431_AddColumnCityToCompanyObj")]
+    partial class AddColumnCityToCompanyObj
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,9 +110,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .HasColumnType("nvarchar(9)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GUID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -268,9 +267,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<int>("CompanyObjectId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -309,9 +305,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<decimal?>("Vat")
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
-
-                    b.Property<DateTime>("VatReasonDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("VatTypeId")
                         .HasColumnType("int");
@@ -702,9 +695,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<int>("CompanyObjectId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
@@ -743,9 +733,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<decimal?>("Vat")
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
-
-                    b.Property<DateTime>("VatReasonDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("VatTypeId")
                         .HasColumnType("int");
