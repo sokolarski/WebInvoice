@@ -21,6 +21,10 @@ namespace WebInvoice.Data
                 nameof(SetIsDeletedQueryFilter),
                 BindingFlags.NonPublic | BindingFlags.Static);
 
+        public CompanyDbContext()
+        {
+
+        }
         public CompanyDbContext(DbContextOptions<CompanyDbContext> options)
             : base(options)
         {

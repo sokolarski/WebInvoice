@@ -155,6 +155,10 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("City")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 

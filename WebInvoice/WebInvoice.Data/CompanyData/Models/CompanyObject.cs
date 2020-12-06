@@ -26,6 +26,9 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public long EndNum { get; set; }
 
+        [MaxLength(50)]
+        public string City { get; set; }
+
         public bool IsActive { get; set; }
 
         public int CompanyId { get; set; }
