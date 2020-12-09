@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebInvoice.Data;
 using WebInvoice.Models;
-using WebInvoice.Models.Home;
+
 
 namespace WebInvoice.Controllers
 {
@@ -26,21 +26,10 @@ namespace WebInvoice.Controllers
 
         public IActionResult Index()
         {
-            var listOfCompanies = applicationDbContext.CompanyApps
-                .Select(c => new CompanyNavBar() { Id = c.Id, Name = c.CompanyName, IsActive = c.IsActive })
-                .ToList();
-            var listOfCompanyViewModel = new CompanyListModels() { Companies=listOfCompanies };
-            return View(listOfCompanyViewModel);
+            
+            return View();
         }
-        public IActionResult Menu()
-        {
-            var listOfCompanies = applicationDbContext.CompanyApps
-                .Select(c => new CompanyNavBar() { Id = c.Id, Name = c.CompanyName, IsActive = c.IsActive })
-                .ToList();
-            var listOfCompanyViewModel = new CompanyListModels() { Companies = listOfCompanies };
-            //return View(listOfCompanyViewModel);
-            return PartialView("_CompanyNavBarPartial", listOfCompanyViewModel);
-        }
+      
         public IActionResult Privacy()
         {
             return View();
