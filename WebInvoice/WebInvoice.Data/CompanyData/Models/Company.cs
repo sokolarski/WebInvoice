@@ -31,10 +31,10 @@ namespace WebInvoice.Data.CompanyData.Models
         [MaxLength(50)]
         public string Country { get; set; }
 
-        [MaxLength(9)]
+        [MaxLength(20)]
         public string EIK { get; set; }
 
-        [MaxLength(11)]
+        [MaxLength(20)]
         public string VatId { get; set; }
 
         [EmailAddress]

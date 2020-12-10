@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebInvoice.Data\WebInvoice.Data.csproj" />
+    <ProjectReference Include="..\WebInvoice.Dto\WebInvoice.Dto.csproj" />
+    <ProjectReference Include="..\WebInvoice.Services\WebInvoice.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using WebInvoice.Data.AppData.Models
+@using WebInvoice.Models.NavBar
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var companies = this.ViewBag.companies as IEnumerable<CompanyNavBar>;
+    string resultActiveCompany = "Избери фирма";
+
+    if (companies != null)
+    {
+        var activeCompany = companies.Where(c => c.IsActive == true).FirstOrDefault();
+
+        if (activeCompany != null)
+        {
+            resultActiveCompany = activeCompany.Name;
+        }
+    }
+
+}
+
+
+
+        @if (companies != null)
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @resultActiveCompany
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    @foreach (var Company in companies)
+                    {
+                        
+                        <a class="dropdown-item" asp-controller="ChangeActiveCompany" asp-action="ChangeCompany" asp-route-guid="@Company.GUID">@Company.Name</a>
+                    }
+
+                    <a asp-controller="Company" asp-action="Create" class="dropdown-item" >Нова фирма</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    (Обект)
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">(друг Обект)</a>
+                    <a class="dropdown-item" href="#">Нов обект</a>
+                    <a class="dropdown-item" href="#">Настройки на обект</a>
+                </div>
+            </li>
+
+        }
+        else
+        {
+            <li class="nav-item active">
+                <a class="nav-link" href="#" id="navbarDropdownMenuLinkCreate">
+                    Създаване на нова фирма
+                </a>
+            </li>
+        }
+
+    
+
+

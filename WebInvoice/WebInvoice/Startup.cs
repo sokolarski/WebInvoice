@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ using WebInvoice.Data.AppData.Repo;
 using WebInvoice.Data.CompanyData;
 using WebInvoice.Data.Repository;
 using WebInvoice.Data.Repository.Repositories;
+using WebInvoice.Services;
 
 namespace WebInvoice
 {
@@ -39,13 +41,17 @@ namespace WebInvoice
             services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(option => option.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
             services.AddDbContext<CompanyDbContext>();
             // Data repositories
             services.AddScoped(typeof(IAppDeletableEntityRepository<>), typeof(AppDeletableEntityRepository<>));
             services.AddScoped(typeof(IAppRepository<>), typeof(AppRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+
+            //Services
+            services.AddTransient<ICompanyService, CompanyService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
