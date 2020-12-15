@@ -21,10 +21,7 @@ namespace WebInvoice.Data
                 nameof(SetIsDeletedQueryFilter),
                 BindingFlags.NonPublic | BindingFlags.Static);
 
-        public CompanyDbContext()
-        {
-
-        }
+      
         public CompanyDbContext(DbContextOptions<CompanyDbContext> options)
             : base(options)
         {
@@ -124,7 +121,7 @@ namespace WebInvoice.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=CompanyDefaultDb;Trusted_Connection=True;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=WebInvoice-CompanyDefaultDb;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
             base.OnConfiguring(optionsBuilder);
         }

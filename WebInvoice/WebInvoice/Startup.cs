@@ -43,7 +43,11 @@ namespace WebInvoice
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews(option => option.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 
-            services.AddDbContext<CompanyDbContext>();
+            //Add CompanyDbContext by user
+            services.AddTransient<ICompanyDbContextConnStrProvider, CompanyDbContextConnStrProvider>();
+            services.AddDbContext<CompanyDbContext>((serviceProvider, options) =>
+                            options.UseSqlServer(serviceProvider.GetService<ICompanyDbContextConnStrProvider>().GetConnectionString()));
+
             // Data repositories
             services.AddScoped(typeof(IAppDeletableEntityRepository<>), typeof(AppDeletableEntityRepository<>));
             services.AddScoped(typeof(IAppRepository<>), typeof(AppRepository<>));
@@ -52,6 +56,7 @@ namespace WebInvoice
 
             //Services
             services.AddTransient<ICompanyService, CompanyService>();
+            services.AddTransient<IConnectionStringGenerator, ConnectionStringGenerator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

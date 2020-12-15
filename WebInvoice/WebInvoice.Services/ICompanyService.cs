@@ -9,7 +9,7 @@ namespace WebInvoice.Services
 {
     public interface ICompanyService
     {
-        bool CreateCompany(CompanyInputDto companyInputDto);
+        Task<bool> CreateCompanyAsync(CompanyInputDto companyInputDto, string userId);
 
         bool EditCompany(CompanyInputDto companyInputDto);
     }

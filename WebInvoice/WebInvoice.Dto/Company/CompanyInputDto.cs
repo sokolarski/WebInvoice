@@ -54,6 +54,10 @@ namespace WebInvoice.Dto.Company
 
         public string LogoPath { get; set; }
 
+        [MaxLength(300, ErrorMessage = "Максимална дължина 300 символа")]
+        [Display(Name = "Пояснения")]
+        public string Description { get; set; }
+
 
     }
 }

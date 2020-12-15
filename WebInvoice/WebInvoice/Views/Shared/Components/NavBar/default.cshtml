@@ -30,10 +30,10 @@
                     @foreach (var Company in companies)
                     {
                         
-                        <a class="dropdown-item" asp-controller="ChangeActiveCompany" asp-action="ChangeCompany" asp-route-guid="@Company.GUID">@Company.Name</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="ChangeActiveCompany" asp-action="ChangeCompany" asp-route-guid="@Company.GUID">@Company.Name</a>
                     }
 
-                    <a asp-controller="Company" asp-action="Create" class="dropdown-item" >Нова фирма</a>
+                    <a asp-area="" asp-controller="Company" asp-action="Create" class="dropdown-item" >Нова фирма</a>
                 </div>
             </li>
             <li class="nav-item dropdown">
@@ -51,7 +51,7 @@
         else
         {
             <li class="nav-item active">
-                <a class="nav-link" href="#" id="navbarDropdownMenuLinkCreate">
+                <a class="nav-link" asp-area="" asp-controller="Company" asp-action="Create" id="navbarDropdownMenuLinkCreate">
                     Създаване на нова фирма
                 </a>
             </li>
