@@ -22,11 +22,12 @@ namespace ConsoleApp
             //using (var db = ne.CreateDbContext(null))
             //{
             //    db.Database.Migrate();
+            //    var seeder = new SeedData(db);
+            //    await seeder.SeedAsync();
 
             //}
 
-            //var seeder = new SeedData();
-            //await seeder.SeedAsync();
+            
         }
     }
 }

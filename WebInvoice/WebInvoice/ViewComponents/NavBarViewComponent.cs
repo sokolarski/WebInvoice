@@ -12,27 +12,28 @@ namespace WebInvoice.ViewComponents
 {
     public class NavBarViewComponent : ViewComponent
     {
-        private readonly IAppDeletableEntityRepository<CompanyApp> appDb;
+        private readonly IAppDeletableEntityRepository<CompanyApp> companyAppRepository;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public NavBarViewComponent(IAppDeletableEntityRepository<CompanyApp> appDb, UserManager<ApplicationUser> userManager)
+        public NavBarViewComponent(IAppDeletableEntityRepository<CompanyApp> companyAppRepository, UserManager<ApplicationUser> userManager)
         {
-            this.appDb = appDb;
+            this.companyAppRepository = companyAppRepository;
             this.userManager = userManager;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public IViewComponentResult Invoke()
         {
             var userConext = HttpContext.User;
             var userId = userManager.GetUserId(userConext);
             if (!string.IsNullOrEmpty(userId))
             {
 
-                var companyList = appDb.AllAsNoTrackingWithDeleted().Where(e => e.ApplicationUserId == userId).ToList();
-                if (companyList.Count > 0)
+                var company= companyAppRepository.All().Where(e => e.ApplicationUserId == userId).FirstOrDefault();
+                if (company != null)
                 {
-                    var companyNavBars = companyList.Select(c => new CompanyNavBar() { Id = c.Id, Name = c.CompanyName, GUID = c.GUID, IsActive = c.IsActive });
-                    this.ViewBag.Companies = companyNavBars;
+                   
+                    var companyNavBar = new CompanyNavBar() { Id = company.Id, Name = company.CompanyName, GUID = company.GUID, IsActive = company.IsActive };
+                    this.ViewBag.Companies = companyNavBar;
                     return View();
                 }
             }

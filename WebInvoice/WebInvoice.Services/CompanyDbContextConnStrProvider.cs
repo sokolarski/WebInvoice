@@ -32,7 +32,7 @@ namespace WebInvoice.Services
             var user = httpContextAccessor.HttpContext.User;
             var userId = userManager.GetUserId(user);
 
-            var companies = applicationDbContext.CompanyApps.Where(c => c.ApplicationUserId == userId && c.IsActive == true).ToList();
+            var companies = applicationDbContext.CompanyApps.Where(c => c.ApplicationUserId == userId).ToList();
 
             if (companies.Count() != 1 && companies != null)
             {

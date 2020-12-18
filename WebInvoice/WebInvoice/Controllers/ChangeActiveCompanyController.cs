@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,18 +24,32 @@ namespace WebInvoice.Controllers
         }
         public async Task<IActionResult> ChangeCompanyAsync(string guid)
         {
+            this.Response.Cookies.Append("Company", guid, new CookieOptions() { MaxAge = new TimeSpan(30,0,0,0) });
             var userConext = HttpContext.User;
             var userId = userManager.GetUserId(userConext);
+
             if (!string.IsNullOrEmpty(userId))
             {
-
                 var companyList = companyAppRepository.All().Where(e => e.ApplicationUserId == userId);
-                var oldActive = companyList.Where(e => e.IsActive == true).FirstOrDefault();
-                if (oldActive != null)
+                var activeCompanies = companyList.Where(e => e.IsActive == true).ToList();
+                if (activeCompanies != null)
                 {
-                    oldActive.IsActive = false;
-                    companyAppRepository.Update(oldActive);
+                    if (activeCompanies.Count == 1)
+                    {
+                        var oldActive = activeCompanies.FirstOrDefault(e => e.IsActive == true);
+                        oldActive.IsActive = false;
+                        companyAppRepository.Update(oldActive);
+                    }
+                    else
+                    {
+                        foreach (var activeCompany in activeCompanies)
+                        {
+                            activeCompany.IsActive = false;
+                            companyAppRepository.Update(activeCompany);
+                        }
+                    }
                 }
+           
                 
                 var newActive = companyList.Where(e => e.GUID == guid).FirstOrDefault();
                 

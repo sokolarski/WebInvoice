@@ -10,21 +10,21 @@ namespace WebInvoice.Data.SeedData
 {
     public class SeedData
     {
-        private CompanyDbContext CompanyDbContext;
-        public SeedData()
+        private CompanyDbContext companyDbContext;
+        public SeedData(CompanyDbContext companyDbContext)
         {
-            this.CompanyDbContext = new DesignTimeCompanyDbContextFactory().CreateDbContext(null);
+            this.companyDbContext = companyDbContext;
         }
 
         public async Task SeedAsync()
         {
-            using (CompanyDbContext)
+            using (companyDbContext)
             {
-                await SeedQuantityTypesAsync(CompanyDbContext);
-                await SeedPaymentTypesAsync(CompanyDbContext);
-                await SeedVatTypesAsync(CompanyDbContext);
-                await SeedReasonsAsync(CompanyDbContext);
-                await CompanyDbContext.SaveChangesAsync();
+                await SeedQuantityTypesAsync(companyDbContext);
+                await SeedPaymentTypesAsync(companyDbContext);
+                await SeedVatTypesAsync(companyDbContext);
+                await SeedReasonsAsync(companyDbContext);
+                await companyDbContext.SaveChangesAsync();
             }
         }
 
@@ -32,12 +32,12 @@ namespace WebInvoice.Data.SeedData
         {
             var listOfVats = companyDbContext.VatTypes.ToList();
             var types = new[] {
-                new Reason(){ Name="Стандартно Основане", Description="Начисляване на ддс 20%", VatType = listOfVats.Where(v => v.Name == "Б").First(), IsActive=true },
+                new Reason(){ Name="Стандартно основане", Description="Начисляване на ддс 20%", VatType = listOfVats.Where(v => v.Name == "Б").First(), IsActive=true },
                 new Reason(){ Name="Неначисляване на ддс", Description="Начисляване на ддс 0%", VatType = listOfVats.Where(v => v.Name == "А").First(), IsActive=false },
             };
 
-           await companyDbContext.Reasons.AddRangeAsync(types);
-           await companyDbContext.SaveChangesAsync();
+            await companyDbContext.Reasons.AddRangeAsync(types);
+            await companyDbContext.SaveChangesAsync();
         }
 
         private async Task SeedVatTypesAsync(CompanyDbContext companyDbContext)
@@ -76,4 +76,4 @@ namespace WebInvoice.Data.SeedData
         }
     }
 }
-    
+

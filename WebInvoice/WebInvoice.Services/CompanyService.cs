@@ -8,6 +8,7 @@ using WebInvoice.Data;
 using WebInvoice.Data.AppData.Models;
 using WebInvoice.Data.CompanyData.Models;
 using WebInvoice.Data.Repository.Repositories;
+using WebInvoice.Data.SeedData;
 using WebInvoice.Dto.Company;
 
 namespace WebInvoice.Services
@@ -75,6 +76,8 @@ namespace WebInvoice.Services
                 };
                 await companyContext.Companies.AddAsync(company);
                 await companyContext.SaveChangesAsync();
+                var seeder = new SeedData(companyContext);
+                await seeder.SeedAsync();
             }
 
             return companyContext;

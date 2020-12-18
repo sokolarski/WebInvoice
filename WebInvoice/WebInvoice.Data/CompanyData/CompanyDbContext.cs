@@ -119,10 +119,6 @@ namespace WebInvoice.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=WebInvoice-CompanyDefaultDb;Trusted_Connection=True;MultipleActiveResultSets=true");
-            }
             base.OnConfiguring(optionsBuilder);
         }
 

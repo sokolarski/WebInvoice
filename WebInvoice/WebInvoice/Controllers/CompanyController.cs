@@ -44,17 +44,22 @@ namespace WebInvoice.Controllers
             var userConext = HttpContext.User;
             var userId = userManager.GetUserId(userConext);
 
-            //var isCreated =await companyService.CreateCompanyAsync(companyInputDto, userId);
-            //if (!isCreated)
-            //{
-            //    return BadRequest();
-            //}
+            var isCreated = await companyService.CreateCompanyAsync(companyInputDto, userId);
+            if (!isCreated)
+            {
+                return BadRequest();
+            }
             return RedirectToAction("Created", new { companyInputDto.Name });
         }
 
         public IActionResult Created(string name)
         {
             this.ViewBag.CompanyName = name;
+            return View();
+        }
+
+        public IActionResult Edit()
+        {
             return View();
         }
     }
