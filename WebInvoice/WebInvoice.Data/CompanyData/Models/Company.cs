@@ -18,6 +18,7 @@ namespace WebInvoice.Data.CompanyData.Models
             this.BankAccounts = new HashSet<BankAccount>();
             this.NonVatDocuments = new HashSet<NonVatDocument>();
             this.VatDocuments = new HashSet<VatDocument>();
+            this.CompanyObjects = new HashSet<CompanyObject>();
         }
         [MaxLength(50)]
         public string Name { get; set; }
@@ -46,6 +47,8 @@ namespace WebInvoice.Data.CompanyData.Models
         public bool IsVatRegistered { get; set; }
 
         public string LogoPath { get; set; }
+
+        public byte[] Logo { get; set; }
 
         public bool IsActive { get; set; }
 

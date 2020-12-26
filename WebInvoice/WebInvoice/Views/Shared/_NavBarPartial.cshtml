@@ -1,22 +1,18 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using WebInvoice.Data.AppData.Models
 @using WebInvoice.Models.NavBar
-@inject SignInManager<ApplicationUser> SignInManager
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 @{
-    var companies = this.ViewBag.companies as IEnumerable<CompanyNavBar>;
+    var companies = userCompanyData.CompanyApps;
     string resultActiveCompany = "Избери фирма";
     bool isActive = false;
-    if (companies != null)
+    if (userCompanyData.IsSetCompany)
     {
-        var activeCompany = companies.Where(c => c.IsActive == true).FirstOrDefault();
+        var activeCompany = userCompanyData.CompanyName;
 
-        if (activeCompany != null)
-        {
-            resultActiveCompany = activeCompany.Name;
-            isActive = true;
-            var title = "WebInvoice-" + activeCompany.Name;
-          
-        }
+
+        resultActiveCompany = activeCompany;
+        isActive = true;
     }
 }
 
@@ -30,7 +26,7 @@
                 Нов документ
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Фактура</a>
+                <a class="dropdown-item" asp-controller="Document" asp-action="index">Фактура</a>
                 <a class="dropdown-item" href="#">Кредитно Известие</a>
                 <a class="dropdown-item" href="#">Дебитно известие</a>
                 <a class="dropdown-item" href="#">Проформа фактура</a>
@@ -80,25 +76,39 @@
             @resultActiveCompany
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            @foreach (var Company in companies)
+            @foreach (var company in companies)
             {
-                <a class="dropdown-item" asp-area="" asp-controller="ChangeActiveCompany" asp-action="ChangeCompany" asp-route-guid="@Company.GUID">@Company.Name</a>
+                var routeData = new Dictionary<string, string>();
+                routeData.Add("company", company.CompanySlug);
+                routeData.Add("object", company.CompanyAppObjects.Where(o => o.IsActive == true).FirstOrDefault().ObjectSlug);
+                <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@company.CompanyName</a>
             }
 
             <a asp-area="" asp-controller="Company" asp-action="Create" class="dropdown-item">Нова фирма</a>
         </div>
     </li>
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            (Обект)
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">(друг Обект)</a>
-            <a class="dropdown-item" href="#">Нов обект</a>
-            <a class="dropdown-item" href="#">Настройки на обект</a>
-        </div>
-    </li>
+    @if (userCompanyData.IsSetObject)
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @userCompanyData.CompanyObjectName
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 
+                @foreach (var obj in userCompanyData.CurrentCompanyAppObjects)
+                {
+                    var routeData = new Dictionary<string, string>();
+                    routeData.Add("company", userCompanyData.CompanySlug);
+                    routeData.Add("object", obj.ObjectSlug);
+
+                    <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@obj.ObjectName</a>
+                }
+
+                <a class="dropdown-item" href="#">Нов обект</a>
+                <a class="dropdown-item" href="#">Настройки на обект</a>
+            </div>
+        </li>
+    }
 }
 else
 {

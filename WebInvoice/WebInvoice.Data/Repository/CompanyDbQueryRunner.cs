@@ -6,14 +6,14 @@
     using Microsoft.EntityFrameworkCore;
 
 
-    public class DbQueryRunner : IDbQueryRunner
+    public class CompanyDbQueryRunner : ICompanyDbQueryRunner
     {
-        public DbQueryRunner(ApplicationDbContext context)
+        public CompanyDbQueryRunner(CompanyDbContext context)
         {
             this.Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public ApplicationDbContext Context { get; set; }
+        public CompanyDbContext Context { get; set; }
 
         public Task RunQueryAsync(string query, params object[] parameters)
         {

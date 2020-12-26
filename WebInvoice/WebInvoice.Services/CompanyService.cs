@@ -16,17 +16,17 @@ namespace WebInvoice.Services
     public class CompanyService : ICompanyService
     {
         private readonly IAppDeletableEntityRepository<CompanyApp> companyAppRepo;
-        private readonly IConnectionStringGenerator connectionStringGenerator;
+        private readonly IStringGenerator stringGenerator;
 
-        public CompanyService(IAppDeletableEntityRepository<CompanyApp> companyAppRepo, IConnectionStringGenerator connectionStringGenerator)
+        public CompanyService(IAppDeletableEntityRepository<CompanyApp> companyAppRepo, IStringGenerator connectionStringGenerator)
         {
             this.companyAppRepo = companyAppRepo;
-            this.connectionStringGenerator = connectionStringGenerator;
+            this.stringGenerator = connectionStringGenerator;
         }
         public async Task<bool> CreateCompanyAsync(CompanyInputDto companyInputDto, string userId)
         {
             var GUIDstr = Guid.NewGuid().ToString();
-            var connectionString = connectionStringGenerator.GetConnectionString(companyInputDto.Name, GUIDstr);
+            var connectionString = stringGenerator.GetConnectionString(companyInputDto.Name, GUIDstr);
 
             var companyContext = await CreateCompanyDbAsync(connectionString, companyInputDto, GUIDstr);
             await CreateCompanyAppAsync(connectionString, companyInputDto, GUIDstr, userId);
@@ -36,15 +36,25 @@ namespace WebInvoice.Services
 
         private async Task CreateCompanyAppAsync(string connectionString, CompanyInputDto companyInputDto, string GUIDstr, string userId)
         {
+            var obj = new CompanyAppObject()
+            {
+                ObjectName = "Стандарт",
+                ObjectSlug = "standart",
+                IsActive = true
+            };
+
+            var companyAppSlug = stringGenerator.GenerateSlug(companyInputDto.Name);
             var companyApp = new CompanyApp()
             {
                 CompanyName = companyInputDto.Name,
                 ConnStr = connectionString,
                 GUID = GUIDstr,
                 Description = companyInputDto.Description,
+                CompanySlug = companyAppSlug,
                 ApplicationUserId = userId,
                 IsActive = false,
             };
+            companyApp.CompanyAppObjects.Add(obj);
 
             await companyAppRepo.AddAsync(companyApp);
             await companyAppRepo.SaveChangesAsync();
@@ -74,6 +84,17 @@ namespace WebInvoice.Services
                     IsActive = false,
                     GUID = GuidStr,
                 };
+
+                var obj = new CompanyObject()
+                {
+                    Name = "Стандарт",
+                    City = companyInputDto.City,
+                    StartNum = 1,
+                    EndNum = 9999999999,
+                    IsActive = true,
+                };
+                company.CompanyObjects.Add(obj);
+
                 await companyContext.Companies.AddAsync(company);
                 await companyContext.SaveChangesAsync();
                 var seeder = new SeedData(companyContext);

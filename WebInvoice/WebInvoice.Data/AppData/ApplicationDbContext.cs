@@ -27,6 +27,8 @@ namespace WebInvoice.Data
 
         public DbSet<CompanyApp> CompanyApps { get; set; }
 
+        public DbSet<CompanyAppObject> CompanyAppObjects { get; set; }
+
         public DbSet<SettingApp> SettingApps { get; set; }
 
 

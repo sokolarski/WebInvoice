@@ -9,7 +9,13 @@ namespace WebInvoice.Data.AppData.Models
 {
     public class CompanyApp : BaseDeletableModel<int>
     {
+        public CompanyApp()
+        {
+            this.CompanyAppObjects = new HashSet<CompanyAppObject>();
+        }
         public string CompanyName { get; set; }
+
+        public string CompanySlug { get; set; }
 
         public string ConnStr { get; set; }
 
@@ -21,5 +27,7 @@ namespace WebInvoice.Data.AppData.Models
 
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+
+        public ICollection<CompanyAppObject> CompanyAppObjects { get; set; }
     }
 }

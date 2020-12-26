@@ -19,6 +19,7 @@ using WebInvoice.Data.AppData.Repo;
 using WebInvoice.Data.CompanyData;
 using WebInvoice.Data.Repository;
 using WebInvoice.Data.Repository.Repositories;
+using WebInvoice.Middleware;
 using WebInvoice.Services;
 
 namespace WebInvoice
@@ -42,21 +43,29 @@ namespace WebInvoice
                 .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews(option => option.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+            
+
+            services.AddScoped<IUserCompanyTemp, UserCompanyTemp>();
 
             //Add CompanyDbContext by user
-            services.AddTransient<ICompanyDbContextConnStrProvider, CompanyDbContextConnStrProvider>();
             services.AddDbContext<CompanyDbContext>((serviceProvider, options) =>
-                            options.UseSqlServer(serviceProvider.GetService<ICompanyDbContextConnStrProvider>().GetConnectionString()));
+                            options.UseSqlServer(serviceProvider.GetService<IUserCompanyTemp>().ConnectionString));
 
             // Data repositories
             services.AddScoped(typeof(IAppDeletableEntityRepository<>), typeof(AppDeletableEntityRepository<>));
             services.AddScoped(typeof(IAppRepository<>), typeof(AppRepository<>));
-            services.AddScoped<IDbQueryRunner, DbQueryRunner>();
+
+            services.AddScoped(typeof(ICompanyDeletableEntityRepository<>), typeof(CompanyDeletableEntityRepository<>));
+            services.AddScoped(typeof(ICompanyRepository<>), typeof(CompanyRepository<>));
+            services.AddScoped<ICompanyDbQueryRunner, CompanyDbQueryRunner>();
 
 
             //Services
             services.AddTransient<ICompanyService, CompanyService>();
-            services.AddTransient<IConnectionStringGenerator, ConnectionStringGenerator>();
+            services.AddTransient<IStringGenerator, StringGenerator>();
+            
+
+          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,9 +89,13 @@ namespace WebInvoice
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<GetCompanyTempDataMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                       "company",
+                       "{company}/{object}/{controller}/{action}/{id?}");
                 endpoints.MapControllerRoute(
                     "areaRoute",
                     "{area:exists}/{controller=Home}/{action=Index}/{id?}");

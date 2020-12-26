@@ -57,10 +57,5 @@ namespace WebInvoice.Controllers
             this.ViewBag.CompanyName = name;
             return View();
         }
-
-        public IActionResult Edit()
-        {
-            return View();
-        }
     }
 }

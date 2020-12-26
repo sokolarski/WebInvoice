@@ -21,19 +21,28 @@ namespace WebInvoice.ViewComponents
             this.userManager = userManager;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             var userConext = HttpContext.User;
             var userId = userManager.GetUserId(userConext);
             if (!string.IsNullOrEmpty(userId))
             {
 
-                var company= companyAppRepository.All().Where(e => e.ApplicationUserId == userId).FirstOrDefault();
-                if (company != null)
+                var companyList = companyAppRepository.All().Where(e => e.ApplicationUserId == userId).ToList();
+                if (companyList.Count > 0)
                 {
-                   
-                    var companyNavBar = new CompanyNavBar() { Id = company.Id, Name = company.CompanyName, GUID = company.GUID, IsActive = company.IsActive };
-                    this.ViewBag.Companies = companyNavBar;
+                    var activeCompanies = companyList.Where(e => e.IsActive == true).ToList();
+                    if (activeCompanies.Count > 1)
+                    {
+                        foreach (var activeCompany in activeCompanies)
+                        {
+                            activeCompany.IsActive = false;
+                            companyAppRepository.Update(activeCompany);
+                        }
+                       await companyAppRepository.SaveChangesAsync();
+                    }
+                    var companyNavBars = companyList.Select(c => new CompanyNavBar() { Id = c.Id, Name = c.CompanyName, GUID = c.GUID, IsActive = c.IsActive });
+                    this.ViewBag.Companies = companyNavBars;
                     return View();
                 }
             }

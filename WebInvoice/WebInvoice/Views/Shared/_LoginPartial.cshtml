@@ -6,7 +6,8 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <vc:nav-bar></vc:nav-bar>
+        @*<vc:nav-bar></vc:nav-bar>*@
+        <partial name="_NavBarPartial" />
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity.Name!</a>
         </li>

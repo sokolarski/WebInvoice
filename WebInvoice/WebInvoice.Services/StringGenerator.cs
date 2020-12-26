@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WebInvoice.Services
 {
-    public class ConnectionStringGenerator : IConnectionStringGenerator
+    public class StringGenerator : IStringGenerator
     {
         public string GetConnectionString(string dbName, string GUID)
         {
