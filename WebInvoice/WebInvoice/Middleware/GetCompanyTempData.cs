@@ -44,9 +44,9 @@ namespace WebInvoice.Middleware
                         
                         if (currentCompany != null)
                         {
-                            if (routeValues.Keys.Contains("object"))
+                            if (routeValues.Keys.Contains("companyObject"))
                             {
-                                var currentObjectSlug = routeValues["object"].ToString();
+                                var currentObjectSlug = routeValues["companyObject"].ToString();
                                 var objects = currentCompany.CompanyAppObjects;
 
                                 if (objects != null)
@@ -54,13 +54,15 @@ namespace WebInvoice.Middleware
                                     var currentObject = objects.Where(o => o.ObjectSlug == currentObjectSlug).FirstOrDefault();
                                     
                                     if (currentObject != null)
-                                    {
+                                    { 
                                         userCompanyTemp.CompanyName = currentCompany.CompanyName;
                                         userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
                                         userCompanyTemp.ConnectionString = currentCompany.ConnStr;
+                                        userCompanyTemp.CompanyGUID = currentCompany.GUID;
                                         userCompanyTemp.CompanyObjectName = currentObject.ObjectName;
                                         userCompanyTemp.CompanyObjectSlug = currentObject.ObjectSlug;
-                                        userCompanyTemp.CurrentCompanyAppObjects = currentCompany.CompanyAppObjects;
+                                        userCompanyTemp.CompanyObjectGUID = currentObject.GUID;
+                                        userCompanyTemp.CurrentCompanyAppObjects = currentCompany.CompanyAppObjects; 
                                     }
                                 }
                             }
@@ -90,7 +92,7 @@ namespace WebInvoice.Middleware
                                     userCompanyTemp.CompanyObjectName = currentObject.ObjectName;
                                     userCompanyTemp.CompanyObjectSlug = currentObject.ObjectSlug;
                                     userCompanyTemp.CurrentCompanyAppObjects = currentCompany.CompanyAppObjects;
-                                    context.Request.RouteValues.TryAdd("object", currentObject.ObjectSlug);
+                                    context.Request.RouteValues.TryAdd("companyObject", currentObject.ObjectSlug);
                                 }
                             }
                         }

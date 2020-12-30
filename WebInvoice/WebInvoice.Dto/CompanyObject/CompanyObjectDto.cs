@@ -36,5 +36,10 @@ namespace WebInvoice.Dto.CompanyObject
 
         [Display(Name = "Брой документи")]
         public int CountOfDocuments { get; set; }
+
+        public string CompanyObjectSlug { get; set; }
+
+        public bool IsValideObject { get; set; } = true;
+        public string ErrorMassage { get; set; }
     }
 }

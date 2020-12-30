@@ -20,11 +20,15 @@ namespace WebInvoice.Services
         public bool IsSetCompany => !string.IsNullOrEmpty(this.CompanyName);
         public string CompanySlug { get; set; }
 
+        public string CompanyGUID { get; set; }
+
         public string CompanyObjectName { get; set; }
 
         public bool IsSetObject => !string.IsNullOrEmpty(this.CompanyObjectName);
 
         public string CompanyObjectSlug { get; set; }
+
+        public string CompanyObjectGUID { get; set; }
 
         public string ConnectionString { get; set; }
 

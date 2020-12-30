@@ -16,6 +16,8 @@ namespace WebInvoice.Data.AppData.Models
 
         public bool IsActive { get; set; }
 
+        public string GUID { get; set; }
+
         public int CompanyAppId { get; set; }
         public CompanyApp CompanyApp { get; set; }
 

@@ -10,8 +10,10 @@ namespace WebInvoice.Services
         string CompanyObjectName { get; set; }
         bool IsSetCompany { get; }
         string CompanyObjectSlug { get; set; }
+        string CompanyGUID { get; set; }
         bool IsSetObject { get; }
         string CompanySlug { get; set; }
+        string CompanyObjectGUID { get; set; }
         string ConnectionString { get; set; }
         bool IsSetConnectionString { get; }
         Dictionary<string, string> RouteData { get; set; }

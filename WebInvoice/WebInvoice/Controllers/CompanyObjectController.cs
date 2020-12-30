@@ -37,11 +37,33 @@ namespace WebInvoice.Controllers
 
             if (ModelState.IsValid)
             {
-                await companyObjectService.Edit(model);
-                return RedirectToAction("Index");
+                var result = await companyObjectService.Edit(model);
+                return RedirectToAction("Index", new {companyObject=result.CompanyObjectSlug });
             }
 
             return View(model);
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CompanyObjectDto companyObjectDto)
+        {
+            if (ModelState.IsValid)
+            {
+               var result = await companyObjectService.ObjectDucumentRange(companyObjectDto);
+                if (companyObjectDto.IsValideObject)
+                {
+                    await companyObjectService.Create(companyObjectDto);
+                    return RedirectToAction("Index");
+                }
+               
+            }
+
+            return View(companyObjectDto);
         }
     }
 }

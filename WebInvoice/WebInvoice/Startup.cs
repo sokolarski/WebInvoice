@@ -96,7 +96,7 @@ namespace WebInvoice
             {
                 endpoints.MapControllerRoute(
                        "company",
-                       "{company}/{object}/{controller}/{action}/{id?}");
+                       "{company}/{companyObject}/{controller}/{action}/{id?}");
                 endpoints.MapControllerRoute(
                     "areaRoute",
                     "{area:exists}/{controller=Home}/{action=Index}/{id?}");

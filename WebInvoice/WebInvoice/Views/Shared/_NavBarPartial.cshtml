@@ -80,7 +80,7 @@
             {
                 var routeData = new Dictionary<string, string>();
                 routeData.Add("company", company.CompanySlug);
-                routeData.Add("object", company.CompanyAppObjects.Where(o => o.IsActive == true).FirstOrDefault().ObjectSlug);
+                routeData.Add("companyObject", company.CompanyAppObjects.Where(o => o.IsActive == true).FirstOrDefault().ObjectSlug);
                 <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@company.CompanyName</a>
             }
 
@@ -99,7 +99,7 @@
                 {
                     var routeData = new Dictionary<string, string>();
                     routeData.Add("company", userCompanyData.CompanySlug);
-                    routeData.Add("object", obj.ObjectSlug);
+                    routeData.Add("companyObject", obj.ObjectSlug);
 
                     <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@obj.ObjectName</a>
                 }

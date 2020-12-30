@@ -25,21 +25,23 @@ namespace WebInvoice.Services
         }
         public async Task<bool> CreateCompanyAsync(CompanyInputDto companyInputDto, string userId)
         {
-            var GUIDstr = Guid.NewGuid().ToString();
-            var connectionString = stringGenerator.GetConnectionString(companyInputDto.Name, GUIDstr);
+            var companyGUID = Guid.NewGuid().ToString();
+            var objectGUID = Guid.NewGuid().ToString();
+            var connectionString = stringGenerator.GetConnectionString(companyInputDto.Name, companyGUID);
 
-            var companyContext = await CreateCompanyDbAsync(connectionString, companyInputDto, GUIDstr);
-            await CreateCompanyAppAsync(connectionString, companyInputDto, GUIDstr, userId);
+            var companyContext = await CreateCompanyDbAsync(connectionString, companyInputDto, companyGUID, objectGUID);
+            await CreateCompanyAppAsync(connectionString, companyInputDto, companyGUID, objectGUID, userId);
 
             return true;
         }
 
-        private async Task CreateCompanyAppAsync(string connectionString, CompanyInputDto companyInputDto, string GUIDstr, string userId)
+        private async Task CreateCompanyAppAsync(string connectionString, CompanyInputDto companyInputDto, string companyGUID, string objectGuid, string userId)
         {
             var obj = new CompanyAppObject()
             {
                 ObjectName = "Стандарт",
                 ObjectSlug = "standart",
+                GUID = objectGuid,
                 IsActive = true
             };
 
@@ -48,7 +50,7 @@ namespace WebInvoice.Services
             {
                 CompanyName = companyInputDto.Name,
                 ConnStr = connectionString,
-                GUID = GUIDstr,
+                GUID = companyGUID,
                 Description = companyInputDto.Description,
                 CompanySlug = companyAppSlug,
                 ApplicationUserId = userId,
@@ -60,7 +62,7 @@ namespace WebInvoice.Services
             await companyAppRepo.SaveChangesAsync();
         }
 
-        private async Task<CompanyDbContext> CreateCompanyDbAsync(string connectionString, CompanyInputDto companyInputDto, string GuidStr)
+        private async Task<CompanyDbContext> CreateCompanyDbAsync(string connectionString, CompanyInputDto companyInputDto, string companyGUID, string objectGUID)
         {
             var options = new DbContextOptionsBuilder<CompanyDbContext>();
             options.UseSqlServer(connectionString);
@@ -82,7 +84,7 @@ namespace WebInvoice.Services
                     IsVatRegistered = companyInputDto.IsVatRegistered,
                     LogoPath = companyInputDto.LogoPath,
                     IsActive = false,
-                    GUID = GuidStr,
+                    GUID = companyGUID,
                 };
 
                 var obj = new CompanyObject()
@@ -92,6 +94,7 @@ namespace WebInvoice.Services
                     StartNum = 1,
                     EndNum = 9999999999,
                     IsActive = true,
+                    GUID = objectGUID,
                 };
                 company.CompanyObjects.Add(obj);
 

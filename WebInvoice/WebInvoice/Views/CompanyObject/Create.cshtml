@@ -1,0 +1,56 @@
+﻿@using WebInvoice.Dto.CompanyObject
+@model CompanyObjectDto
+@if (Model != null)
+{
+    @if (!Model.IsValideObject)
+    {
+        <div>@Model.ErrorMassage</div>
+    }
+}
+
+<div class="container">
+    <h2 class="text-center">Нов обект</h2>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6">
+            <form asp-controller="CompanyObject" asp-action="Create" method="post">
+                <div class="form-group">
+                    <label asp-for="Name">Име на обекта</label>
+                    <input asp-for="Name" class="form-control" id="objectName" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City"></label>
+                    <input asp-for="City" class="form-control" id="objectCity" />
+                    <small id="nameHelp" class="form-text text-muted">Посоченият град ще е място на сделката в документа</small>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="StartNum"></label>
+                    <input asp-for="StartNum" class="form-control" id="startNum" />
+                    <span asp-validation-for="StartNum" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="EndNum"></label>
+                    <input asp-for="EndNum" class="form-control" id="endNum" />
+                    <span asp-validation-for="EndNum" class="text-danger"></span>
+                </div>
+
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" id="isActive" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <input asp-for="Description" class="form-control" id="description" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Създай</button>
+            </form>
+        </div>
+    </div>
+</div>
