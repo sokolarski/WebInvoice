@@ -1,0 +1,39 @@
+﻿@using WebInvoice.Dto.CompanyObject
+@model CompanyObjectListDto
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Обект</th>
+            <th scope="col">Град</th>
+            <th scope="col">Начална номерация</th>
+            <th scope="col">Крайна номерация</th>
+            <th scope="col">Брой документи</th>
+            <th scope="col">По подразбиране</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var companyObject in Model.CompanyObjects)
+        {
+        <tr>
+            <td>@companyObject.Name</td>
+            <td>@companyObject.City</td>
+            <td>@companyObject.StartNum</td>
+            <td>@companyObject.EndNum</td>
+            <td>@companyObject.CountOfDocuments</td>
+            <td>
+                @if (companyObject.IsActive)
+                {
+                    @:ДА
+                }
+                else
+                {
+                    @:НЕ
+                }
+            </td>
+            <td><a asp-area="" asp-controller="CompanyObject" asp-action="Edit" asp-route-id="@companyObject.Id" class="btn btn-dark">Редактирай</a></td>
+        </tr>
+        }
+    </tbody>
+</table>
