@@ -80,7 +80,17 @@
             {
                 var routeData = new Dictionary<string, string>();
                 routeData.Add("company", company.CompanySlug);
-                routeData.Add("companyObject", company.CompanyAppObjects.Where(o => o.IsActive == true).FirstOrDefault().ObjectSlug);
+                var companyObject = company.CompanyAppObjects.Where(o => o.IsActive == true).FirstOrDefault();
+                if (companyObject != null)
+                {
+                    routeData.Add("companyObject", companyObject.ObjectSlug);
+
+                }
+                else
+                {
+                    routeData.Add("companyObject", company.CompanyAppObjects.FirstOrDefault().ObjectSlug);
+                }
+
                 <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@company.CompanyName</a>
             }
 

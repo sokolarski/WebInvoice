@@ -14,18 +14,18 @@ namespace WebInvoice.Services
 
     public class CompanyObjectService : ICompanyObjectService
     {
-        private readonly IAppDeletableEntityRepository<CompanyApp> appDeletableEntityRepository;
-        private readonly ICompanyDeletableEntityRepository<Company> companyDeletableEntityRepository;
+        private readonly IAppRepository<CompanyApp> appRepository;
+        private readonly ICompanyRepository<Company> companyRepository;
         private readonly IUserCompanyTemp userCompanyTemp;
         private readonly IStringGenerator stringGenerator;
 
-        public CompanyObjectService(IAppDeletableEntityRepository<CompanyApp> appDeletableEntityRepository,
-                                    ICompanyDeletableEntityRepository<Company> companyDeletableEntityRepository,
+        public CompanyObjectService(IAppRepository<CompanyApp> appRepository,
+                                    ICompanyRepository<Company> companyRepository,
                                     IUserCompanyTemp userCompanyTemp,
                                     IStringGenerator stringGenerator)
         {
-            this.appDeletableEntityRepository = appDeletableEntityRepository;
-            this.companyDeletableEntityRepository = companyDeletableEntityRepository;
+            this.appRepository = appRepository;
+            this.companyRepository = companyRepository;
             this.userCompanyTemp = userCompanyTemp;
             this.stringGenerator = stringGenerator;
         }
@@ -34,7 +34,7 @@ namespace WebInvoice.Services
         {
             var resultCompanyObjects = new CompanyObjectListDto();
 
-            var companyObects = await companyDeletableEntityRepository.AllAsNoTracking().OrderBy(c => c.Id)
+            var companyObects = await companyRepository.AllAsNoTracking().OrderBy(c => c.Id)
                 .Select(c => c.CompanyObjects.Select(co =>
                new CompanyObjectDto()
                {
@@ -45,6 +45,7 @@ namespace WebInvoice.Services
                    Id = co.Id,
                    Name = co.Name,
                    IsActive = co.IsActive,
+                   ObjectGUID = co.GUID,
                    CountOfDocuments = co.VatDocuments.Count,
                })
                 ).LastAsync();
@@ -55,32 +56,37 @@ namespace WebInvoice.Services
 
         public async Task<CompanyObjectDto> GetById(int id)
         {
-            var companyObect = await companyDeletableEntityRepository.AllAsNoTracking().OrderBy(c => c.Id)
+            var companyObect = await companyRepository.AllAsNoTracking().OrderBy(c => c.Id)
                 .Select(c => c.CompanyObjects.Where(co => co.Id == id).Select(co =>
-               new CompanyObjectDto()
-               {
-                   City = co.City,
-                   Description = co.Description,
-                   StartNum = co.StartNum,
-                   EndNum = co.EndNum,
-                   Id = co.Id,
-                   Name = co.Name,
-                   IsActive = co.IsActive,
-                   CountOfDocuments = co.VatDocuments.Count,
-               })
+              new CompanyObjectDto()
+              {
+                  City = co.City,
+                  Description = co.Description,
+                  StartNum = co.StartNum,
+                  EndNum = co.EndNum,
+                  Id = co.Id,
+                  Name = co.Name,
+                  IsActive = co.IsActive,
+                  ObjectGUID = co.GUID,
+                  CountOfDocuments = co.VatDocuments.Count,
+              })
                 ).LastAsync();
 
             return companyObect.FirstOrDefault();
         }
 
-        public async Task<CompanyObjectDto> Edit(CompanyObjectDto companyObjectDto)
+        public async Task Edit(CompanyObjectDto companyObjectDto)
         {
-            var company = await companyDeletableEntityRepository.All().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
+            if (companyObjectDto.IsActive == true)
+            {
+                await SetAllObjectNonActive();
+            }
+            var company = await companyRepository.All().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
             var companyObject = company.CompanyObjects.Where(co => co.Id == companyObjectDto.Id).FirstOrDefault();
 
-            if (company.GUID == userCompanyTemp.CompanyGUID && companyObject.GUID == userCompanyTemp.CompanyObjectGUID)
+            if (company.GUID == userCompanyTemp.CompanyGUID)
             {
-                var companyApp = await appDeletableEntityRepository.All().Include(c => c.CompanyAppObjects).Where(c => c.GUID == company.GUID).FirstOrDefaultAsync();
+                var companyApp = await appRepository.All().Include(c => c.CompanyAppObjects).Where(c => c.GUID == company.GUID).FirstOrDefaultAsync();
                 var companyAppObject = companyApp.CompanyAppObjects.Where(co => co.GUID == companyObject.GUID).FirstOrDefault();
 
 
@@ -88,7 +94,8 @@ namespace WebInvoice.Services
                 companyObjectDto.CompanyObjectSlug = companyObjectSlug;
                 companyAppObject.ObjectName = companyObjectDto.Name;
                 companyAppObject.ObjectSlug = companyObjectSlug;
-                appDeletableEntityRepository.Update(companyApp);
+                companyAppObject.IsActive = companyObjectDto.IsActive;
+                appRepository.Update(companyApp);
 
                 companyObject.Name = companyObjectDto.Name;
                 companyObject.City = companyObjectDto.City;
@@ -97,22 +104,43 @@ namespace WebInvoice.Services
                 companyObject.IsActive = companyObjectDto.IsActive;
                 companyObject.Description = companyObjectDto.Description;
 
-                companyDeletableEntityRepository.Update(company);
-                await companyDeletableEntityRepository.SaveChangesAsync();
-                await appDeletableEntityRepository.SaveChangesAsync();
+                companyRepository.Update(company);
+                await companyRepository.SaveChangesAsync();
+                await appRepository.SaveChangesAsync();
 
             }
-            else
-            {
-                return null;
-            }
-
-            return companyObjectDto;
 
         }
-
-        public async Task<CompanyObjectDto> Create(CompanyObjectDto companyObjectDto)
+        public async Task Delete(CompanyObjectDto companyObjectDto)
         {
+            var company = await companyRepository.All().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
+            var companyObject = company.CompanyObjects.Where(co => co.Id == companyObjectDto.Id && co.GUID == companyObjectDto.ObjectGUID).FirstOrDefault();
+
+            if (companyObject.VatDocuments.Count == 0 && companyObject.NonVatDocuments.Count == 0)
+            {
+                if (company.GUID == userCompanyTemp.CompanyGUID)
+                {
+                    var companyApp = await appRepository.All().Include(c => c.CompanyAppObjects).Where(c => c.GUID == company.GUID).FirstOrDefaultAsync();
+                    var companyAppObject = companyApp.CompanyAppObjects.Where(co => co.GUID == companyObject.GUID).FirstOrDefault();
+
+
+                    companyRepository.Context.CompanyObjects.Remove(companyObject);
+                    appRepository.Context.CompanyAppObjects.Remove(companyAppObject);
+                    //companyRepository.Update(company);
+                    //appRepository.Update(companyApp);
+                    await companyRepository.SaveChangesAsync();
+                    await appRepository.SaveChangesAsync();
+                }
+            }
+
+        }
+        public async Task Create(CompanyObjectDto companyObjectDto)
+        {
+            if (companyObjectDto.IsActive == true)
+            {
+                await SetAllObjectNonActive();
+            }
+
             var companyObjectGUID = Guid.NewGuid().ToString();
 
             var companyAppObject = new CompanyAppObject()
@@ -123,9 +151,9 @@ namespace WebInvoice.Services
                 ObjectSlug = stringGenerator.GenerateSlug(companyObjectDto.Name),
             };
 
-            var companyApp = appDeletableEntityRepository.All().Where(c => c.GUID == userCompanyTemp.CompanyGUID).FirstOrDefault();
+            var companyApp = appRepository.All().Where(c => c.GUID == userCompanyTemp.CompanyGUID).FirstOrDefault();
             companyApp.CompanyAppObjects.Add(companyAppObject);
-           
+
 
             var companyObject = new CompanyObject()
             {
@@ -138,43 +166,106 @@ namespace WebInvoice.Services
                 GUID = companyObjectGUID,
             };
 
-            var company = await companyDeletableEntityRepository.All().OrderBy(c => c.Id).LastAsync();
+            var company = await companyRepository.All().OrderBy(c => c.Id).LastAsync();
             company.CompanyObjects.Add(companyObject);
 
-            await appDeletableEntityRepository.SaveChangesAsync();
-            await companyDeletableEntityRepository.SaveChangesAsync();
+            await appRepository.SaveChangesAsync();
+            await companyRepository.SaveChangesAsync();
 
-            return companyObjectDto;
         }
 
-        public async Task<CompanyObjectDto> ObjectDucumentRange(CompanyObjectDto companyObjectDto)
+        public async Task ValidateObjectDucumentRange(CompanyObjectDto companyObjectDto)
         {
-            var company = await companyDeletableEntityRepository.All().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
+            var company = await companyRepository.AllAsNoTracking().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
             var companyObjects = company.CompanyObjects.ToList();
+
+
+
             var start = companyObjectDto.StartNum;
             var end = companyObjectDto.EndNum;
             bool IsInUse = false;
-            var sb = new StringBuilder();
+
+            if (companyObjectDto.Id != 0)
+            {
+                var currentObject = companyObjects.Where(o => o.Id == companyObjectDto.Id).FirstOrDefault();
+                if (currentObject != null)
+                {
+                    var firstDocument = companyRepository.Context.VatDocuments.Where(vd => vd.CompanyObjectId == companyObjectDto.Id).Select(vd => vd.Id).FirstOrDefault();
+                    var lastDocument = companyRepository.Context.VatDocuments.Where(vd => vd.CompanyObjectId == companyObjectDto.Id).Select(vd => vd.Id).LastOrDefault();
+                    if (firstDocument != 0 && lastDocument != 0)
+                    {
+                        //if (start >= firstDocument && end <= lastDocument)
+                        //{
+                        //    IsInUse = true;
+                        //    companyObjectDto.ErrorMassages.Add( $"Има издадени документи от номер{firstDocument} до {lastDocument}!");
+                        //}
+                        //if (start >= firstDocument && end <= lastDocument)
+                        //{
+                        //    IsInUse = true;
+                        //    companyObjectDto.ErrorMassages.Add($"Има издадени документи от номер{firstDocument} до {lastDocument}!");
+                        //}
+                    }
+                    companyObjects.Remove(currentObject);
+                }
+            }
+
+            if (start > end)
+            {
+                IsInUse = true;
+                companyObjectDto.ErrorMassages.Add("Старт номера трябва да бъде по-голям от край номера");
+            }
 
             foreach (var companyObject in companyObjects)
             {
-                if (start > companyObject.StartNum && start < companyObject.EndNum)
+                if (start >= companyObject.StartNum && start <= companyObject.EndNum)
                 {
-                    sb.AppendLine( $"Старт номерa е в номерацията  на обект {companyObject.Name}");
+                    companyObjectDto.ErrorMassages.Add($"Старт номерa е в номерацията  на обект {companyObject.Name}!");
                     IsInUse = true;
                 }
-                if (end > companyObject.StartNum && end < companyObject.EndNum)
+                if (end >= companyObject.StartNum && end <= companyObject.EndNum)
                 {
-                    sb.AppendLine($"Край номерa е в номерацията  на обект {companyObject.Name}");
+                    companyObjectDto.ErrorMassages.Add($"Край номерa е в номерацията  на обект {companyObject.Name}!");
+                    IsInUse = true;
+                }
+                if (companyObject.Name == companyObjectDto.Name)
+                {
+                    companyObjectDto.ErrorMassages.Add($"Съществува обект с име {companyObject.Name}!");
                     IsInUse = true;
                 }
             }
-            if (IsInUse)
+            if (!IsInUse)
             {
-                companyObjectDto.ErrorMassage = sb.ToString().Trim();
-                companyObjectDto.IsValideObject = false;
+                companyObjectDto.IsValidObjectDocumentRange = true;
             }
-            return companyObjectDto;
+        }
+
+        public async Task SetAllObjectNonActive()
+        {
+            var company = await companyRepository.All().Include(x => x.CompanyObjects).OrderBy(c => c.Id).LastAsync();
+
+            if (company.GUID == userCompanyTemp.CompanyGUID)
+            {
+                foreach (var obj in company.CompanyObjects)
+                {
+                    obj.IsActive = false;
+                }
+            }
+
+            var companyApp = await appRepository.All().Include(c => c.CompanyAppObjects).Where(c => c.GUID == company.GUID).FirstOrDefaultAsync();
+
+            if (companyApp.GUID == userCompanyTemp.CompanyGUID)
+            {
+                foreach (var obj in companyApp.CompanyAppObjects)
+                {
+                    obj.IsActive = false;
+                }
+            }
+            companyRepository.Update(company);
+            appRepository.Update(companyApp);
+
+            await companyRepository.SaveChangesAsync();
+            await appRepository.SaveChangesAsync();
+
 
         }
 

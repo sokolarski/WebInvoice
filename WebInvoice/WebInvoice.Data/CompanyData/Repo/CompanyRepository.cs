@@ -18,7 +18,7 @@
 
         protected DbSet<TEntity> DbSet { get; set; }
 
-        protected CompanyDbContext Context { get; set; }
+        public CompanyDbContext Context { get; set; }
 
         public virtual IQueryable<TEntity> All() => this.DbSet;
 

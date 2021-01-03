@@ -5,10 +5,11 @@ namespace WebInvoice.Services
 {
     public interface ICompanyObjectService
     {
-        Task<CompanyObjectDto> Create(CompanyObjectDto companyObjectDto);
-        Task<CompanyObjectDto> Edit(CompanyObjectDto companyObjectDto);
+        Task Create(CompanyObjectDto companyObjectDto);
+        Task Edit(CompanyObjectDto companyObjectDto);
         Task<CompanyObjectListDto> GetAllCompanyObjects();
         Task<CompanyObjectDto> GetById(int id);
-        Task<CompanyObjectDto> ObjectDucumentRange(CompanyObjectDto companyObjectDto);
+        Task ValidateObjectDucumentRange(CompanyObjectDto companyObjectDto);
+        Task Delete(CompanyObjectDto companyObjectDto);
     }
 }

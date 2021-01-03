@@ -20,5 +20,6 @@
         void Delete(TEntity entity);
 
         Task<int> SaveChangesAsync();
+        public ApplicationDbContext Context { get; set; }
     }
 }

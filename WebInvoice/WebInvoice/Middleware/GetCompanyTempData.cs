@@ -52,7 +52,12 @@ namespace WebInvoice.Middleware
                                 if (objects != null)
                                 {
                                     var currentObject = objects.Where(o => o.ObjectSlug == currentObjectSlug).FirstOrDefault();
-                                    
+
+                                    if (currentObject is null)
+                                    {
+                                        currentObject = objects.FirstOrDefault();
+                                    }
+
                                     if (currentObject != null)
                                     { 
                                         userCompanyTemp.CompanyName = currentCompany.CompanyName;
@@ -75,14 +80,17 @@ namespace WebInvoice.Middleware
                         
                         if (currentCompany != null)
                         {
-                           
-
                             context.Request.RouteValues.TryAdd("company", currentCompany.CompanySlug);
 
                             var objects = currentCompany.CompanyAppObjects;
                             if (objects != null)
                             {
                                 var currentObject = objects.Where(o => o.IsActive == true).FirstOrDefault();
+
+                                if (currentObject is null)
+                                {
+                                    currentObject = objects.FirstOrDefault();
+                                }
 
                                 if (currentObject != null)
                                 {

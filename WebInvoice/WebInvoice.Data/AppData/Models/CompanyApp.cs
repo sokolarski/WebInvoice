@@ -13,6 +13,7 @@ namespace WebInvoice.Data.AppData.Models
         {
             this.CompanyAppObjects = new HashSet<CompanyAppObject>();
         }
+      
         public string CompanyName { get; set; }
 
         public string CompanySlug { get; set; }

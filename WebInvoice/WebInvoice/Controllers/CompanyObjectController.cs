@@ -33,15 +33,20 @@ namespace WebInvoice.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(CompanyObjectDto companyObjectDto)
         {
-            var model = companyObjectDto;
 
             if (ModelState.IsValid)
             {
-                var result = await companyObjectService.Edit(model);
-                return RedirectToAction("Index", new {companyObject=result.CompanyObjectSlug });
+                await companyObjectService.ValidateObjectDucumentRange(companyObjectDto);
+
+                if (companyObjectDto.IsValidObjectDocumentRange)
+                {
+                    await companyObjectService.Edit(companyObjectDto);
+                    return RedirectToAction("Index");
+                }
+                
             }
 
-            return View(model);
+            return View(companyObjectDto);
         }
 
         public async Task<IActionResult> Create()
@@ -54,16 +59,26 @@ namespace WebInvoice.Controllers
         {
             if (ModelState.IsValid)
             {
-               var result = await companyObjectService.ObjectDucumentRange(companyObjectDto);
-                if (companyObjectDto.IsValideObject)
+                await companyObjectService.ValidateObjectDucumentRange(companyObjectDto);
+
+                if (companyObjectDto.IsValidObjectDocumentRange)
                 {
                     await companyObjectService.Create(companyObjectDto);
                     return RedirectToAction("Index");
                 }
-               
+
             }
 
             return View(companyObjectDto);
+        }
+
+        public async Task<IActionResult> Delete(CompanyObjectDto companyObjectDto)
+        {
+            if (companyObjectDto!=null)
+            {
+                await companyObjectService.Delete(companyObjectDto);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

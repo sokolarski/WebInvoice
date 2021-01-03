@@ -22,5 +22,6 @@ namespace WebInvoice.Data.Repository.Repositories
         void Delete(TEntity entity);
 
         Task<int> SaveChangesAsync();
+        public CompanyDbContext Context { get; set; }
     }
 }
