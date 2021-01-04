@@ -191,19 +191,15 @@ namespace WebInvoice.Services
                 if (currentObject != null)
                 {
                     var firstDocument = companyRepository.Context.VatDocuments.Where(vd => vd.CompanyObjectId == companyObjectDto.Id).Select(vd => vd.Id).FirstOrDefault();
-                    var lastDocument = companyRepository.Context.VatDocuments.Where(vd => vd.CompanyObjectId == companyObjectDto.Id).Select(vd => vd.Id).LastOrDefault();
+                    var lastDocument = companyRepository.Context.VatDocuments.Where(vd => vd.CompanyObjectId == companyObjectDto.Id).OrderBy(vd => vd.Id).Select(vd => vd.Id).LastOrDefault();
                     if (firstDocument != 0 && lastDocument != 0)
                     {
-                        //if (start >= firstDocument && end <= lastDocument)
-                        //{
-                        //    IsInUse = true;
-                        //    companyObjectDto.ErrorMassages.Add( $"Има издадени документи от номер{firstDocument} до {lastDocument}!");
-                        //}
-                        //if (start >= firstDocument && end <= lastDocument)
-                        //{
-                        //    IsInUse = true;
-                        //    companyObjectDto.ErrorMassages.Add($"Има издадени документи от номер{firstDocument} до {lastDocument}!");
-                        //}
+                        if (start > firstDocument || end < lastDocument)
+                        {
+                            IsInUse = true;
+                            companyObjectDto.ErrorMassages.Add($"Има издадени документи от номер{firstDocument} до {lastDocument}!");
+                        }
+
                     }
                     companyObjects.Remove(currentObject);
                 }
@@ -219,12 +215,12 @@ namespace WebInvoice.Services
             {
                 if (start >= companyObject.StartNum && start <= companyObject.EndNum)
                 {
-                    companyObjectDto.ErrorMassages.Add($"Старт номерa е в номерацията  на обект {companyObject.Name}!");
+                    companyObjectDto.ErrorMassages.Add($"Старт номерa е в номерацията  на обект {companyObject.Name} с начало: {companyObject.StartNum} и край: {companyObject.EndNum}!");
                     IsInUse = true;
                 }
                 if (end >= companyObject.StartNum && end <= companyObject.EndNum)
                 {
-                    companyObjectDto.ErrorMassages.Add($"Край номерa е в номерацията  на обект {companyObject.Name}!");
+                    companyObjectDto.ErrorMassages.Add($"Край номерa е в номерацията  на обект {companyObject.Name} с начало: {companyObject.StartNum} и край: {companyObject.EndNum}!");
                     IsInUse = true;
                 }
                 if (companyObject.Name == companyObjectDto.Name)

@@ -1,19 +1,28 @@
 ﻿@using WebInvoice.Dto.Company
 @model CompanyDto
-@{
-    ViewData["Title"] = "Create New Company";
-}
+
+<partial name="_NavBarSettingsPartial.cshtml"/>
 <div class="container">
-    <h2 class="text-center">Нова фирма</h2>
+
+    <a class="btn btn-danger" asp-controller="CompanySettings" asp-action="ApplyMigration">Apply migration</a>
+    <h3 class="text-center">Настройки на фирма</h3>
+    <h2 class="text-center">@Model.Name</h2>
     <div class="row justify-content-md-center">
         <div class="col-md-6">
-            <form asp-controller="Company" asp-action="Create" method="post">
+            <form asp-controller="CompanySettings" asp-action="Edit" method="post">
                 <div class="form-group">
                     <label asp-for="Name">Име на фирмата</label>
                     <input asp-for="Name" class="form-control" id="companyName" aria-describedby="nameHelp" placeholder="Име на фирма" />
                     <small id="nameHelp" class="form-text text-muted">Моля въведете името на кирилица, не повече от 50 символа</small>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
+
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" id="isVatRegistered" placeholder=""  />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+
                 <div class="form-group">
                     <label asp-for="Country">Страна</label>
                     <input asp-for="Country" class="form-control" id="countryName" placeholder="Страна" value="България" />
@@ -60,7 +69,8 @@
                     <input asp-for="Description" class="form-control" id="Description" placeholder="" type="text" />
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-                <button type="submit" class="btn btn-primary">Създай</button>
+                <button type="submit" class="btn btn-primary">Промени</button>
+                <a class="btn btn-secondary" asp-controller="CompanySettings" asp-action="index">Отказ</a>
             </form>
         </div>
     </div>
@@ -72,6 +82,6 @@
         if (country == "България") {
             var vatId = document.getElementById('vatId').value = "BG" + eik;
         }
-        
+
     }
 </script>

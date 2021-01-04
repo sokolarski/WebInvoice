@@ -34,7 +34,7 @@ namespace WebInvoice.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CompanyInputDto companyInputDto)
+        public async Task<IActionResult> Create(CompanyDto companyInputDto)
         {
             if (!ModelState.IsValid)
             {
@@ -57,5 +57,6 @@ namespace WebInvoice.Controllers
             this.ViewBag.CompanyName = name;
             return View();
         }
+
     }
 }

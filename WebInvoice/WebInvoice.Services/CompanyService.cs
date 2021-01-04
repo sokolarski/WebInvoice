@@ -23,7 +23,7 @@ namespace WebInvoice.Services
             this.companyAppRepo = companyAppRepo;
             this.stringGenerator = connectionStringGenerator;
         }
-        public async Task<bool> CreateCompanyAsync(CompanyInputDto companyInputDto, string userId)
+        public async Task<bool> CreateCompanyAsync(CompanyDto companyInputDto, string userId)
         {
             var companyGUID = Guid.NewGuid().ToString();
             var objectGUID = Guid.NewGuid().ToString();
@@ -35,7 +35,7 @@ namespace WebInvoice.Services
             return true;
         }
 
-        private async Task CreateCompanyAppAsync(string connectionString, CompanyInputDto companyInputDto, string companyGUID, string objectGuid, string userId)
+        private async Task CreateCompanyAppAsync(string connectionString, CompanyDto companyInputDto, string companyGUID, string objectGuid, string userId)
         {
             var obj = new CompanyAppObject()
             {
@@ -62,7 +62,7 @@ namespace WebInvoice.Services
             await companyAppRepo.SaveChangesAsync();
         }
 
-        private async Task<CompanyDbContext> CreateCompanyDbAsync(string connectionString, CompanyInputDto companyInputDto, string companyGUID, string objectGUID)
+        private async Task<CompanyDbContext> CreateCompanyDbAsync(string connectionString, CompanyDto companyInputDto, string companyGUID, string objectGUID)
         {
             var options = new DbContextOptionsBuilder<CompanyDbContext>();
             options.UseSqlServer(connectionString);
@@ -107,9 +107,5 @@ namespace WebInvoice.Services
             return companyContext;
         }
 
-        public bool EditCompany(CompanyInputDto companyInputDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

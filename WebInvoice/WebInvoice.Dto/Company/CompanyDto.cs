@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebInvoice.Dto.Company
 {
-    public class CompanyInputDto
+    public class CompanyDto
     {
         
         [Required(ErrorMessage = "Полето е задължително!")]
@@ -31,6 +31,7 @@ namespace WebInvoice.Dto.Company
         [Display(Name = "Държава")]
         public string Country { get; set; }
 
+        [Required(ErrorMessage = "Полето е задължително!")]
         [MaxLength(20, ErrorMessage = "ЕИК трябва да бъде точно 9 цифри")]
         [RegularExpression(@"^[0-9]{2,13}$", ErrorMessage = "ЕИК номер трябва да започва с две латински букви последвани от 2 до 13 символа")]
         [Display(Name ="ЕИК")]
@@ -52,11 +53,16 @@ namespace WebInvoice.Dto.Company
         [Display(Name = "Регистрация по ДДС")]
         public bool IsVatRegistered { get; set; }
 
+        [Display(Name = "Да се отваря по подразбиране")]
+        public bool IsActive { get; set; }
+
         public string LogoPath { get; set; }
 
         [MaxLength(300, ErrorMessage = "Максимална дължина 300 символа")]
         [Display(Name = "Пояснения")]
         public string Description { get; set; }
+
+        public string CompanySlug { get; set; }
 
 
     }

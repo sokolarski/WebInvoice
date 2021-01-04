@@ -95,6 +95,10 @@
             }
 
             <a asp-area="" asp-controller="Company" asp-action="Create" class="dropdown-item">Нова фирма</a>
+            @if (userCompanyData.IsSetCompany)
+            {
+                <a asp-area="" asp-controller="CompanySettings" asp-action="Index" class="dropdown-item">Настройки на фирма</a>
+            }
         </div>
     </li>
     @if (userCompanyData.IsSetObject)
@@ -114,7 +118,7 @@
                     <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@obj.ObjectName</a>
                 }
 
-                <a class="dropdown-item" href="#">Нов обект</a>
+                <a class="dropdown-item" asp-controller="CompanyObject" asp-action="Create">Нов обект</a>
                 <a class="dropdown-item" asp-controller="CompanyObject" asp-action="Index">Настройки на обект</a>
             </div>
         </li>

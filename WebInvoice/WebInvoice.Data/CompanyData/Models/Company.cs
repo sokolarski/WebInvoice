@@ -54,6 +54,8 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public string GUID { get; set; }
 
+        public string Description { get; set; }
+
         public virtual ICollection<Partner> Partners { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
