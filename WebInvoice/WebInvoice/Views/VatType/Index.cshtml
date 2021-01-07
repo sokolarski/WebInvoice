@@ -1,0 +1,48 @@
+﻿@using WebInvoice.Dto.VatType
+@model ICollection<VatTypeDto>
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+
+<div class="row">
+    <partial name="~/Views/CompanySettings/_NavBarSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@userCompanyData.CompanyName</h3>
+        <h3 class="text-center">Настройки на ДДС</h3>
+        <div class="row justify-content-center">
+            <table class="table table-hover col-10">
+                <thead>
+                    <tr>
+                        <th scope="col">Име</th>
+                        <th scope="col">Описание</th>
+                        <th scope="col">Процента</th>
+                        <th scope="col">По подразбиране</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vat in Model)
+                    {
+                        <tr>
+                            <td>@vat.Name</td>
+                            <td>@vat.Description</td>
+                            <td>@vat.Percantage %</td>
+                            <td>
+                                @if (vat.IsActive)
+                                {
+                                    @:ДА
+                                }
+                                else
+                                {
+                                    @:НЕ
+                                }
+                            </td>
+                            <td><a asp-area="" asp-controller="VatType" asp-action="Edit" asp-route-id="@vat.Id" class="btn btn-dark">Редактирай</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <a asp-area="" asp-controller="VatType" asp-action="Create" class="btn btn-light">Нов тип ДДС</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿@using WebInvoice.Dto.Employee
+@model EmployeeDto
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+
+<div class="row">
+    <partial name="~/Views/CompanySettings/_NavBarSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@userCompanyData.CompanyName</h3>
+        <h3 class="text-center">Редактиране служител</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form asp-controller="Employee" asp-action="Edit" method="post">
+                    <div class="form-group">
+                        <label asp-for="FullName"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Създай</button>
+                    <a class="btn btn-secondary" asp-controller="Employee" asp-action="index">Отказ</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

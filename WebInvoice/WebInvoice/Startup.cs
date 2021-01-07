@@ -65,6 +65,10 @@ namespace WebInvoice
             services.AddTransient<IStringGenerator, StringGenerator>();
             services.AddTransient<ICompanyObjectService, CompanyObjectService>();
             services.AddTransient<ICompanySettingsService, CompanySettingsService>();
+            services.AddTransient<IVatTypeService, VatTypeService>();
+            services.AddTransient<IBankAccountService, BankAccountService>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IPaymentTypeService, PaymentTypeService>();
             
 
           

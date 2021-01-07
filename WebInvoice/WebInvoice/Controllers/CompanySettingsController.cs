@@ -24,16 +24,27 @@ namespace WebInvoice.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> Edit()
+        {
+            var model = await this.companySettingsService.GetCompanyInfo();
+            return View(model);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Edit(CompanyDto companyDto)
         {
             if (ModelState.IsValid)
             {
                 await companySettingsService.Edit(companyDto);
-                return RedirectToAction("Index", new { company = companyDto.CompanySlug, companyObject = userCompanyTemp.CompanyObjectSlug});
+                return RedirectToAction("Index", new { company = companyDto.CompanySlug, companyObject = userCompanyTemp.CompanyObjectSlug });
             }
             return RedirectToAction("Index");
         }
 
+        public IActionResult Database()
+        {
+            return View();
+        }
         public async Task<IActionResult> ApplyMigration()
         {
             await companySettingsService.ApplyMigration();

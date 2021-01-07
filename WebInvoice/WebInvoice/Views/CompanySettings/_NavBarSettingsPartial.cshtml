@@ -1,19 +1,31 @@
-﻿<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Navbar w/ text</a>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-            </li>
-        </ul>
-        <span class="navbar-text">
-            Navbar text with an inline element
-        </span>
-    </div>
-</nav>
+﻿
+<div class="container col-md-3">
+    <nav class="navbar flex-column navbar-light bg-white border-bottom box-shadow mb-3">
+        <a asp-controller="CompanySettings" asp-action="Index" class="navbar-brand text-nowrap" >Настройки</a>
+        <div class="justify-content-center" id="navbarNav">
+            <ul class="navbar-nav flex-column">
+                <li class="nav-item">
+                    <a asp-controller="CompanySettings" asp-action="Edit" class="nav-link" >Редактиране на фирма</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="VatType" asp-action="Index" class="nav-link">ДДС</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="BankAccount" asp-action="Index" class="nav-link">Банкови сметки</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Employee" asp-action="Index" class="nav-link">Служители</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="PaymentType" asp-action="Index" class="nav-link">Начини на плащане</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Основания</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="CompanySettings" asp-action="Database" class="nav-link">База данни</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

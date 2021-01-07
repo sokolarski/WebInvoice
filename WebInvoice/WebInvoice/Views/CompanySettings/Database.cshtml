@@ -1,0 +1,12 @@
+﻿@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+
+<div class="row">
+    <partial name="_NavBarSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">Настройки на база данни</h3>
+        <h2 class="text-center">@userCompanyData.CompanyName</h2>
+        <div class="row justify-content-md-center">
+            <a class="btn btn-danger" asp-controller="CompanySettings" asp-action="ApplyMigration">Apply migration</a>
+        </div>
+    </div>
+</div>

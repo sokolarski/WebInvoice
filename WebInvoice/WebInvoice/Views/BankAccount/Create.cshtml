@@ -1,0 +1,65 @@
+﻿@using WebInvoice.Dto.BankAccount
+@model BankAccountDto
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+
+<div class="row">
+    <partial name="~/Views/CompanySettings/_NavBarSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@userCompanyData.CompanyName</h3>
+        <h3 class="text-center">Нова сметка</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                @if (Model != null)
+                {
+                    @if (!Model.IsValidBankAccount)
+                    {
+                        @foreach (var error in Model.ErrorMassages)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @error
+                            </div>
+                        }
+                    }
+                }
+                <form asp-controller="BankAccount" asp-action="Create" method="post">
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BankName"></label>
+                        <input asp-for="BankName" class="form-control" />
+                        <span asp-validation-for="BankName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="BIC"></label>
+                        <input asp-for="BIC" class="form-control" />
+                        <span asp-validation-for="BIC" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="IBAN"></label>
+                        <input asp-for="IBAN" class="form-control" />
+                        <span asp-validation-for="IBAN" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Създай</button>
+                    <a class="btn btn-secondary" asp-controller="BankAccount" asp-action="index">Отказ</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

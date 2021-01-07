@@ -21,7 +21,7 @@ namespace WebInvoice.Data.CompanyData.Models
         [MaxLength(50)]
         public string BankName { get; set; }
 
-        [MaxLength(10)]
+        [MaxLength(11)]
         public string BIC { get; set; }
 
         [MaxLength(20)]
