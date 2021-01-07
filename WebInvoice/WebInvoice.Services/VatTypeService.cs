@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using WebInvoice.Data.CompanyData.Models;
 using WebInvoice.Data.Repository.Repositories;
 using WebInvoice.Dto.VatType;
@@ -21,33 +22,43 @@ namespace WebInvoice.Services
         public ICollection<VatTypeDto> GetAll()
         {
             var vatTypes = vatTypeRepository.AllAsNoTracking().Select(vt => new VatTypeDto()
-                                            {
-                                                Id = vt.Id,
-                                                Name = vt.Name,
-                                                Percantage = vt.Percantage,
-                                                Description = vt.Description,
-                                                IsActive = vt.IsActive,
-                                            }).ToList();
+            {
+                Id = vt.Id,
+                Name = vt.Name,
+                Percantage = vt.Percantage,
+                Description = vt.Description,
+                IsActive = vt.IsActive,
+            }).ToList();
+            return vatTypes;
+        }
+
+        public ICollection<VatTypeView> GetAllView()
+        {
+            var vatTypes = vatTypeRepository.AllAsNoTracking().Select(vt => new VatTypeView()
+            {
+                Name = vt.Name + "-" + vt.Percantage.ToString("F2") + "%",
+                Id = vt.Id
+            }).ToList();
             return vatTypes;
         }
 
         public VatTypeDto GetById(int id)
         {
             var vatTypes = vatTypeRepository.AllAsNoTracking().Select(vt => new VatTypeDto()
-                                              {
-                                                  Id = vt.Id,
-                                                  Name = vt.Name,
-                                                  Percantage = vt.Percantage,
-                                                  Description = vt.Description,
-                                                  IsActive = vt.IsActive,
-                                              }).Where(vt => vt.Id == id).FirstOrDefault();
+            {
+                Id = vt.Id,
+                Name = vt.Name,
+                Percantage = vt.Percantage,
+                Description = vt.Description,
+                IsActive = vt.IsActive,
+            }).Where(vt => vt.Id == id).FirstOrDefault();
             return vatTypes;
         }
 
         public async Task Edit(VatTypeDto vatTypeDto)
         {
             var vatType = vatTypeRepository.All().Where(vt => vt.Id == vatTypeDto.Id).FirstOrDefault();
-           
+
             if (vatTypeDto.Id != 0 && vatType != null)
             {
                 if (vatTypeDto.IsActive == true)
@@ -83,8 +94,8 @@ namespace WebInvoice.Services
 
         private void SetAllNonActive()
         {
-           var vatTypes= vatTypeRepository.All();
-            
+            var vatTypes = vatTypeRepository.All();
+
             foreach (var vatType in vatTypes)
             {
                 vatType.IsActive = false;
@@ -94,7 +105,7 @@ namespace WebInvoice.Services
 
         public void ValidateVatType(VatTypeDto vatTypeDto)
         {
-            if (vatTypeDto.Id !=0)
+            if (vatTypeDto.Id != 0)
             {
                 var vatType = vatTypeRepository.AllAsNoTracking().Where(vt => vt.Name == vatTypeDto.Name && vt.Id != vatTypeDto.Id).FirstOrDefault();
                 if (vatType is null)
@@ -106,7 +117,7 @@ namespace WebInvoice.Services
                     vatTypeDto.IsValidVatType = false;
                     vatTypeDto.ErrorMassages.Add($"Съществува Име {vatType.Name}");
                 }
-                
+
             }
             else
             {
@@ -120,7 +131,7 @@ namespace WebInvoice.Services
                     vatTypeDto.IsValidVatType = false;
                     vatTypeDto.ErrorMassages.Add($"Съществува Име {vatType.Name}");
                 }
-               
+
             }
 
         }

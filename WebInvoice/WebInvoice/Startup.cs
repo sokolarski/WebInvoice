@@ -69,6 +69,7 @@ namespace WebInvoice
             services.AddTransient<IBankAccountService, BankAccountService>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IPaymentTypeService, PaymentTypeService>();
+            services.AddTransient<IReasonService, ReasonService>();
             
 
           

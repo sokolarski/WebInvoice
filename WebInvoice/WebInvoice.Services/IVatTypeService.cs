@@ -11,5 +11,6 @@ namespace WebInvoice.Services
         ICollection<VatTypeDto> GetAll();
         VatTypeDto GetById(int id);
         void ValidateVatType(VatTypeDto vatTypeDto);
+        ICollection<VatTypeView> GetAllView();
     }
 }

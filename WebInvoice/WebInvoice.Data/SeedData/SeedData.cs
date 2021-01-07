@@ -32,7 +32,7 @@ namespace WebInvoice.Data.SeedData
         {
             var listOfVats = companyDbContext.VatTypes.ToList();
             var types = new[] {
-                new Reason(){ Name="Стандартно основане", Description="Начисляване на ддс 20%", VatType = listOfVats.Where(v => v.Name == "Б").First(), IsActive=true },
+                new Reason(){ Name="Стандартно основание", Description="Начисляване на ддс 20%", VatType = listOfVats.Where(v => v.Name == "Б").First(), IsActive=true },
                 new Reason(){ Name="Неначисляване на ддс", Description="Начисляване на ддс 0%", VatType = listOfVats.Where(v => v.Name == "А").First(), IsActive=false },
             };
 
