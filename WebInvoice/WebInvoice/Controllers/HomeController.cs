@@ -11,7 +11,8 @@ using WebInvoice.Models;
 
 
 namespace WebInvoice.Controllers
-{ 
+{
+ 
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

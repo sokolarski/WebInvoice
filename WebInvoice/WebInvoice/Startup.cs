@@ -70,6 +70,8 @@ namespace WebInvoice
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IPaymentTypeService, PaymentTypeService>();
             services.AddTransient<IReasonService, ReasonService>();
+            services.AddTransient<IPartnerService, PartnerService>();
+            services.AddTransient<IPartnerSettingService, PartnerSettingService>();
             
 
           

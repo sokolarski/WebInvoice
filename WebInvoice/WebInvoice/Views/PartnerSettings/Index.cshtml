@@ -1,0 +1,80 @@
+﻿@using WebInvoice.Dto.Partner
+@model PartnerDto
+
+<div class="row">
+    <partial name="_NavBarPartnerSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+
+        <h3 class="text-center">Настройки на фирма</h3>
+        <h2 class="text-center">@Model.Name</h2>
+        <div class="row justify-content-center">
+
+            <form class="col-10">
+                <div class="form-group">
+                    <label asp-for="Name">Име на фирмата</label>
+                    <input asp-for="Name" class="form-control" id="companyName" aria-describedby="nameHelp" placeholder="Име на фирма" disabled="disabled" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" id="isVatRegistered" placeholder="" disabled="disabled" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Country">Страна</label>
+                    <input asp-for="Country" class="form-control" id="countryName" placeholder="Страна" value="България" disabled="disabled" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City">Град</label>
+                    <input asp-for="City" class="form-control" id="cityName" placeholder="Град" disabled="disabled" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address">Адрес</label>
+                    <input asp-for="Address" class="form-control" id="AddressName" placeholder="Адрес" disabled="disabled" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MOL"></label>
+                    <input asp-for="MOL" class="form-control" id="MOL" placeholder="" disabled="disabled" />
+                    <span asp-validation-for="MOL" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="EIK"></label>
+                    <input asp-for="EIK" class="form-control" id="EIK" placeholder="ЕИК" disabled="disabled" />
+                    <span asp-validation-for="EIK" class="text-danger"></span>
+                </div>
+                <div class="form-check">
+                    <input asp-for="IsVatRegistered" class="form-check-input" id="isVatRegistered" placeholder="" onclick="fillVatId()" disabled="disabled" />
+                    <label asp-for="IsVatRegistered" class="form-check-label"></label>
+                    <span asp-validation-for="IsVatRegistered" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="VatId"></label>
+                    <input asp-for="VatId" class="form-control" id="vatId" placeholder="ДДС номер" disabled="disabled" />
+                    <span asp-validation-for="VatId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" id="email" placeholder="e-mail" disabled="disabled" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    function fillVatId() {
+        var eik = document.getElementById('EIK').value;
+        var country = document.getElementById('countryName').value;
+        if (country == "България") {
+            var vatId = document.getElementById('vatId').value = "BG" + eik;
+        }
+
+    }
+</script>

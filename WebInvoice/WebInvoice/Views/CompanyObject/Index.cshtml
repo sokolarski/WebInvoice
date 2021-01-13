@@ -1,6 +1,10 @@
 ﻿@using WebInvoice.Dto.CompanyObject
 @model CompanyObjectListDto
-
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+<div class="justify-content-center">
+    <h3 class="text-center">@userCompanyData.CompanyName</h3>
+    <h3 class="text-center">Настройки на обект</h3>
+</div>
 <table class="table table-hover">
     <thead>
         <tr>
@@ -16,25 +20,25 @@
     <tbody>
         @foreach (var companyObject in Model.CompanyObjects)
         {
-        <tr>
-            <td>@companyObject.Name</td>
-            <td>@companyObject.City</td>
-            <td>@companyObject.StartNum</td>
-            <td>@companyObject.EndNum</td>
-            <td>@companyObject.CountOfDocuments</td>
-            <td>
-                @if (companyObject.IsActive)
-                {
-                    @:ДА
-                }
-                else
-                {
-                    @:НЕ
-                }
-            </td>
-            <td><a asp-area="" asp-controller="CompanyObject" asp-action="Edit" asp-route-id="@companyObject.Id" class="btn btn-dark">Редактирай</a></td>
-        </tr>
+            <tr>
+                <td>@companyObject.Name</td>
+                <td>@companyObject.City</td>
+                <td>@companyObject.StartNum</td>
+                <td>@companyObject.EndNum</td>
+                <td>@companyObject.CountOfDocuments</td>
+                <td>
+                    @if (companyObject.IsActive)
+                    {
+                        @:ДА
+                    }
+                    else
+                    {
+                        @:НЕ
+                    }
+                </td>
+                <td><a asp-area="" asp-controller="CompanyObject" asp-action="Edit" asp-route-id="@companyObject.Id" class="btn btn-dark">Редактирай</a></td>
+            </tr>
         }
     </tbody>
 </table>
-<a asp-area="" asp-controller="CompanyObject" asp-action="Create"  class="btn btn-light">Нов обект</a>
+<a asp-area="" asp-controller="CompanyObject" asp-action="Create" class="btn btn-light">Нов обект</a>

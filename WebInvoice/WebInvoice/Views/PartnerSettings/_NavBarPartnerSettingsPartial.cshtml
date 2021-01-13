@@ -1,0 +1,19 @@
+﻿
+<div class="container col-md-3">
+    <nav class="navbar flex-column navbar-light bg-white border-bottom box-shadow mb-3">
+        <a asp-controller="PartnerSettings" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" class="navbar-brand text-nowrap" >Настройки</a>
+        <div class="justify-content-center" id="navbarNav">
+            <ul class="navbar-nav flex-column">
+                <li class="nav-item">
+                    <a asp-controller="PartnerSettings" asp-action="Edit" asp-route-companyId="@this.ViewBag.companyId" class="nav-link" >Редактиране на фирма</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="PartnerBankAccount" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" class="nav-link">Банкови сметки</a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="PartnerEmployee" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" class="nav-link">Служители</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

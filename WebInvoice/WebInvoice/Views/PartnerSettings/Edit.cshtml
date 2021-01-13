@@ -1,0 +1,82 @@
+﻿@using WebInvoice.Dto.Partner
+@model PartnerDto
+
+<div class="row">
+    <partial name="_NavBarPartnerSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">Настройки на фирма</h3>
+        <h2 class="text-center">@Model.Name</h2>
+        <div class="row justify-content-center">
+
+            <form asp-controller="PartnerSettings" asp-action="Edit" asp-route-companyId="@this.ViewBag.companyId" method="post" class="col-10">
+                <input asp-for="Id" type="hidden"/>
+                <div class="form-group">
+                    <label asp-for="Name">Име на фирмата</label>
+                    <input asp-for="Name" class="form-control" id="companyName" aria-describedby="nameHelp" placeholder="Име на фирма" />
+                    <small id="nameHelp" class="form-text text-muted">Моля въведете името на кирилица, не повече от 50 символа</small>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" id="isVatRegistered" placeholder="" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                    <span asp-validation-for="IsActive" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Country">Страна</label>
+                    <input asp-for="Country" class="form-control" id="countryName" placeholder="Страна" value="България" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City">Град</label>
+                    <input asp-for="City" class="form-control" id="cityName" placeholder="Град" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address">Адрес</label>
+                    <input asp-for="Address" class="form-control" id="AddressName" placeholder="Адрес" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MOL"></label>
+                    <input asp-for="MOL" class="form-control" id="MOL" placeholder="" />
+                    <span asp-validation-for="MOL" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="EIK"></label>
+                    <input asp-for="EIK" class="form-control" id="EIK" placeholder="ЕИК" />
+                    <span asp-validation-for="EIK" class="text-danger"></span>
+                </div>
+                <div class="form-check">
+                    <input asp-for="IsVatRegistered" class="form-check-input" id="isVatRegistered" placeholder="" onclick="fillVatId()" />
+                    <label asp-for="IsVatRegistered" class="form-check-label"></label>
+                    <span asp-validation-for="IsVatRegistered" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="VatId"></label>
+                    <input asp-for="VatId" class="form-control" id="vatId" placeholder="ДДС номер" />
+                    <span asp-validation-for="VatId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" id="email" placeholder="e-mail" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Промени</button>
+                <a class="btn btn-secondary" asp-controller="PartnerSettings" asp-action="index" asp-route-companyId="@Model.Id">Отказ</a>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function fillVatId() {
+        var eik = document.getElementById('EIK').value;
+        var country = document.getElementById('countryName').value;
+        if (country == "България") {
+            var vatId = document.getElementById('vatId').value = "BG" + eik;
+        }
+
+    }
+</script>

@@ -1,5 +1,6 @@
 ﻿@using WebInvoice.Dto.CompanyObject
 @model CompanyObjectDto
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 
 @if (Model != null)
 {
@@ -15,7 +16,12 @@
 }
 
 <div class="container">
-    <h2 class="text-center">Редактиране на обект</h2>
+
+    <div class="justify-content-center text-center">
+        <h3>@userCompanyData.CompanyName</h3>
+        <h3>Редактиране на обект</h3>
+        <h4>@Model.Name</h4>
+    </div>
     <div class="row justify-content-md-center">
         <div class="col-md-6">
             <form asp-controller="CompanyObject" asp-action="Edit" method="post">

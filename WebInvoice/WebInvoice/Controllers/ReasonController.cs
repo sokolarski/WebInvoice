@@ -6,9 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebInvoice.Dto.Reason;
 using WebInvoice.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebInvoice.Controllers
 {
+    [Authorize]
     public class ReasonController : Controller
     {
         private readonly IReasonService reasonService;
