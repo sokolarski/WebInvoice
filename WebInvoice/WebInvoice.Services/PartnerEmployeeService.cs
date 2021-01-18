@@ -20,7 +20,7 @@ namespace WebInvoice.Services
 
         public ICollection<EmployeeDto> GetAllCompanyEmployees(int companyId)
         {
-            var employees = employeeRepository.AllAsNoTracking().Where(e => e.CompanyId == companyId)
+            var employees = employeeRepository.AllAsNoTracking().Where(e => e.PartnerId == companyId)
                                                     .Select(e => new EmployeeDto()
                                                     {
                                                         Id = e.Id,
@@ -73,7 +73,7 @@ namespace WebInvoice.Services
             {
                 FullName = employeeDto.FullName,
                 IsActive = employeeDto.IsActive,
-                CompanyId = companyId,
+                PartnerId = companyId,
             };
 
             await employeeRepository.AddAsync(employee);
@@ -83,7 +83,7 @@ namespace WebInvoice.Services
         private void SetAllNonActive(int companyId)
         {
 
-            var employees = employeeRepository.All().Where(e => e.CompanyId == companyId); ;
+            var employees = employeeRepository.All().Where(e => e.PartnerId == companyId); ;
 
             foreach (var employee in employees)
             {

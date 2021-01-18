@@ -1,0 +1,16 @@
+﻿
+<div class="row justify-content-center">
+    <div class="col-8 d-flex flex-column justify-content-center">
+        <div class="alert alert-success" role="alert">
+            Фирма @ViewBag.companyName е успешно добавена!
+        </div>
+
+
+        <h3 class="text-center">Желаете ли да добавите банкова сметка към фирма @ViewBag.companyName</h3>
+        <div class="d-flex flex-row justify-content-center">
+            <a asp-controller="PartnerBankAccount" asp-action="Create" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-info m-1">ДА</a>
+            <a asp-controller="Partner" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-light m-1">НЕ</a>
+        </div>
+
+    </div>
+</div>

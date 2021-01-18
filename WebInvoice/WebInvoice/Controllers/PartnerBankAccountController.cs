@@ -4,24 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebInvoice.Dto.Employee;
-using WebInvoice.Dto.Partner;
+using WebInvoice.Dto.BankAccount;
 using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
 {
     [Authorize]
-    public class PartnerEmployeeController : Controller
+    public class PartnerBankAccountController : Controller
     {
-        private readonly IPartnerEmployeeService partnerEmployeeService;
+        private readonly IPartnerBankAccountService bankAccountService;
 
-        public PartnerEmployeeController(IPartnerEmployeeService partnerEmployeeService)
+        public PartnerBankAccountController(IPartnerBankAccountService bankAccountService)
         {
-            this.partnerEmployeeService = partnerEmployeeService;
+            this.bankAccountService = bankAccountService;
         }
+
         public IActionResult Index(int companyId, string companyName)
         {
-            var model = partnerEmployeeService.GetAllCompanyEmployees(companyId);
+            var model = bankAccountService.GetAllCompanyBankAccounts(companyId);
             this.ViewBag.companyId = companyId;
             this.ViewBag.companyName = companyName;
             return View(model);
@@ -29,46 +29,44 @@ namespace WebInvoice.Controllers
 
         public IActionResult Edit(int id, int companyId, string companyName)
         {
-            var model = partnerEmployeeService.GetById(id);
+            var model = bankAccountService.GetById(id);
             this.ViewBag.companyId = companyId;
             this.ViewBag.companyName = companyName;
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EmployeeDto employeeDto, int companyId, string companyName)
+        public async Task<IActionResult> Edit(BankAccountDto bankAccountDto, int companyId, string companyName)
         {
-            if (ModelState.IsValid)
+            bankAccountService.ValidateBankAccount(bankAccountDto, companyId);
+
+            if (ModelState.IsValid && bankAccountDto.IsValidBankAccount)
             {
-                await partnerEmployeeService.Edit(employeeDto, companyId);
-                return RedirectToAction("Index", new { companyId = companyId, companyName = companyName });
-            }
-            this.ViewBag.companyId = companyId;
-            this.ViewBag.companyName = companyName;
-            return View(employeeDto);
-        }
-
-
-        public IActionResult Create(int companyId, string companyName)
-        {
-            this.ViewBag.companyId = companyId;
-            this.ViewBag.companyName = companyName;
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(EmployeeDto employeeDto, int companyId, string companyName)
-        {
-            if (ModelState.IsValid)
-            {
-                await partnerEmployeeService.Create(employeeDto, companyId);
+                await bankAccountService.Edit(bankAccountDto, companyId);
                 this.ViewBag.companyId = companyId;
                 this.ViewBag.companyName = companyName;
                 return RedirectToAction("Index", new { companyId = companyId, companyName = companyName });
             }
             this.ViewBag.companyId = companyId;
             this.ViewBag.companyName = companyName;
-            return View(employeeDto);
+
+            return View(bankAccountDto);
+        }
+
+        public async Task<IActionResult> Create(BankAccountDto bankAccountDto, int companyId, string companyName)
+        {
+            bankAccountService.ValidateBankAccount(bankAccountDto, companyId);
+
+            if (ModelState.IsValid && bankAccountDto.IsValidBankAccount)
+            {
+                await bankAccountService.Create(bankAccountDto, companyId);
+                this.ViewBag.companyId = companyId;
+                this.ViewBag.companyName = companyName;
+                return RedirectToAction("Index", new { companyId = companyId, companyName = companyName });
+            }
+            this.ViewBag.companyId = companyId;
+            this.ViewBag.companyName = companyName;
+            return View(bankAccountDto);
         }
     }
 }

@@ -5,13 +5,13 @@
         <div class="justify-content-center" id="navbarNav">
             <ul class="navbar-nav flex-column">
                 <li class="nav-item">
-                    <a asp-controller="PartnerSettings" asp-action="Edit" asp-route-companyId="@this.ViewBag.companyId" class="nav-link" >Редактиране на фирма</a>
+                    <a asp-controller="PartnerSettings" asp-action="Edit" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="nav-link" >Редактиране на фирма</a>
                 </li>
                 <li class="nav-item">
-                    <a asp-controller="PartnerBankAccount" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" class="nav-link">Банкови сметки</a>
+                    <a asp-controller="PartnerBankAccount" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="nav-link">Банкови сметки</a>
                 </li>
                 <li class="nav-item">
-                    <a asp-controller="PartnerEmployee" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" class="nav-link">Служители</a>
+                    <a asp-controller="PartnerEmployee" asp-action="Index" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="nav-link">Служители</a>
                 </li>
             </ul>
         </div>

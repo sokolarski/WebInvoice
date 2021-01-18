@@ -1,0 +1,28 @@
+﻿@using WebInvoice.Dto.Employee
+@model EmployeeDto
+<div class="row">
+    <partial name="~/Views/PartnerSettings/_NavBarPartnerSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@ViewBag.companyName</h3>
+        <h3 class="text-center">Нов служител</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form asp-controller="PartnerEmployee" asp-action="Create" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" method="post">
+                    <div class="form-group">
+                        <label asp-for="FullName"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Създай</button>
+                    <a class="btn btn-secondary" asp-controller="PartnerEmployee" asp-action="index" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName">Отказ</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

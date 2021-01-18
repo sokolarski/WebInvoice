@@ -1,5 +1,5 @@
 ﻿@using WebInvoice.Dto.Partner
-@model IEnumerable<PartnerShortViewDto>
+@model WebInvoice.Services.PaginatedList<PartnerShortViewDto>
 @inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 <div class="justify-content-center">
     <h3 class="text-center">@userCompanyData.CompanyName</h3>
@@ -8,14 +8,22 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th scope="col">Име</th>
-            <th scope="col">Адрес</th>
-            <th scope="col">ЕИК</th>
-            <th scope="col">Брой документи</th>
-            <th scope="col"></th>
+            <th scope="col">
+                Име <form asp-controller="Partner" asp-action="Index" method="get" id="find" autocomplete="off">
+                    <input name="findByName" type="text" oninput="load()" id="inputName"> <button type="submit" class="btn btn-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                    </button>
+                </form>
+            </th>
+            <th scope="col" class="align-middle">Адрес</th>
+            <th scope="col" class="align-middle">ЕИК</th>
+            <th scope="col" class="align-middle">Брой документи</th>
+            <th scope="col" class="align-middle"></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="table">
         @foreach (var partner in Model)
         {
             <tr>
@@ -23,9 +31,81 @@
                 <td>@partner.Address</td>
                 <td>@partner.EIK</td>
                 <td>@partner.CountOfDocuments</td>
-                <td><a asp-area="" asp-controller="PartnerSettings" asp-action="Index" asp-route-companyId="@partner.Id" class="btn btn-dark">Настройки</a>
-                    <a asp-area="" asp-controller="Partner" asp-action="Edit" asp-route-id="@partner.Id" class="btn btn-info">Документи</a></td>
+                <td>
+                    <a asp-area="" asp-controller="PartnerSettings" asp-action="Index" asp-route-companyId="@partner.Id" class="btn btn-dark">Настройки</a>
+                    <a asp-area="" asp-controller="Partner" asp-action="Edit" asp-route-id="@partner.Id" class="btn btn-info">Документи</a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+<div class="d-flex justify-content-center invisible" id="loading">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item @prevDisabled">
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link " aria-label="Предишна">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Предишна</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">@Model.PageIndex</a></li>
+        <li class="page-item @nextDisabled">
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link "  aria-label="Следваща">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Следваща</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@section Scripts{
+    <script type="text/javascript">
+        document.getElementById('inputName').focus();
+        function load() {
+            var dataList = document.getElementById('result');
+            var table = document.getElementById('table');
+            var route = "/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/PartnerSettings/index?companyId=";
+            var value = document.getElementById('inputName').value;
+            if (value === null || value =='') {
+                location.reload();
+            }
+            var loading = document.getElementById('loading');
+            loading.classList.remove('invisible');
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    table.innerHTML = "";
+                    loading.classList.add('invisible');
+                    result.forEach(function (item) {
+
+                        table.innerHTML += `<tr>
+                                                <td>${item.name}</td>
+                                                <td>${item.address}</td>
+                                                <td>${item.eik}</td>
+                                                <td>${item.countOfDocuments}</td>
+                                                <td><a href="${route + item.id}" class="btn btn-dark">Настройки</a>
+                                                    <a href="/" class="btn btn-info">Документи</a></td>
+                                            </tr>`;
+
+                    });
+                }
+            };
+            xhttp.open("GET", `Search?name=${value}`, true);
+            xhttp.send();
+        }
+
+    </script>
+}

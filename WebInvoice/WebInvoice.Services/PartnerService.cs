@@ -20,7 +20,7 @@ namespace WebInvoice.Services
 
         public IEnumerable<PartnerShortViewDto> GetAllPartners()
         {
-            var result = partnerRepository.AllAsNoTracking().Select(p => new PartnerShortViewDto()
+            var result = partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Select(p => new PartnerShortViewDto()
             {
                 Id = p.Id,
                 Name = p.Name,
@@ -32,7 +32,36 @@ namespace WebInvoice.Services
             return result;
         }
 
-        public async Task Create(PartnerDto partnerDto)
+        public async Task<PaginatedList<PartnerShortViewDto>> GetPaginatedPartnerAsync(int page)
+        {
+            int itemPerPage = 10;
+            var query = partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Select(p => new PartnerShortViewDto()
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Address = p.City + ", " + p.Address,
+                EIK = p.EIK,
+                CountOfDocuments = p.VatDocuments.Count + p.NonVatDocuments.Count,
+            });
+            var result =await PaginatedList<PartnerShortViewDto>.CreateAsync(query, page, itemPerPage);
+            return result;
+        }
+
+        public IEnumerable<PartnerShortViewDto> FindPartner(string name)
+        {
+            var result = partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Where(p => p.Name.Contains(name) == true).Select(p => new PartnerShortViewDto()
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Address = p.City + ", " + p.Address,
+                EIK = p.EIK,
+                CountOfDocuments = p.VatDocuments.Count + p.NonVatDocuments.Count,
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<int> Create(PartnerDto partnerDto)
         {
             var partner = new Partner()
             {
@@ -50,6 +79,7 @@ namespace WebInvoice.Services
 
             await partnerRepository.AddAsync(partner);
             await partnerRepository.SaveChangesAsync();
+            return partner.Id;
         }
 
         

@@ -1,5 +1,43 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using WebInvoice.Dto.Employee
+@model ICollection<EmployeeDto>
+
+<div class="row">
+    <partial name="~/Views/PartnerSettings/_NavBarPartnerSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@ViewBag.companyName</h3>
+        <h3 class="text-center">Служители</h3>
+        <div class="row justify-content-center">
+            <table class="table table-hover col-10">
+                <thead>
+                    <tr>
+                        <th scope="col">Име</th>
+                        <th scope="col">По подразбиране</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in Model)
+                    {
+                        <tr>
+                            <td>@employee.FullName</td>
+                            <td>
+                                @if (employee.IsActive)
+                                {
+                                    @:ДА
+                                }
+                                else
+                                {
+                                    @:НЕ
+                                }
+                            </td>
+                            <td><a asp-area="" asp-controller="PartnerEmployee" asp-action="Edit" asp-route-id="@employee.Id " asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-dark">Редактирай</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <a asp-area="" asp-controller="PartnerEmployee" asp-action="Create" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-light">Нов служител</a>
+        </div>
+    </div>
+</div>

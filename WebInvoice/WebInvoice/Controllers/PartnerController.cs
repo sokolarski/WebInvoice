@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
 {
+    [Authorize]
     public class PartnerController : Controller
     {
         private readonly IPartnerService partnerService;
@@ -17,9 +19,17 @@ namespace WebInvoice.Controllers
             this.partnerService = partnerService;
         }
 
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index(string findByName, int? pageNumber)
         {
-            var model = partnerService.GetAllPartners();
+
+            if (findByName != null)
+            {
+                var result = partnerService.FindPartner(findByName);
+                this.ViewBag.findName = findByName;
+                return View(result);
+            }
+            var model = await partnerService.GetPaginatedPartnerAsync(pageNumber ?? 1);
             return View(model);
         }
 
@@ -33,10 +43,27 @@ namespace WebInvoice.Controllers
         {
             if (ModelState.IsValid)
             {
-                await partnerService.Create(partnerDto);
-                return RedirectToAction("Index");
+
+                var companyId = await partnerService.Create(partnerDto);
+                var companyName = partnerDto.Name;
+                return RedirectToAction("ConfirmCreate", new { companyId = companyId, companyName = companyName });
             }
             return View();
+        }
+
+        public IActionResult ConfirmCreate(int companyId, string companyName)
+        {
+            this.ViewBag.companyId = companyId;
+            this.ViewBag.companyName = companyName;
+            return View();
+        }
+
+        public IActionResult Search(string name)
+        {
+
+            var result = partnerService.FindPartner(name);
+            return Json(result);
+
         }
     }
 }

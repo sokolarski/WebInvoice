@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
 {
+    [Authorize]
     public class PartnerSettingsController : Controller
     {
         private readonly IPartnerSettingService partnerSettingService;
@@ -25,22 +27,26 @@ namespace WebInvoice.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Edit(int companyId)
+        public async Task<IActionResult> Edit(int companyId, string companyName)
         {
             var model = await partnerSettingService.GetPartnerByIdAsync(companyId);
             this.ViewBag.companyId = companyId;
+            this.ViewBag.companyName = companyName;
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit (PartnerDto partnerDto, int companyId)
+        public async Task<IActionResult> Edit (PartnerDto partnerDto, int companyId, string companyName)
         {
             if (ModelState.IsValid)
             {
                 await partnerSettingService.Edit(partnerDto);
+                this.ViewBag.companyId = companyId;
+                this.ViewBag.companyName = companyName;
                 return RedirectToAction("Index", new { companyId = partnerDto.Id });
             }
             this.ViewBag.companyId = companyId;
+            this.ViewBag.companyName = companyName;
             return View(partnerDto);
         }
     }

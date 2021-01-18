@@ -1,0 +1,48 @@
+﻿@using WebInvoice.Dto.BankAccount
+@model ICollection<BankAccountDto>
+<div class="row">
+    <partial name="~/Views/PartnerSettings/_NavBarPartnerSettingsPartial.cshtml" />
+    <div class="container col-md-9">
+        <h3 class="text-center">@ViewBag.companyName</h3>
+        <h3 class="text-center">Настройки банкови сметки</h3>
+        <div class="row justify-content-center">
+            <table class="table table-hover col-10">
+                <thead>
+                    <tr>
+                        <th scope="col">Име</th>
+                        <th scope="col">БАНКА</th>
+                        <th scope="col">BIC</th>
+                        <th scope="col">IBAN</th>
+                        <th scope="col">По подразбиране</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var account in Model)
+                    {
+                    <tr>
+                        <td>@account.Name</td>
+                        <td>@account.BankName</td>
+                        <td>@account.BIC</td>
+                        <td>@account.IBAN</td>
+                        <td>
+                            @if (account.IsActive)
+                            {
+                                @:ДА
+                            }
+                            else
+                            {
+                                @:НЕ
+                            }
+                        </td>
+                        <td><a asp-area="" asp-controller="PartnerBankAccount" asp-action="Edit" asp-route-id="@account.Id" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-dark">Редактирай</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <a asp-area="" asp-controller="PartnerBankAccount" asp-action="Create" asp-route-companyId="@this.ViewBag.companyId" asp-route-companyName="@this.ViewBag.companyName" class="btn btn-light">Нова сметка</a>
+        </div>
+    </div>
+</div>
