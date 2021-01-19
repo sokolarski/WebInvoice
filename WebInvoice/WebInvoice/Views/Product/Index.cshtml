@@ -1,0 +1,149 @@
+﻿@using WebInvoice.Dto.Product
+@model WebInvoice.Services.PaginatedList<ProductDto>
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+<div class="justify-content-center">
+    <h3 class="text-center">@userCompanyData.CompanyName</h3>
+    <h3 class="text-center">Продукти</h3>
+</div>
+<div class="d-flex justify-content-center invisible" id="loading">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<table class="table table-hover text-center">
+    <thead>
+        <tr>
+            <th scope="col" class="align-middle">ID</th>
+            <th scope="col" >
+                Име <form asp-controller="Product" asp-action="Index" method="get" id="find" autocomplete="off">
+                    <input name="findByName" type="text" oninput="load()" id="inputName"> <button type="submit" class="btn btn-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                        </svg>
+                    </button>
+                </form>
+            </th>
+            <th scope="col" class="align-middle">Цена</th>
+            <th scope="col" class="align-middle">Цена с ДДС</th>
+            <th scope="col" class="align-middle">Количество</th>
+            <th scope="col" class="align-middle">Тип</th>
+            <th scope="col" class="align-middle text-left">Добавяне на количество</th>
+        </tr>
+    </thead>
+    <tbody id="table">
+        @foreach (var product in Model)
+        {
+        <tr>
+            <td class="align-middle">@product.Id</td>
+            <td class="align-middle text-left">@product.Name</td>
+            <td class="align-middle">@product.Price.ToString("F3")</td>
+            <td class="align-middle">@product.PriceWithVat.ToString("F3")</td>
+            <td class="align-middle" id="quantity@(product.Id)">@product.Quantity.ToString("F3")</td>
+            <td class="align-middle">@product.QuantityType.Type</td>
+            <td class="align-middle">
+                <form class="form-inline form-group d-flex m-auto flex-wrap">
+                    <input type="number" step="any" class="form-control col-3 m-1 align-middle" id="@product.Id" />
+                    <a onclick="addQuantity(@product.Id)" class="btn btn-info m-1">Добави</a>
+                    <a asp-area="" asp-controller="Product" asp-action="Edit" asp-route-productId="@product.Id" class="btn btn-dark m-1">Преглед</a>
+                </form>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item @prevDisabled">
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link " aria-label="Предишна">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Предишна</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">@Model.PageIndex</a></li>
+        <li class="page-item @nextDisabled">
+            <a asp-action="Index"
+               asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link " aria-label="Следваща">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Следваща</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@section Scripts{
+    <script type="text/javascript">
+        document.getElementById('inputName').focus();
+        function load() {
+            var dataList = document.getElementById('result');
+            var table = document.getElementById('table');
+            var route = "/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/Product/Edit?productId=";
+            var value = document.getElementById('inputName').value;
+            if (value === null || value =='') {
+                location.reload();
+            }
+            var loading = document.getElementById('loading');
+            loading.classList.remove('invisible');
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    table.innerHTML = "";
+                    loading.classList.add('invisible');
+                    result.forEach(function (item) {
+
+                        table.innerHTML += `<tr>
+                                                <td class="align-middle">${item.id}</td>
+                                                <td class="align-middle text-left">${item.name}</td>
+                                                <td class="align-middle">${item.price.toFixed(3)}</td>
+                                                <td class="align-middle">${item.priceWithVat.toFixed(3)}</td>
+                                                <td class="align-middle" id="quantity${item.id}">${item.quantity.toFixed(3)}</td>
+                                                <td class="align-middle">${item.quantityType.type}</td>
+                                                <td class="align-middle">
+                                                    <form class="form-inline form-group d-flex m-auto flex-wrap">
+                                                    <input type="number" step="any" class="form-control col-3 m-1" id="${item.id}" />
+                                                    <a onclick="addQuantity(${item.id})" class="btn btn-info m-1">Добави</a>
+                                                    <a href="${route + item.id}" class="btn btn-dark m-1">Преглед</a>
+                                                    </form>
+                                                </td>
+                                            </tr>`;
+
+                    });
+                }
+            };
+            xhttp.open("GET", `Search?name=${value}`, true);
+            xhttp.send();
+        }
+        function addQuantity(productId) {
+
+            var inputElement = document.getElementById(productId)
+            var quantity = inputElement.value;
+
+            if (quantity === null || quantity =='') {
+                location.reload();
+            }
+
+            var loading = document.getElementById('loading');
+            loading.classList.remove('invisible');
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    loading.classList.add('invisible');
+                    document.getElementById(`quantity${productId}`).innerHTML = result.toFixed(3);
+                    inputElement.value = '';
+                }
+            };
+            xhttp.open("GET", `AddQuantity?productId=${productId}&quantity=${quantity}`, true);
+            xhttp.send();
+        }
+    </script>
+}

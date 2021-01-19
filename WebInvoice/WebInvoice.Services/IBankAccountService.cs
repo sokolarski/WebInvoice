@@ -6,10 +6,10 @@ namespace WebInvoice.Services
 {
     public interface IBankAccountService
     {
-        ICollection<BankAccountDto> GetAllCompanyBankAccounts();
-        BankAccountDto GetById(int id);
+        Task<ICollection<BankAccountDto>> GetAllCompanyBankAccounts();
+        Task<BankAccountDto> GetById(int id);
         Task Edit(BankAccountDto bankAccountDto);
         Task Create(BankAccountDto bankAccountDto);
-        void ValidateBankAccount(BankAccountDto bankAccountDto);
+        Task ValidateBankAccount(BankAccountDto bankAccountDto);
     }
 }

@@ -55,9 +55,9 @@
                 Продукти
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Преглед</a>
-                <a class="dropdown-item" href="#">Нов продукт</a>
-                <a class="dropdown-item" href="#">Настройки на продукти</a>
+                <a asp-area="" asp-controller="Product" asp-action="Index" class="dropdown-item" >Преглед</a>
+                <a a asp-area="" asp-controller="Product" asp-action="Create" class="dropdown-item" >Нов продукт</a>
+                <a asp-area="" asp-controller="QuantityType" asp-action="Index" class="dropdown-item">Настройки на продукти</a>
             </div>
         </li>
         <li class="nav-item dropdown">

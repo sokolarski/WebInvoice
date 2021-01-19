@@ -10,7 +10,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main()
         {
            
             //var stringGen = new ConnectionStringGenerator();

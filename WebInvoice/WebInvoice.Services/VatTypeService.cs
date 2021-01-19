@@ -37,7 +37,9 @@ namespace WebInvoice.Services
             var vatTypes = vatTypeRepository.AllAsNoTracking().Select(vt => new VatTypeView()
             {
                 Name = vt.Name + "-" + vt.Percantage.ToString("F2") + "%",
-                Id = vt.Id
+                Id = vt.Id,
+                IsActive = vt.IsActive,
+                
             }).ToList();
             return vatTypes;
         }

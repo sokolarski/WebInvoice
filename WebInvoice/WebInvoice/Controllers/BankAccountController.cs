@@ -18,22 +18,22 @@ namespace WebInvoice.Controllers
         {
             this.bankAccountService = bankAccountService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = bankAccountService.GetAllCompanyBankAccounts();
+            var model =await bankAccountService.GetAllCompanyBankAccounts();
             return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var model = bankAccountService.GetById(id);
+            var model =await bankAccountService.GetById(id);
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(BankAccountDto bankAccountDto)
         {
-            bankAccountService.ValidateBankAccount(bankAccountDto);
+            await bankAccountService.ValidateBankAccount(bankAccountDto);
 
             if (ModelState.IsValid && bankAccountDto.IsValidBankAccount)
             {
@@ -46,7 +46,7 @@ namespace WebInvoice.Controllers
 
         public async Task<IActionResult> Create(BankAccountDto bankAccountDto)
         {
-            bankAccountService.ValidateBankAccount(bankAccountDto);
+            await bankAccountService.ValidateBankAccount(bankAccountDto);
 
             if (ModelState.IsValid && bankAccountDto.IsValidBankAccount)
             {

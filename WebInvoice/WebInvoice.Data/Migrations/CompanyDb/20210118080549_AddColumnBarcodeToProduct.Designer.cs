@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebInvoice.Data;
 
 namespace WebInvoice.Data.Migrations.CompanyDb
 {
     [DbContext(typeof(CompanyDbContext))]
-    partial class CompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210118080549_AddColumnBarcodeToProduct")]
+    partial class AddColumnBarcodeToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -474,10 +476,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
 
                     b.Property<string>("Barcode")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("BasePrice")
-                        .HasPrecision(15, 5)
-                        .HasColumnType("decimal(15,5)");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");

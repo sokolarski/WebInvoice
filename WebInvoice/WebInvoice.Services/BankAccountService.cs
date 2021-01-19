@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,11 @@ namespace WebInvoice.Services
             this.bankAccountRepository = bankAccountRepository;
         }
 
-        public ICollection<BankAccountDto> GetAllCompanyBankAccounts()
+        public async Task<ICollection<BankAccountDto>> GetAllCompanyBankAccounts()
         {
-            var company = bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company =await bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
 
-            var bankAccounts = bankAccountRepository.AllAsNoTracking().Where(ba => ba.CompanyId == company.Id)
+            var bankAccounts =await bankAccountRepository.AllAsNoTracking().Where(ba => ba.CompanyId == company.Id)
                                                     .Select(ba => new BankAccountDto()
                                                     {
                                                         Id = ba.Id,
@@ -33,14 +34,14 @@ namespace WebInvoice.Services
                                                         IBAN = ba.IBAN,
                                                         Description = ba.Description,
                                                         IsActive = ba.IsActive
-                                                    }).ToList();
+                                                    }).ToListAsync();
 
             return bankAccounts;
         }
 
-        public BankAccountDto GetById(int id)
+        public async Task<BankAccountDto> GetById(int id)
         {
-            var bankAccount = bankAccountRepository.AllAsNoTracking().Where(ba => ba.Id == id)
+            var bankAccount =await bankAccountRepository.AllAsNoTracking().Where(ba => ba.Id == id)
                                                     .Select(ba => new BankAccountDto()
                                                     {
                                                         Id = ba.Id,
@@ -50,7 +51,7 @@ namespace WebInvoice.Services
                                                         IBAN = ba.IBAN,
                                                         Description = ba.Description,
                                                         IsActive = ba.IsActive
-                                                    }).FirstOrDefault();
+                                                    }).FirstOrDefaultAsync();
             return bankAccount;
         }
 
@@ -62,7 +63,7 @@ namespace WebInvoice.Services
             {
                 if (bankAccountDto.IsActive == true)
                 {
-                    SetAllNonActive();
+                   await SetAllNonActive();
                 }
 
                 bankAccount.Name = bankAccountDto.Name;
@@ -82,7 +83,7 @@ namespace WebInvoice.Services
             var company = bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
             if (bankAccountDto.IsActive == true)
             {
-                SetAllNonActive();
+               await SetAllNonActive();
             }
             var bankAccount = new BankAccount()
             {
@@ -99,9 +100,9 @@ namespace WebInvoice.Services
             await bankAccountRepository.SaveChangesAsync();
         }
 
-        private void SetAllNonActive()
+        private async Task SetAllNonActive()
         {
-            var company = bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company = await bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
 
             var bankAccounts = bankAccountRepository.All().Where(ba => ba.CompanyId == company.Id); ;
 
@@ -112,12 +113,12 @@ namespace WebInvoice.Services
             }
         }
 
-        public void ValidateBankAccount(BankAccountDto bankAccountDto)
+        public async Task ValidateBankAccount(BankAccountDto bankAccountDto)
         {
-            var company = bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company =await bankAccountRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
             if (bankAccountDto.Id != 0)
             {
-                var bankAccount = bankAccountRepository.AllAsNoTracking().Where(ba => ba.Name == bankAccountDto.Name && ba.CompanyId == company.Id && ba.Id != bankAccountDto.Id).FirstOrDefault();
+                var bankAccount =await bankAccountRepository.AllAsNoTracking().Where(ba => ba.Name == bankAccountDto.Name && ba.CompanyId == company.Id && ba.Id != bankAccountDto.Id).FirstOrDefaultAsync();
                 if (bankAccount is null)
                 {
                     bankAccountDto.IsValidBankAccount = true;
@@ -131,7 +132,7 @@ namespace WebInvoice.Services
             }
             else
             {
-                var bankAccount = bankAccountRepository.AllAsNoTracking().Where(ba => ba.Name == bankAccountDto.Name && ba.CompanyId == company.Id).FirstOrDefault();
+                var bankAccount =await bankAccountRepository.AllAsNoTracking().Where(ba => ba.Name == bankAccountDto.Name && ba.CompanyId == company.Id).FirstOrDefaultAsync();
                 if (bankAccount is null)
                 {
                     bankAccountDto.IsValidBankAccount = true;

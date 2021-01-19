@@ -31,7 +31,7 @@ namespace WebInvoice.Controllers
         {
             var reason = reasonService.GetById(id);
             var vatTypes = vatTypeService.GetAllView();
-            this.ViewBag.SelectVatType = new SelectList(vatTypes, "Id", "Name", vatTypes.Where(v => v.Id == reason.Id).FirstOrDefault());
+            this.ViewBag.SelectVatType = new SelectList(vatTypes, "Id", "Name");
             return View(reason);
         }
 
@@ -48,9 +48,8 @@ namespace WebInvoice.Controllers
 
         public IActionResult Create()
         {
-            var vatTypes = vatTypeService.GetAllView();
-            //.Select(vt => new SelectListItem(vt.Id.ToString(),vt.Name));
-            this.ViewBag.SelectVatType =new SelectList( vatTypes,"Id","Name");
+            var vatTypes = vatTypeService.GetAllView().Select(vt => new SelectListItem(vt.Name, vt.Id.ToString(), vt.IsActive));
+            this.ViewBag.SelectVatType =vatTypes;
             return View();
         }
 
