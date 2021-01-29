@@ -25,7 +25,7 @@ namespace WebInvoice.Controllers
 
             if (findByName != null)
             {
-                var result = partnerService.FindPartner(findByName);
+                var result =await partnerService.FindPartner(findByName);
                 this.ViewBag.findName = findByName;
                 return View(result);
             }
@@ -58,12 +58,38 @@ namespace WebInvoice.Controllers
             return View();
         }
 
-        public IActionResult Search(string name)
+        public async Task<IActionResult> Search(string name)
         {
 
-            var result = partnerService.FindPartner(name);
+            var result =await partnerService.FindPartner(name);
             return Json(result);
 
         }
+
+        public async Task<IActionResult> FindPartnerDataListAjax(string name)
+        {
+
+            var result = await partnerService.FindPartnerDataList(name);
+            return Json(result);
+
+        }
+
+        public async Task<IActionResult> GetPartnerByNameAjax(string name)
+        {
+
+            var result = await partnerService.GetPartnerByName(name);
+            return Json(result);
+
+        }
+
+        public async Task<IActionResult> GetPartnerByIdAjax(int id)
+        {
+
+            var result = await partnerService.GetPartnerById(id);
+            return Json(result);
+
+        }
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,16 +19,16 @@ namespace WebInvoice.Services
             this.partnerRepository = partnerRepository;
         }
 
-        public IEnumerable<PartnerShortViewDto> GetAllPartners()
+        public async Task<IEnumerable<PartnerShortViewDto>> GetAllPartners()
         {
-            var result = partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Select(p => new PartnerShortViewDto()
+            var result = await partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Select(p => new PartnerShortViewDto()
             {
                 Id = p.Id,
                 Name = p.Name,
                 Address = p.City + ", " + p.Address,
                 EIK = p.EIK,
                 CountOfDocuments = p.VatDocuments.Count + p.NonVatDocuments.Count,
-            }).ToList();
+            }).ToListAsync();
 
             return result;
         }
@@ -43,24 +44,74 @@ namespace WebInvoice.Services
                 EIK = p.EIK,
                 CountOfDocuments = p.VatDocuments.Count + p.NonVatDocuments.Count,
             });
-            var result =await PaginatedList<PartnerShortViewDto>.CreateAsync(query, page, itemPerPage);
+            var result = await PaginatedList<PartnerShortViewDto>.CreateAsync(query, page, itemPerPage);
             return result;
         }
 
-        public IEnumerable<PartnerShortViewDto> FindPartner(string name)
+        public async Task<PartnerDto> GetPartnerById(int id)
         {
-            var result = partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Where(p => p.Name.Contains(name) == true).Select(p => new PartnerShortViewDto()
+            var partner = await partnerRepository.AllAsNoTracking().Where(p => p.Id == id).Select(p => new PartnerDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                EIK = p.EIK,
+                Country = p.Country,
+                City = p.City,
+                Address = p.Address,
+                VatId = p.VatId,
+                MOL = p.MOL,
+                IsVatRegistered = p.IsVatRegistered,
+                Email = p.Email,
+                IsActive = p.IsActive,
+            }).FirstOrDefaultAsync();
+
+            return partner;
+        }
+
+        public async Task<PartnerDto> GetPartnerByName(string name)
+        {
+            var partner = await partnerRepository.AllAsNoTracking().Where(p => p.Name == name).Select(p => new PartnerDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                EIK = p.EIK,
+                Country = p.Country,
+                City = p.City,
+                Address = p.Address,
+                VatId = p.VatId,
+                MOL = p.MOL,
+                IsVatRegistered = p.IsVatRegistered,
+                Email = p.Email,
+                IsActive = p.IsActive,
+            }).FirstOrDefaultAsync();
+
+            return partner;
+        }
+
+        public async Task<IEnumerable<PartnerShortViewDto>> FindPartner(string name)
+        {
+            var result = await partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Where(p => p.Name.Contains(name) == true).Select(p => new PartnerShortViewDto()
             {
                 Id = p.Id,
                 Name = p.Name,
                 Address = p.City + ", " + p.Address,
                 EIK = p.EIK,
                 CountOfDocuments = p.VatDocuments.Count + p.NonVatDocuments.Count,
-            }).ToList();
+            }).ToListAsync();
 
             return result;
         }
 
+        public async Task<IEnumerable<PartnerDataList>> FindPartnerDataList(string name)
+        {
+            var result = await partnerRepository.AllAsNoTracking().OrderBy(p => p.Name).Where(p => p.Name.Contains(name) == true).Select(p => new PartnerDataList()
+            {
+                Id = p.Id,
+                Name = p.Name,
+            }).ToListAsync();
+
+            return result;
+        }
         public async Task<int> Create(PartnerDto partnerDto)
         {
             var partner = new Partner()
@@ -82,7 +133,7 @@ namespace WebInvoice.Services
             return partner.Id;
         }
 
-        
+
 
     }
 }

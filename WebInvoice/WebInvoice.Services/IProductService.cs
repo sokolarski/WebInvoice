@@ -13,5 +13,8 @@ namespace WebInvoice.Services
         Task<IEnumerable<ProductDto>> FindProductAsync(string name);
         Task<PaginatedList<ProductDto>> GetPaginatedProductsAsync(int page);
         Task<decimal?> AddQuantity(int productId, decimal quantity);
+        Task<IEnumerable<ProductFindDto>> FindProductDataListAsync(string name);
+
+        Task<ProductShortDto> GetProductByNameAsync(string name);
     }
 }

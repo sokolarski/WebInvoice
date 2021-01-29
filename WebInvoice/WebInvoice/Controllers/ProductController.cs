@@ -57,6 +57,18 @@ namespace WebInvoice.Controllers
 
         }
 
+        public async Task<IActionResult> FindProductDataListAjax(string name)
+        {
+            var result = await productService.FindProductDataListAsync(name);
+            return Json(result);
+        }
+
+        public async Task<IActionResult> GetProductByNameAjax(string name)
+        {
+            var result = await productService.GetProductByNameAsync(name);
+            return Json(result);
+        }
+
         public async Task<IActionResult> Edit(int productId)
         {
             var model = await productService.GetById(productId);

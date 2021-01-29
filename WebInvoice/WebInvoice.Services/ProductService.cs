@@ -30,7 +30,7 @@ namespace WebInvoice.Services
                 Description = e.Description,
                 Barcode = e.Barcode,
                 Price = e.Price,
-                BasePrice=e.BasePrice,
+                BasePrice = e.BasePrice,
                 Quantity = e.Quantity,
                 PriceWithVat = e.Price * ((e.VatType.Percantage / 100) + 1),
                 VatTypeId = e.VatTypeId,
@@ -49,7 +49,7 @@ namespace WebInvoice.Services
                 Description = e.Description,
                 Barcode = e.Barcode,
                 Price = e.Price,
-                BasePrice=e.BasePrice,
+                BasePrice = e.BasePrice,
                 PriceWithVat = e.Price * ((e.VatType.Percantage / 100) + 1),
                 Quantity = e.Quantity,
                 VatTypeId = e.VatTypeId,
@@ -71,7 +71,7 @@ namespace WebInvoice.Services
                 Description = e.Description,
                 Barcode = e.Barcode,
                 Price = e.Price,
-                BasePrice=e.BasePrice,
+                BasePrice = e.BasePrice,
                 Quantity = e.Quantity,
                 PriceWithVat = e.Price * ((e.VatType.Percantage / 100) + 1),
                 VatTypeId = e.VatTypeId,
@@ -104,6 +104,31 @@ namespace WebInvoice.Services
             return result;
         }
 
+        public async Task<IEnumerable<ProductFindDto>> FindProductDataListAsync(string name)
+        {
+            var result = await productRepositoy.AllAsNoTracking().OrderBy(p => p.Name).Where(p => p.Name.Contains(name) == true).Select(e => new ProductFindDto()
+            {
+                Name = e.Name,
+                Id = e.Id,
+            }).ToListAsync();
+
+            return result;
+        }
+
+        public async Task<ProductShortDto> GetProductByNameAsync(string name)
+        {
+            var result = await productRepositoy.AllAsNoTracking().Where(p => p.Name == name).Select(e => new ProductShortDto()
+            {
+                ProductId = e.Id,
+                Name = e.Name,
+                ProductType = e.QuantityType.Type,
+                AvailableQuantity = e.Quantity,
+                Price = e.Price,
+            }).FirstOrDefaultAsync();
+
+            return result;
+        }
+
         public async Task Create(ProductDto productDto)
         {
             var company = await productRepositoy.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
@@ -113,7 +138,7 @@ namespace WebInvoice.Services
                 Description = productDto.Description,
                 Barcode = productDto.Barcode,
                 Price = productDto.Price,
-                BasePrice=productDto.BasePrice,
+                BasePrice = productDto.BasePrice,
                 Quantity = productDto.Quantity,
                 VatTypeId = productDto.VatTypeId,
                 QuantityTypeId = productDto.QuantityTypeId,

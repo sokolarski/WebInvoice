@@ -28,14 +28,17 @@ namespace WebInvoice.Dto.Product
         public string Description { get; set; }
 
         [Display(Name = "Количество")]
+        [Required(ErrorMessage = "Полето е задължително!")]
         [Range(double.MinValue,double.MaxValue, ErrorMessage = "Стойността е прекалено голяма")]
         public decimal Quantity { get; set; }
 
         [Display(Name = "Цена")]
+        [Required(ErrorMessage = "Полето е задължително!")]
         [Range(double.MinValue, double.MaxValue, ErrorMessage = "Стойността е прекалено голяма")]
         public decimal Price { get; set; }
 
         [Display(Name = "Доставна цена")]
+        [Required(ErrorMessage ="Полето е задължително!")]
         [Range(double.MinValue, double.MaxValue ,ErrorMessage ="Стойността е прекалено голяма")]
         public decimal BasePrice { get; set; }
 

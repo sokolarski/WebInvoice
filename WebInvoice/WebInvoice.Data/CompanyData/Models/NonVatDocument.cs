@@ -26,6 +26,11 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public DateTime VatReasonDate { get; set; }
 
+        public string Description { get; set; }
+
+        public string FreeText { get; set; }
+
+
         public byte[] AllDocumentData { get; set; }
 
         public int CompanyId { get; set; }
