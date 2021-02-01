@@ -55,45 +55,64 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center invisible" id="loading">
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <div class="col-12 m-0 d-flex flex-row">
-        <div class="m-0 px-1 text-center" style="width:25px">№</div><div class="m-0 px-1 text-center" style="width:25px">П</div><div class="col-6 m-0 p-0">Наимование на стоката</div><div class="col m-0 p-0">Мярка</div><div class="col m-0 p-0">Количество</div><div class="col m-0 p-0">Цена</div><div class="col m-0 p-0">Сума</div><div class="m-0 px-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-            </svg>
-        </div>
-    </div>
-    <div id="productContainer">
-        @if (Model.Sales != null)
-        {
-            for (int i = 0; i < Model.Sales.Count; i++)
-            {
-                var readOnly = false;
-                if (Model.Sales[i].ProductId != 0)
+    <div class="card text-center">
+
+        <div class="card-body p-1">
+            <div class="d-flex justify-content-center invisible" id="loading">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="col-12 m-0 d-flex flex-row">
+                <div class="m-0 px-1 text-center" style="width:25px">№</div><div class="m-0 px-1 text-center" style="width:25px">П</div><div class="col-6 m-0 p-0">Наимование на стоката</div><div class="col m-0 p-0">Мярка</div><div class="col m-0 p-0">Количество</div><div class="col m-0 p-0">Цена</div><div class="col m-0 p-0">Сума</div><div class="m-0 px-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                    </svg>
+                </div>
+            </div>
+            <div id="productContainer">
+                @if (Model.Sales != null)
                 {
-                    readOnly = true;
+                    for (int i = 0; i < Model.Sales.Count; i++)
+                    {
+                        var readOnly = false;
+                        if (Model.Sales[i].ProductId != 0)
+                        {
+                            readOnly = true;
+                        }
+                        <div class="col-12 m-0 d-flex flex-row productRow" id="row@(i)"><input type="hidden" asp-for="@Model.Sales[i].ProductId" class="productId"><input type="hidden" asp-for="@Model.Sales[i].FreePeoductID" class="freeProductId"><span class="m-0 px-1 text-right productCount" style="width: 25px;">@(i+1)</span><input asp-for="@Model.Sales[i].IsProduct" onchange="changeIsProduct(this)" type="checkbox" class="m-auto px-1 text-right isProduct" style="width: 25px;"><input asp-for="@Model.Sales[i].Name" oninput="findProductAjax(this)" onkeydown="loadProduct(event, this)" list="productDataList" class="col-6 m-0 p-0 productName" type="text"><input asp-for="@Model.Sales[i].ProductType" readonly="@readOnly" class="col m-0 p-0 productType" type="text"><input asp-for="@Model.Sales[i].Quantity" onkeydown="calculatePrice(event, this)" placeholder="@Model.Sales[i].AvailableQuantity" class="col m-0 p-0 productQuantity" type="text"><input asp-for="@Model.Sales[i].Price" readonly="@readOnly" class="col m-0 p-0 productPrice" onkeydown="calculatePrice(event, this)" type="text"><input asp-for="@Model.Sales[i].TottalPrice" onkeydown="newLine(event, this)" class="col m-0 p-0 productTottalPrice" type="text"><span class="m-0 px-1 close productDelete" onclick="delete_row(this)">X</span></div>
+                    }
                 }
-                <div class="col-12 m-0 d-flex flex-row productRow" id="row@(i)"><input type="hidden" asp-for="@Model.Sales[i].ProductId" class="productId"><input type="hidden" asp-for="@Model.Sales[i].FreePeoductID" class="freeProductId"><span class="m-0 px-1 text-right productCount" style="width: 25px;">@(i+1)</span><input asp-for="@Model.Sales[i].IsProduct" onchange="changeIsProduct(this)" type="checkbox" class="m-auto px-1 text-right isProduct" style="width: 25px;"><input asp-for="@Model.Sales[i].Name" oninput="findProductAjax(this)" onkeydown="loadProduct(event, this)" list="productDataList" class="col-6 m-0 p-0 productName" type="text"><input asp-for="@Model.Sales[i].ProductType" readonly="@readOnly" class="col m-0 p-0 productType" type="text"><input asp-for="@Model.Sales[i].Quantity" onkeydown="calculatePrice(event, this)" placeholder="@Model.Sales[i].AvailableQuantity" class="col m-0 p-0 productQuantity" type="text"><input asp-for="@Model.Sales[i].Price" readonly="@readOnly" class="col m-0 p-0 productPrice" onkeydown="calculatePrice(event, this)" type="text"><input asp-for="@Model.Sales[i].TottalPrice" onkeydown="newLine(event, this)" class="col m-0 p-0 productTottalPrice" type="text"><span class="m-0 px-1 close productDelete" onclick="delete_row(this)">X</span></div>
-            }
-        }
+            </div>
+            <datalist id="productDataList"></datalist>
+            <div class="d-flex flex-row justify-content-end">
+                <div class="btn btn-light btn-sm" onclick="addProductElement()">Нов ред</div>
+            </div>
+            <input asp-for="PartnerId" type="hidden" id="partnerId" />
+            <button type="submit">субмит</button>
+            @*<div  class="" data-toggle="tooltip" data-placement="top" title="Tooltip on topasaaaaasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss">
+                Tooltip on top
+                asas
+            </div>*@
+        </div>
+        <div class="card-footer text-muted">
+            <input asp-for="@Model.CreatedDate" type="date" />
+            2 days ago
+        </div>
     </div>
-    <datalist id="productDataList"></datalist>
-    <div class="d-flex flex-row justify-content-end">
-        <div class="btn btn-light" onclick="addProductElement()">Нов ред</div>
-    </div>
-    <input asp-for="PartnerId" type="hidden" id="partnerId" />
-    <button type="submit">субмит</button>
 </form>
 @section Styles {
     <link rel="stylesheet" href="~/css/document.css" />
 }
 @section Scripts{
     <script type="text/javascript">
+        
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        var vatTypes = JSON.parse('@Html.Raw(Model.VatTypes)');
+        console.log(vatTypes);
         document.getElementById('findPartner').focus();
         var partnerDataListValues = [];
         var loadedPartner = document.getElementById('partnerId').value;

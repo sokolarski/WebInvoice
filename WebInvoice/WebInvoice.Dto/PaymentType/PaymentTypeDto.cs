@@ -23,5 +23,8 @@ namespace WebInvoice.Dto.PaymentType
 
         [Display(Name = "Да се използва по подразбиране")]
         public bool IsActiv { get; set; }
+
+        [Display(Name = "Изисква се банкова сметка!")]
+        public bool RequiredBankAccount { get; set; }
     }
 }

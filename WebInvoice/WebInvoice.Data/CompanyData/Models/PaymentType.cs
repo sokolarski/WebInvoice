@@ -21,6 +21,9 @@ namespace WebInvoice.Data.CompanyData.Models
         [MaxLength(150)]
         public string Description { get; set; }
 
+
+        public bool RequireBankAccount { get; set; }
+
         public bool IsActiv { get; set; }
 
         public virtual ICollection<VatDocument> VatDocuments { get; set; }

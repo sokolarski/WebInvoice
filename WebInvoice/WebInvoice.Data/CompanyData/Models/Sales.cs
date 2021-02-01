@@ -19,8 +19,11 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public decimal Total { get; set; }
 
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public Product Product { get; set; }
+
+        public int? FreeProductId { get; set; }
+        public FreeProduct FreeProduct { get; set; }
 
         public long? VatDocumentId { get; set; }
         public VatDocument VatDocument { get; set; }

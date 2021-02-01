@@ -12,7 +12,7 @@ namespace WebInvoice.Data.CompanyData.Models
     {
         public VatType()
         {
-            this.Reasons = new HashSet<Reason>();
+           // this.Reasons = new HashSet<Reason>();
             this.Products = new HashSet<Product>();
             this.VatDocuments = new HashSet<VatDocument>();
             this.NonVatDocuments = new HashSet<NonVatDocument>();
@@ -27,7 +27,7 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public bool IsActive { get; set; }
 
-        public virtual ICollection<Reason> Reasons { get; set; }
+       // public virtual ICollection<Reason> Reasons { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }
 

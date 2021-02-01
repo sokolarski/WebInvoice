@@ -98,6 +98,14 @@ namespace WebInvoice.Services
                 };
                 company.CompanyObjects.Add(obj);
 
+                var employee = new Employee()
+                {
+                    FullName = companyInputDto.MOL,
+                    IsActive=true,
+                };
+
+                company.Employees.Add(employee);
+
                 await companyContext.Companies.AddAsync(company);
                 await companyContext.SaveChangesAsync();
                 var seeder = new SeedData(companyContext);

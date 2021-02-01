@@ -29,6 +29,7 @@ namespace WebInvoice.Services
                                                         Name = e.Name,
                                                         Description = e.Description,
                                                         IsActiv = e.IsActiv,
+                                                        RequiredBankAccount = e.RequireBankAccount,
                                                     }).ToList();
 
             return paymentType;
@@ -43,6 +44,7 @@ namespace WebInvoice.Services
                                                         Name = e.Name,
                                                         Description = e.Description,
                                                         IsActiv = e.IsActiv,
+                                                        RequiredBankAccount = e.RequireBankAccount,
                                                     }).FirstOrDefault();
             return paymentType;
         }
@@ -61,6 +63,7 @@ namespace WebInvoice.Services
                 paymentType.Name = paymentTypeDto.Name;
                 paymentType.Description = paymentTypeDto.Description;
                 paymentType.IsActiv = paymentTypeDto.IsActiv;
+                paymentType.RequireBankAccount = paymentTypeDto.RequiredBankAccount;
 
                 paymentTypeRepository.Update(paymentType);
                 await paymentTypeRepository.SaveChangesAsync();
@@ -78,6 +81,7 @@ namespace WebInvoice.Services
                 Name = paymentTypeDto.Name,
                 Description = paymentTypeDto.Description,
                 IsActiv = paymentTypeDto.IsActiv,
+                RequireBankAccount = paymentTypeDto.RequiredBankAccount,
             };
 
             await paymentTypeRepository.AddAsync(paymentType);

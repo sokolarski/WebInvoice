@@ -23,22 +23,11 @@ namespace WebInvoice.Data.SeedData
                 await SeedQuantityTypesAsync(companyDbContext);
                 await SeedPaymentTypesAsync(companyDbContext);
                 await SeedVatTypesAsync(companyDbContext);
-                await SeedReasonsAsync(companyDbContext);
                 await companyDbContext.SaveChangesAsync();
             }
         }
 
-        private async Task SeedReasonsAsync(CompanyDbContext companyDbContext)
-        {
-            var listOfVats = companyDbContext.VatTypes.ToList();
-            var types = new[] {
-                new Reason(){ Name="Стандартно основание", Description="Начисляване на ддс 20%", VatType = listOfVats.Where(v => v.Name == "Б").First(), IsActive=true },
-                new Reason(){ Name="Неначисляване на ддс", Description="Начисляване на ддс 0%", VatType = listOfVats.Where(v => v.Name == "А").First(), IsActive=false },
-            };
-
-            await companyDbContext.Reasons.AddRangeAsync(types);
-            await companyDbContext.SaveChangesAsync();
-        }
+    
 
         private async Task SeedVatTypesAsync(CompanyDbContext companyDbContext)
         {
@@ -55,10 +44,10 @@ namespace WebInvoice.Data.SeedData
         private async Task SeedPaymentTypesAsync(CompanyDbContext companyDbContext)
         {
             var types = new[] {
-            new PaymentType(){ Name="Брой", Description="Брой в лева", IsActiv=true },
-            new PaymentType(){ Name="Банка", Description="Превод по сметка", IsActiv=false },
-            new PaymentType(){ Name="Карта", Description="Дебитна или кредитна карта", IsActiv=false },
-            new PaymentType(){ Name="Прихващане", Description="Прихващане", IsActiv=false },
+            new PaymentType(){ Name="Брой", Description="Брой в лева", IsActiv=true , RequireBankAccount=false },
+            new PaymentType(){ Name="Банка", Description="Превод по сметка", IsActiv=false , RequireBankAccount=true },
+            new PaymentType(){ Name="Карта", Description="Дебитна или кредитна карта", IsActiv=false , RequireBankAccount=false},
+            new PaymentType(){ Name="Прихващане", Description="Прихващане", IsActiv=false, RequireBankAccount=false },
             };
             await companyDbContext.PaymentTypes.AddRangeAsync(types);
             await companyDbContext.SaveChangesAsync();

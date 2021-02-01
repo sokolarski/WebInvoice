@@ -46,8 +46,6 @@ namespace WebInvoice.Data
 
         public DbSet<QuantityType> QuantityTypes { get; set; }
 
-        public DbSet<Reason> Reasons { get; set; }
-
         public DbSet<Sales> Sales { get; set; }
 
         public DbSet<Setting> Settings { get; set; }
@@ -55,6 +53,8 @@ namespace WebInvoice.Data
         public DbSet<VatDocument> VatDocuments { get; set; }
 
         public DbSet<VatType> VatTypes { get; set; }
+
+        public DbSet<FreeProduct> FreeProducts { get; set; }
 
 
         public override int SaveChanges() => this.SaveChanges(true);
@@ -152,9 +152,6 @@ namespace WebInvoice.Data
                 .HasIndex(e => e.Name).IsUnique();
 
             builder.Entity<PaymentType>()
-                .HasIndex(e => e.Name).IsUnique();
-
-            builder.Entity<Reason>()
                 .HasIndex(e => e.Name).IsUnique();
 
             builder.Entity<VatType>()

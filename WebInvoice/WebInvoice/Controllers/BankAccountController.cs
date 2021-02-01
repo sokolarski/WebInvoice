@@ -44,6 +44,13 @@ namespace WebInvoice.Controllers
             return View(bankAccountDto);
         }
 
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Create(BankAccountDto bankAccountDto)
         {
             await bankAccountService.ValidateBankAccount(bankAccountDto);

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebInvoice.Data;
 
 namespace WebInvoice.Data.Migrations.CompanyDb
 {
     [DbContext(typeof(CompanyDbContext))]
-    partial class CompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210129105406_AddColumnRequireBankAccountToPaymentType")]
+    partial class AddColumnRequireBankAccountToPaymentType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,6 +352,9 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<int>("PaymentTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReasonId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RecipientEmployeeId")
                         .HasColumnType("int");
 
@@ -390,6 +395,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("PaymentTypeId");
+
+                    b.HasIndex("ReasonId");
 
                     b.HasIndex("RecipientEmployeeId");
 
@@ -623,6 +630,52 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.ToTable("QuantityTypes");
                 });
 
+            modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.Reason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("VatTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
+
+                    b.HasIndex("VatTypeId");
+
+                    b.ToTable("Reasons");
+                });
+
             modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.Sales", b =>
                 {
                     b.Property<long>("Id")
@@ -757,6 +810,9 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<int>("PaymentTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ReasonId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RecipientEmployeeId")
                         .HasColumnType("int");
 
@@ -797,6 +853,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.HasIndex("PartnerId");
 
                     b.HasIndex("PaymentTypeId");
+
+                    b.HasIndex("ReasonId");
 
                     b.HasIndex("RecipientEmployeeId");
 
@@ -923,6 +981,12 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("WebInvoice.Data.CompanyData.Models.Reason", "Reason")
+                        .WithMany("NonVatDocuments")
+                        .HasForeignKey("ReasonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("WebInvoice.Data.CompanyData.Models.Employee", "RecipientEmployee")
                         .WithMany("NonVatDocumentsRecipient")
                         .HasForeignKey("RecipientEmployeeId");
@@ -946,6 +1010,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("Partner");
 
                     b.Navigation("PaymentType");
+
+                    b.Navigation("Reason");
 
                     b.Navigation("RecipientEmployee");
 
@@ -984,6 +1050,17 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("Company");
 
                     b.Navigation("QuantityType");
+
+                    b.Navigation("VatType");
+                });
+
+            modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.Reason", b =>
+                {
+                    b.HasOne("WebInvoice.Data.CompanyData.Models.VatType", "VatType")
+                        .WithMany("Reasons")
+                        .HasForeignKey("VatTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("VatType");
                 });
@@ -1045,6 +1122,12 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("WebInvoice.Data.CompanyData.Models.Reason", "Reason")
+                        .WithMany("VatDocuments")
+                        .HasForeignKey("ReasonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("WebInvoice.Data.CompanyData.Models.Employee", "RecipientEmployee")
                         .WithMany("VatDocumentsRecipient")
                         .HasForeignKey("RecipientEmployeeId");
@@ -1068,6 +1151,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("Partner");
 
                     b.Navigation("PaymentType");
+
+                    b.Navigation("Reason");
 
                     b.Navigation("RecipientEmployee");
 
@@ -1146,6 +1231,13 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.Reason", b =>
+                {
+                    b.Navigation("NonVatDocuments");
+
+                    b.Navigation("VatDocuments");
+                });
+
             modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.VatDocument", b =>
                 {
                     b.Navigation("Sales");
@@ -1156,6 +1248,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("NonVatDocuments");
 
                     b.Navigation("Products");
+
+                    b.Navigation("Reasons");
 
                     b.Navigation("VatDocuments");
                 });

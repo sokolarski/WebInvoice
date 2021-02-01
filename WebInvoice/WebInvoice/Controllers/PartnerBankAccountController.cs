@@ -53,6 +53,14 @@ namespace WebInvoice.Controllers
             return View(bankAccountDto);
         }
 
+        public IActionResult Create(int companyId, string companyName)
+        {
+            this.ViewBag.companyId = companyId;
+            this.ViewBag.companyName = companyName;
+            return View();
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Create(BankAccountDto bankAccountDto, int companyId, string companyName)
         {
             bankAccountService.ValidateBankAccount(bankAccountDto, companyId);

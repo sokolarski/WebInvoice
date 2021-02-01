@@ -55,8 +55,8 @@ namespace WebInvoice.Data.CompanyData.Models
         public int? BankAccountId { get; set; }
         public BankAccount BankAccount { get; set; }
 
-        public int ReasonId { get; set; }
-        public Reason Reason { get; set; }
+        //public int ReasonId { get; set; }
+        //public Reason Reason { get; set; }
 
         public int VatTypeId { get; set; }
         public VatType VatType { get; set; }

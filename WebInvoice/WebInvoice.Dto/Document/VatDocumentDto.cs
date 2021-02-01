@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using WebInvoice.Dto.BankAccount;
 using WebInvoice.Dto.Partner;
 using WebInvoice.Dto.PaymentType;
 using WebInvoice.Dto.Product;
-using WebInvoice.Dto.Reason;
 using WebInvoice.Dto.VatType;
 
 namespace WebInvoice.Dto.Document
@@ -27,6 +27,7 @@ namespace WebInvoice.Dto.Document
 
         public decimal Tottal { get; set; }
 
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime CreatedDate { get; set; }
 
         public DateTime VatReasonDate { get; set; }
@@ -49,9 +50,8 @@ namespace WebInvoice.Dto.Document
 
         public int? BankAccountId { get; set; }
 
-        public int ReasonId { get; set; }
 
-        public int VatTypeId { get; set; }
+        public string VatTypes { get; set; }
 
         public List<ProductShortDto> Sales { get; set; }
     }

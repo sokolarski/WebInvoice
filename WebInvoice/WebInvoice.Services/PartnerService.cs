@@ -128,6 +128,14 @@ namespace WebInvoice.Services
                 MOL = partnerDto.MOL,
             };
 
+            var employee = new Employee()
+            {
+                FullName = partnerDto.MOL,
+                IsActive = true,
+            };
+
+            partner.Employees.Add(employee);
+
             await partnerRepository.AddAsync(partner);
             await partnerRepository.SaveChangesAsync();
             return partner.Id;
