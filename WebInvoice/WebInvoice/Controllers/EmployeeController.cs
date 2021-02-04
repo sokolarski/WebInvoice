@@ -18,15 +18,15 @@ namespace WebInvoice.Controllers
         {
             this.employeeService = employeeService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = employeeService.GetAllCompanyEmployees();
+            var model =await employeeService.GetAllCompanyEmployees();
             return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var model = employeeService.GetById(id);
+            var model =await employeeService.GetById(id);
             return View(model);
         }
 

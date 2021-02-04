@@ -17,7 +17,7 @@ namespace WebInvoice.Dto.Document
     {
         public VatDocumentDto()
         {
-            this.Sales = new List<ProductShortDto>();
+            this.Sales = new List<ProductDocumentDto>();
         }
         public int Id { get; set; }
 
@@ -51,8 +51,7 @@ namespace WebInvoice.Dto.Document
         public int? BankAccountId { get; set; }
 
 
-        public string VatTypes { get; set; }
 
-        public List<ProductShortDto> Sales { get; set; }
+        public List<ProductDocumentDto> Sales { get; set; }
     }
 }

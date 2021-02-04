@@ -4,16 +4,20 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebInvoice.Dto.VatType;
 
-namespace WebInvoice.Dto.Product
+namespace WebInvoice.Dto.Document
 {
-    public class ProductShortDto
+    public class ProductDocumentDto
     {
+
         public int ProductId { get; set; }
 
-        public int VatTypeId { get; set; }
+        public int FreeProductID { get; set; }
 
-        [Required(ErrorMessage ="Полето е задължително")]
+        public bool IsProduct { get; set; }
+
+        [Required(ErrorMessage = "Полето е задължително")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Полето е задължително")]
@@ -26,6 +30,11 @@ namespace WebInvoice.Dto.Product
 
         [Required(ErrorMessage = "Полето е задължително")]
         public decimal Price { get; set; }
+
+        [Required(ErrorMessage = "Полето е задължително")]
+        public decimal TottalPrice { get; set; }
+
+        public int VatTypeId { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,30 +20,30 @@ namespace WebInvoice.Services
             this.employeeRepository = employeeRepository;
         }
 
-        public ICollection<EmployeeDto> GetAllCompanyEmployees()
+        public async Task<ICollection<EmployeeDto>> GetAllCompanyEmployees()
         {
-            var company = employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company = await employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
 
-            var employees = employeeRepository.AllAsNoTracking().Where(e => e.CompanyId == company.Id)
+            var employees = await employeeRepository.AllAsNoTracking().Where(e => e.CompanyId == company.Id)
                                                     .Select(e => new EmployeeDto()
                                                     {
                                                         Id = e.Id,
                                                         FullName = e.FullName,
                                                         IsActive = e.IsActive,
-                                                    }).ToList();
+                                                    }).ToListAsync();
 
             return employees;
         }
 
-        public EmployeeDto GetById(int id)
+        public async Task<EmployeeDto> GetById(int id)
         {
-            var employee = employeeRepository.AllAsNoTracking().Where(e => e.Id == id)
+            var employee = await employeeRepository.AllAsNoTracking().Where(e => e.Id == id)
                                                     .Select(e => new EmployeeDto()
                                                     {
                                                         Id = e.Id,
                                                         FullName = e.FullName,
                                                         IsActive = e.IsActive,
-                                                    }).FirstOrDefault();
+                                                    }).FirstOrDefaultAsync();
             return employee;
         }
 
@@ -54,7 +55,7 @@ namespace WebInvoice.Services
             {
                 if (employeeDto.IsActive == true)
                 {
-                    SetAllNonActive();
+                    await SetAllNonActive();
                 }
 
                 employee.FullName = employeeDto.FullName;
@@ -70,7 +71,7 @@ namespace WebInvoice.Services
             var company = employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
             if (employeeDto.IsActive == true)
             {
-                SetAllNonActive();
+                await SetAllNonActive();
             }
             var employee = new Employee()
             {
@@ -83,9 +84,9 @@ namespace WebInvoice.Services
             await employeeRepository.SaveChangesAsync();
         }
 
-        private void SetAllNonActive()
+        private async Task SetAllNonActive()
         {
-            var company = employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company = await employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
 
             var employees = employeeRepository.All().Where(e => e.CompanyId == company.Id); ;
 

@@ -8,8 +8,8 @@ namespace WebInvoice.Services
     {
         Task Create(BankAccountDto bankAccountDto, int companyId);
         Task Edit(BankAccountDto bankAccountDto, int companyId);
-        ICollection<BankAccountDto> GetAllCompanyBankAccounts(int companyId);
-        BankAccountDto GetById(int id);
-        void ValidateBankAccount(BankAccountDto bankAccountDto, int companyId);
+        Task<ICollection<BankAccountDto>> GetAllCompanyBankAccounts(int companyId);
+        Task<BankAccountDto> GetById(int id);
+        Task ValidateBankAccount(BankAccountDto bankAccountDto, int companyId);
     }
 }

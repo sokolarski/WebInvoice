@@ -120,6 +120,7 @@ namespace WebInvoice.Services
             var result = await productRepositoy.AllAsNoTracking().Where(p => p.Name == name).Select(e => new ProductShortDto()
             {
                 ProductId = e.Id,
+                VatTypeId = e.VatTypeId,
                 Name = e.Name,
                 ProductType = e.QuantityType.Type,
                 AvailableQuantity = e.Quantity,

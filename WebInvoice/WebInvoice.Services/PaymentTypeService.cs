@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +19,11 @@ namespace WebInvoice.Services
             this.paymentTypeRepository = paymentTypeRepository;
         }
 
-        public ICollection<PaymentTypeDto> GetAllCompanyPaymentTypes()
+        public async Task<ICollection<PaymentTypeDto>> GetAllCompanyPaymentTypes()
         {
 
 
-            var paymentType = paymentTypeRepository.AllAsNoTracking()
+            var paymentType = await paymentTypeRepository.AllAsNoTracking()
                                                     .Select(e => new PaymentTypeDto()
                                                     {
                                                         Id = e.Id,
@@ -30,14 +31,14 @@ namespace WebInvoice.Services
                                                         Description = e.Description,
                                                         IsActiv = e.IsActiv,
                                                         RequiredBankAccount = e.RequireBankAccount,
-                                                    }).ToList();
+                                                    }).ToListAsync();
 
             return paymentType;
         }
 
-        public PaymentTypeDto GetById(int id)
+        public async Task<PaymentTypeDto> GetById(int id)
         {
-            var paymentType = paymentTypeRepository.AllAsNoTracking().Where(e => e.Id == id)
+            var paymentType = await paymentTypeRepository.AllAsNoTracking().Where(e => e.Id == id)
                                                     .Select(e => new PaymentTypeDto()
                                                     {
                                                         Id = e.Id,
@@ -45,7 +46,7 @@ namespace WebInvoice.Services
                                                         Description = e.Description,
                                                         IsActiv = e.IsActiv,
                                                         RequiredBankAccount = e.RequireBankAccount,
-                                                    }).FirstOrDefault();
+                                                    }).FirstOrDefaultAsync();
             return paymentType;
         }
 

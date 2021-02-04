@@ -35,18 +35,23 @@ namespace WebInvoice.Controllers
         {
             var model = new VatDocumentDto();
             model.PartnerId = 7;
-            var list = new List<ProductShortDto>();
-            list.Add(new ProductShortDto() {Name="test",  ProductId=1, Price=1.2m, ProductType="br", Quantity=5, TottalPrice=6.0m, IsProduct=true, AvailableQuantity=2 });
-            list.Add(new ProductShortDto() { ProductId = 2, Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m ,IsProduct=false });
+            var list = new List<ProductDocumentDto>();
+            list.Add(new ProductDocumentDto() { Name = "test", ProductId = 1, Price = 1.2m, ProductType = "br", Quantity = 5, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
+            list.Add(new ProductDocumentDto() { Name = "fr", ProductId = 2, Price = 1.8m, ProductType = "br", Quantity = 2, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
+            list.Add(new ProductDocumentDto() {  Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m ,IsProduct=false ,VatTypeId=2 });
             model.Sales.AddRange(list);
             var vatTypes = vatTypeService.GetAll();
-            model.VatTypes = JsonConvert.SerializeObject(vatTypes);
+            this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
+            this.ViewBag.SalesJson= JsonConvert.SerializeObject(list);
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(VatDocumentDto vatDocumentDto)
         {
+            var vatTypes = vatTypeService.GetAll();
+            this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
+            this.ViewBag.SalesJson = JsonConvert.SerializeObject(vatDocumentDto.Sales);
             return View(vatDocumentDto);
         }
     }

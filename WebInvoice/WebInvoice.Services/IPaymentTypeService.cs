@@ -8,7 +8,7 @@ namespace WebInvoice.Services
     {
         Task Create(PaymentTypeDto paymentTypeDto);
         Task Edit(PaymentTypeDto paymentTypeDto);
-        ICollection<PaymentTypeDto> GetAllCompanyPaymentTypes();
-        PaymentTypeDto GetById(int id);
+        Task<ICollection<PaymentTypeDto>> GetAllCompanyPaymentTypes();
+        Task<PaymentTypeDto> GetById(int id);
     }
 }

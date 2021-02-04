@@ -19,17 +19,17 @@ namespace WebInvoice.Controllers
         {
             this.partnerEmployeeService = partnerEmployeeService;
         }
-        public IActionResult Index(int companyId, string companyName)
+        public async Task<IActionResult> Index(int companyId, string companyName)
         {
-            var model = partnerEmployeeService.GetAllCompanyEmployees(companyId);
+            var model =await partnerEmployeeService.GetAllCompanyEmployees(companyId);
             this.ViewBag.companyId = companyId;
             this.ViewBag.companyName = companyName;
             return View(model);
         }
 
-        public IActionResult Edit(int id, int companyId, string companyName)
+        public async Task<IActionResult> Edit(int id, int companyId, string companyName)
         {
-            var model = partnerEmployeeService.GetById(id);
+            var model =await partnerEmployeeService.GetById(id);
             this.ViewBag.companyId = companyId;
             this.ViewBag.companyName = companyName;
             return View(model);

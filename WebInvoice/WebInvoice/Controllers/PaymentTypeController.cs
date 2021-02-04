@@ -18,15 +18,15 @@ namespace WebInvoice.Controllers
         {
             this.paymentTypeService = paymentTypeService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = paymentTypeService.GetAllCompanyPaymentTypes();
+            var model =await paymentTypeService.GetAllCompanyPaymentTypes();
             return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var model = paymentTypeService.GetById(id);
+            var model =await paymentTypeService.GetById(id);
             return View(model);
         }
 
