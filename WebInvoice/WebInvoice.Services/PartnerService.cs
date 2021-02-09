@@ -63,6 +63,7 @@ namespace WebInvoice.Services
                 IsVatRegistered = p.IsVatRegistered,
                 Email = p.Email,
                 IsActive = p.IsActive,
+                Employees = p.Employees.Select(e => new Dto.Employee.EmployeeDto() { Id = e.Id, FullName = e.FullName, IsActive = e.IsActive }),
             }).FirstOrDefaultAsync();
 
             return partner;
@@ -83,6 +84,7 @@ namespace WebInvoice.Services
                 IsVatRegistered = p.IsVatRegistered,
                 Email = p.Email,
                 IsActive = p.IsActive,
+                Employees = p.Employees.Select(e => new Dto.Employee.EmployeeDto() { Id=e.Id, FullName = e.FullName, IsActive=e.IsActive}),
             }).FirstOrDefaultAsync();
 
             return partner;

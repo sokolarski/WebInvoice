@@ -19,11 +19,13 @@ namespace WebInvoice.Controllers
     {
         private readonly ICompanyDeletableEntityRepository<Company> companyRepository;
         private readonly IVatTypeService vatTypeService;
+        private readonly IEmployeeService employeeService;
 
-        public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository, IVatTypeService vatTypeService)
+        public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository, IVatTypeService vatTypeService, IEmployeeService employeeService)
         {
             this.companyRepository = companyRepository;
             this.vatTypeService = vatTypeService;
+            this.employeeService = employeeService;
         }
         public IActionResult Index()
         {
@@ -44,6 +46,7 @@ namespace WebInvoice.Controllers
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
             this.ViewBag.SalesJson= JsonConvert.SerializeObject(list);
+            this.ViewBag.Employees =await employeeService.GetAllCompanyEmployees();
             return View(model);
         }
 

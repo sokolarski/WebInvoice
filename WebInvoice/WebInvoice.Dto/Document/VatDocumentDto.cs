@@ -43,9 +43,9 @@ namespace WebInvoice.Dto.Document
 
         public int CompanyObjectId { get; set; }
        
-        public int? WriterEmployeeId { get; set; }
+        public string WriterEmployee { get; set; }
 
-        public int? RecipientEmployeeId { get; set; }
+        public string RecipientEmployee { get; set; }
 
         public int PaymentTypeId { get; set; }
 

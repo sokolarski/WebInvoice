@@ -128,16 +128,17 @@
                 </div>
                 <div class="col-4 text-nowrap">
                     <label for="writerEmployee">Съставил</label>
-                    <input class="form-control" asp-for="WriterEmployeeId" list="writerEmployeeList" type="text" id="writerEmployee" value="MILKO" />
+                    <input class="form-control" asp-for="WriterEmployee" list="writerEmployeeList" type="text" />
                     <datalist id="writerEmployeeList">
-                        <option value="Edge"/>
-                        <option value="Firefox"/>
-                        <option value="Chrome" />
-                        <option value="Opera"/>
-                        <option value="Safari"/>
+                        @foreach (var emploee in this.ViewBag.Employees)
+                        {
+                            <option>@emploee.FullName</option>
+                        }
                     </datalist>
                     <label for="recipientEmployee">Получил</label>
-                    <input class="form-control" asp-for="RecipientEmployeeId" type="text" id="recipientEmployee" />
+                    <input class="form-control" asp-for="RecipientEmployee" type="text" list="recipientEmployeeList" />
+                    <datalist id="recipientEmployeeList">
+                    </datalist>
                 </div>
                 <div class="col-4 text-nowrap">
                     <label for="paymentType">Начин на плащане</label>
@@ -156,13 +157,13 @@
                     <button type="submit" class="btn btn-info">Потвърди</button>
                 </div>
                 <div class="col">
-                    <label for="FreeText"> Основание за неначисляване на ДДС</label>
-                    <input asp-for="FreeText" class="form-control" id="FreeText" />
+                    <label for="FreeText" id="freeText"> Основание за неначисляване на ДДС</label>
+                    <input asp-for="FreeText" class="form-control" id="FreeText" disabled />
                 </div>
             </div>
         </div>
     </div>
-    
+
 </form>
 @section Styles {
     <link rel="stylesheet" href="~/css/document.css" />
@@ -193,7 +194,7 @@
             options.rules["custom"] = true;
             options.messages["custom"] = function () { return $(options.element).attr('data-val-custom'); };
         });
-      
+
         //function submit() {
         //    $("#form1").validate();
         //    if ($('#form1').valid())
@@ -228,7 +229,7 @@
             calculateDocumentTottal();
         }
 
-       
+
         function tryParseJSON(jsonString) {
             try {
                 var o = JSON.parse(jsonString);
@@ -596,6 +597,10 @@
                     let index = getIndex(vatTypeContainerChild[i].id);
                     if (!map.has(index)) {
                         vatTypeContainerChild[i].remove();
+                        let currentVatType = vatTypes.find(x => x.Id == index);
+                        if (currentVatType.Percantage == 0) {
+                            document.getElementById('FreeText').disabled = true;
+                        }
                     }
                 }
             }
@@ -644,6 +649,9 @@
                     divVatTypeElement.appendChild(vatTypeTottal);
 
                     vatTypeContainer.appendChild(divVatTypeElement);
+                    if (currentVatType.Percantage == 0) {
+                        document.getElementById('FreeText').disabled = false;
+                    }
                 }
                 else {
 
@@ -918,6 +926,7 @@
             productQuantity.name = `Sales[${index}].Quantity`;
             productQuantity.classList.add('productQuantity');
             productQuantity.addEventListener('keydown', function () { calculatePrice(event, this) });
+            productQuantity.value = 0;
             product.appendChild(productQuantity);
 
             let productPrice = document.createElement('input');
@@ -930,6 +939,7 @@
             productPrice.name = `Sales[${index}].Price`;
             productPrice.classList.add('productPrice');
             productPrice.addEventListener('keydown', function () { calculatePrice(event, this) });
+            productPrice.value = 0;
             product.appendChild(productPrice);
 
             let productTottal = document.createElement('input');
@@ -942,6 +952,7 @@
             productTottal.name = `Sales[${index}].TottalPrice`;
             productTottal.classList.add('productTottalPrice');
             productTottal.addEventListener('keydown', function () { newLine(event, this) });
+            productTottal.value = 0;
             product.appendChild(productTottal);
 
             let productVatType = document.createElement('select');
@@ -1036,17 +1047,35 @@
                     if (this.readyState == 4 && this.status == 200) {
                         let item = JSON.parse(this.responseText);
                         loading.classList.add('invisible');
-                        document.getElementById('partnerId').value = item.id;
-                        document.getElementById('partnerHead').innerText = item.name;
-                        document.getElementById('partner').innerText = item.name;
-                        document.getElementById('eik').innerText = item.eik;
-                        document.getElementById('isVatRegister').innerText = item.isVatRegistered == true ? "ДА" : "НЕ";
-                        document.getElementById('vat').innerText = item.vatId;
-                        document.getElementById('address').innerText = `${item.country}, ${item.city}, ${item.address}`;
-                        document.getElementById('mol').innerText = item.mol;
-                        document.getElementById('email').innerText = item.email;
+                        if (item != null) {
+                            document.getElementById('partnerId').value = item.id;
+                            document.getElementById('partnerHead').innerText = item.name;
+                            document.getElementById('partner').innerText = item.name;
+                            document.getElementById('eik').innerText = item.eik;
+                            document.getElementById('isVatRegister').innerText = item.isVatRegistered == true ? "ДА" : "НЕ";
+                            document.getElementById('vat').innerText = item.vatId;
+                            document.getElementById('address').innerText = `${item.country}, ${item.city}, ${item.address}`;
+                            document.getElementById('mol').innerText = item.mol;
+                            document.getElementById('email').innerText = item.email;
 
-                        document.getElementById('partnerDescription').focus();
+                            if (item.employees != null) {
+                                let employeeInputElem = document.getElementById('RecipientEmployee');
+                                let recepientEmployeeList = document.getElementById('recipientEmployeeList');
+                                recepientEmployeeList.innerHTML = '';
+                                for (var i = 0; i < item.employees.length; i++) {
+                                    let option = document.createElement('option');
+                                    option.value = item.employees[i].fullName;
+                                    option.id = item.employees[i].id;
+                                    recepientEmployeeList.appendChild(option);
+                                    if (item.employees[i].isActive == true) {
+                                        employeeInputElem.value = item.employees[i].fullName;
+                                    }
+                                }
+                            }
+
+                            document.getElementById('partnerDescription').focus();
+                        }
+
 
                     }
                 };
@@ -1066,15 +1095,30 @@
                 if (this.readyState == 4 && this.status == 200) {
                     let item = JSON.parse(this.responseText);
                     loading.classList.add('invisible');
-                    document.getElementById('partnerId').value = item.id;
-                    document.getElementById('partnerHead').innerText = item.name;
-                    document.getElementById('partner').innerText = item.name;
-                    document.getElementById('eik').innerText = item.eik;
-                    document.getElementById('isVatRegister').innerText = item.isVatRegistered == true ? "ДА":"НЕ";
-                    document.getElementById('vat').innerText =item.vatId;
-                    document.getElementById('address').innerText = `${item.country }, ${item.city}, ${item.address}`;
-                    document.getElementById('mol').innerText = item.mol;
-                    document.getElementById('email').innerText = item.email;
+                    if (item != null) {
+                        document.getElementById('partnerId').value = item.id;
+                        document.getElementById('partnerHead').innerText = item.name;
+                        document.getElementById('partner').innerText = item.name;
+                        document.getElementById('eik').innerText = item.eik;
+                        document.getElementById('isVatRegister').innerText = item.isVatRegistered == true ? "ДА" : "НЕ";
+                        document.getElementById('vat').innerText = item.vatId;
+                        document.getElementById('address').innerText = `${item.country}, ${item.city}, ${item.address}`;
+                        document.getElementById('mol').innerText = item.mol;
+                        document.getElementById('email').innerText = item.email;
+
+                        if (item.employees != null) {
+                            let recepientEmployeeList = document.getElementById('recipientEmployeeList');
+                            recepientEmployeeList.innerHTML = '';
+                            for (var i = 0; i < item.employees.length; i++) {
+                                let option = document.createElement('option');
+                                option.value = item.employees[i].fullName;
+                                option.id = item.employees[i].id;
+                                recepientEmployeeList.appendChild(option);
+                            }
+                        }
+
+                    }
+
 
                 }
             };

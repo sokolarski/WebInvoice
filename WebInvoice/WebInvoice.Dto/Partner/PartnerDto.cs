@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebInvoice.Dto.Employee;
 
 namespace WebInvoice.Dto.Partner
 {
@@ -55,5 +56,7 @@ namespace WebInvoice.Dto.Partner
 
         [Display(Name = "Да се отваря по подразбиране")]
         public bool IsActive { get; set; }
+
+        public IEnumerable<EmployeeDto> Employees { get; set; }
     }
 }
