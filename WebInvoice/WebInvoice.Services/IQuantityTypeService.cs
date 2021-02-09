@@ -8,8 +8,8 @@ namespace WebInvoice.Services
     {
         Task Create(QuantityTypeDto quantityTypeDto);
         Task Edit(QuantityTypeDto quantityTypeDto);
-        ICollection<QuantityTypeDto> GetAllQuantityTypes();
-        QuantityTypeDto GetById(int id);
+        Task<ICollection<QuantityTypeDto>> GetAllQuantityTypes();
         Task<ICollection<QuantityTypeShortView>> GetAllView();
+        Task<QuantityTypeDto> GetById(int id);
     }
 }

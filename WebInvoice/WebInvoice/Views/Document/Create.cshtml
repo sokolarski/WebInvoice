@@ -6,16 +6,18 @@
     <h2 class="text-center">Фактура: 0000000001</h2>
 
     <div class="card">
-        <div class="card-header d-inline-flex justify-content-between">
-            <div class="form-inline align-items-center">
-                <label for="findPartner" class="m-1">Получател: </label>
+        <div class="card-header d-flex flex-row justify-content-between p-1">
+            <div class="col-3 d-flex flex-column justify-content-center align-items-center ">
+                <label for="findPartner" class="m-0 p-0">Получател: </label>
                 <input type="text" id="findPartner" class="form-control" list="partnersDataList" oninput="findPartnerAjax()" onkeydown="loadPartner(event)" placeholder="Търси..." />
                 <datalist id="partnersDataList"></datalist>
             </div>
-            <h3 class="align-content-center" id="partnerHead"></h3>
-            <button id="partnerDescription" class="btn btn-outline-primary align-content-end" type="button" data-toggle="collapse" data-target="#description" aria-expanded="false" aria-controls="description">
-                Подробности
-            </button>
+            <h3 class="d-flex justify-content-center align-items-center col" id="partnerHead"></h3>
+            <div class="col-3 d-flex justify-content-center align-items-center">
+                <button id="partnerDescription" class="btn btn-outline-primary " type="button" data-toggle="collapse" data-target="#description" aria-expanded="false" aria-controls="description">
+                    Подробности
+                </button>
+            </div>
         </div>
 
         <div class="collapse" id="description">
@@ -117,34 +119,90 @@
                 </div>*@
         </div>
         <div class="card-footer text-muted">
-            <input asp-for="@Model.CreatedDate" type="date" />
-            2 days ago
+            <div class="d-flex flex-row">
+                <div class="col-4 text-nowrap">
+                    <label for="createdDate">Дата на документа</label>
+                    <input class="form-control" asp-for="CreatedDate" type="text" id="createdDate" data-val="true" data-val-custom="Невалидна дата!" />
+                    <label for="vatReasonDate">Дата на дан. събитите</label>
+                    <input class="form-control" asp-for="VatReasonDate" type="text" id="vatReasonDate" data-val="true" data-val-custom="Невалидна дата!" />
+                </div>
+                <div class="col-4 text-nowrap">
+                    <label for="writerEmployee">Съставил</label>
+                    <input class="form-control" asp-for="WriterEmployeeId" list="writerEmployeeList" type="text" id="writerEmployee" value="MILKO" />
+                    <datalist id="writerEmployeeList">
+                        <option value="Edge"/>
+                        <option value="Firefox"/>
+                        <option value="Chrome" />
+                        <option value="Opera"/>
+                        <option value="Safari"/>
+                    </datalist>
+                    <label for="recipientEmployee">Получил</label>
+                    <input class="form-control" asp-for="RecipientEmployeeId" type="text" id="recipientEmployee" />
+                </div>
+                <div class="col-4 text-nowrap">
+                    <label for="paymentType">Начин на плащане</label>
+                    <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType"></select>
+                    <label for="bankAccount">Бакова сметка</label>
+                    <select class="form-control" asp-for="BankAccountId" type="text" id="bankAccount"></select>
+                </div>
+            </div>
+            <div class="d-flex flex-row">
+                <div class="col">
+                    <label for="Description"> Описание</label>
+                    <input asp-for="Description" class="form-control" id="Description" />
+                </div>
+                <div class="col-2">
+                    <div>&nbsp;</div>
+                    <button type="submit" class="btn btn-info">Потвърди</button>
+                </div>
+                <div class="col">
+                    <label for="FreeText"> Основание за неначисляване на ДДС</label>
+                    <input asp-for="FreeText" class="form-control" id="FreeText" />
+                </div>
+            </div>
         </div>
     </div>
-    <button type="submit">субмит</button>
+    
 </form>
 @section Styles {
     <link rel="stylesheet" href="~/css/document.css" />
 }
 @section Scripts{
     <script type="text/javascript">
+        $(function () {
+            $("#createdDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+
+            $("#vatReasonDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+        });
+
+        $.validator.addMethod('custom', function (value, element, params) {
+                return validatedate(value);
+        }, "Невалидна дата!");
+
+        jQuery.validator.unobtrusive.adapters.add("custom", {}, function (options) {
+            options.rules["custom"] = true;
+            options.messages["custom"] = function () { return $(options.element).attr('data-val-custom'); };
+        });
+      
+        //function submit() {
+        //    $("#form1").validate();
+        //    if ($('#form1').valid())
+        //        $('#form1').submit();
+        //}
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
-        var vatTypes = tryParseJSON('@Html.Raw(ViewBag.VatTypes)');
-        console.log(vatTypes);
-        var salesJson = tryParseJSON('@Html.Raw(ViewBag.SalesJson)');
-        console.log(salesJson);
-
-        if (salesJson != null) {
-            for (var i = 0; i < salesJson.length; i++) {
-                addProductElementWithValues(salesJson[i]);
-            }
-            calculateDocumentTottal();
-        }
-
-
 
         document.getElementById('findPartner').focus();
         var partnerDataListValues = [];
@@ -155,10 +213,22 @@
         var productContainer = document.getElementById('productContainer');
 
         if (loadedPartner != "") {
-                loadPartnerById(loadedPartner);
+            loadPartnerById(loadedPartner);
         }
 
+        var vatTypes = tryParseJSON('@Html.Raw(ViewBag.VatTypes)');
+            //console.log(vatTypes);
+        var salesJson = tryParseJSON('@Html.Raw(ViewBag.SalesJson)');
+            //console.log(salesJson);
 
+        if (salesJson != null) {
+            for (var i = 0; i < salesJson.length; i++) {
+                addProductElementWithValues(salesJson[i]);
+            }
+            calculateDocumentTottal();
+        }
+
+       
         function tryParseJSON(jsonString) {
             try {
                 var o = JSON.parse(jsonString);
@@ -1054,6 +1124,51 @@
             });
         }
 
+        function validatedate(inputText) {
+            const dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\.](0?[1-9]|1[012])[\.]\d{4}$/;
+            // Match the date format through regular expression
+            let regex = new RegExp(dateformat);
+
+            if (regex.test(inputText)) {
+                //Test which seperator is used '/' or '-'
+                var opera1 = inputText.split('.');
+                lopera1 = opera1.length;
+
+                // Extract the string into month, date and year
+                if (lopera1 > 1) {
+                    var pdate = inputText.split('.');
+                }
+                else {
+                    return false;
+                }
+                var dd = parseInt(pdate[0]);
+                var mm = parseInt(pdate[1]);
+                var yy = parseInt(pdate[2]);
+                // Create list of days of a month [assume there is no leap year by default]
+                var ListofDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                if (mm == 1 || mm > 2) {
+                    if (dd > ListofDays[mm - 1]) {
+                        return false;
+                    }
+                }
+                if (mm == 2) {
+                    var lyear = false;
+                    if ((!(yy % 4) && yy % 100) || !(yy % 400)) {
+                        lyear = true;
+                    }
+                    if ((lyear == false) && (dd >= 29)) {
+                        return false;
+                    }
+                    if ((lyear == true) && (dd > 29)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
 
     </script>
 }

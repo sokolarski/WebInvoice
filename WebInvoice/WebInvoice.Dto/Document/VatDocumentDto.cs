@@ -27,10 +27,11 @@ namespace WebInvoice.Dto.Document
 
         public decimal Tottal { get; set; }
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
-        public DateTime CreatedDate { get; set; }
+        [Required]
+        public string CreatedDate { get; set; }
 
-        public DateTime VatReasonDate { get; set; }
+        [Required]
+        public string VatReasonDate { get; set; }
 
         public string Description { get; set; }
 

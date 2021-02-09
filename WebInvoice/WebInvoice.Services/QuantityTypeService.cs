@@ -19,40 +19,40 @@ namespace WebInvoice.Services
             this.quantityTypeRepository = quantityTypeRepository;
         }
 
-        public ICollection<QuantityTypeDto> GetAllQuantityTypes()
+        public async Task<ICollection<QuantityTypeDto>> GetAllQuantityTypes()
         {
-            var quantityTypes = quantityTypeRepository.AllAsNoTracking()
+            var quantityTypes = await quantityTypeRepository.AllAsNoTracking()
                                                     .Select(e => new QuantityTypeDto()
                                                     {
                                                         Id = e.Id,
                                                         Type = e.Type,
                                                         Description = e.Description,
                                                         IsActive = e.IsActive,
-                                                    }).ToList();
+                                                    }).ToListAsync();
 
             return quantityTypes;
         }
 
         public async Task<ICollection<QuantityTypeShortView>> GetAllView()
         {
-            var quantityTypes =await quantityTypeRepository.AllAsNoTracking().Select(e => new QuantityTypeShortView()
+            var quantityTypes = await quantityTypeRepository.AllAsNoTracking().Select(e => new QuantityTypeShortView()
             {
                 Type = e.Type,
                 Id = e.Id,
-                IsActive=e.IsActive,
+                IsActive = e.IsActive,
             }).ToListAsync();
             return quantityTypes;
         }
-        public QuantityTypeDto GetById(int id)
+        public async Task<QuantityTypeDto> GetById(int id)
         {
-            var quantityType = quantityTypeRepository.AllAsNoTracking().Where(e => e.Id == id)
+            var quantityType = await quantityTypeRepository.AllAsNoTracking().Where(e => e.Id == id)
                                                     .Select(e => new QuantityTypeDto()
                                                     {
                                                         Id = e.Id,
                                                         Type = e.Type,
                                                         Description = e.Description,
                                                         IsActive = e.IsActive,
-                                                    }).FirstOrDefault();
+                                                    }).FirstOrDefaultAsync();
             return quantityType;
         }
 

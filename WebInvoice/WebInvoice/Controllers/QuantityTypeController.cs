@@ -19,15 +19,15 @@ namespace WebInvoice.Controllers
             this.quantityTypeService = quantityTypeService;
         }
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = quantityTypeService.GetAllQuantityTypes();
+            var model =await quantityTypeService.GetAllQuantityTypes();
             return View(model);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var model = quantityTypeService.GetById(id);
+            var model =await quantityTypeService.GetById(id);
             return View(model);
         }
 
