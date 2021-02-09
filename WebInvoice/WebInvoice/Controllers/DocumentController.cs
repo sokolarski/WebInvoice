@@ -20,12 +20,20 @@ namespace WebInvoice.Controllers
         private readonly ICompanyDeletableEntityRepository<Company> companyRepository;
         private readonly IVatTypeService vatTypeService;
         private readonly IEmployeeService employeeService;
+        private readonly IPaymentTypeService paymentTypeService;
+        private readonly IBankAccountService bankAccountService;
 
-        public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository, IVatTypeService vatTypeService, IEmployeeService employeeService)
+        public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
+            IVatTypeService vatTypeService,
+            IEmployeeService employeeService,
+            IPaymentTypeService paymentTypeService,
+            IBankAccountService bankAccountService)
         {
             this.companyRepository = companyRepository;
             this.vatTypeService = vatTypeService;
             this.employeeService = employeeService;
+            this.paymentTypeService = paymentTypeService;
+            this.bankAccountService = bankAccountService;
         }
         public IActionResult Index()
         {
@@ -40,13 +48,15 @@ namespace WebInvoice.Controllers
             var list = new List<ProductDocumentDto>();
             list.Add(new ProductDocumentDto() { Name = "test", ProductId = 1, Price = 1.2m, ProductType = "br", Quantity = 5, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
             list.Add(new ProductDocumentDto() { Name = "fr", ProductId = 2, Price = 1.8m, ProductType = "br", Quantity = 2, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
-            list.Add(new ProductDocumentDto() { Name="as", Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m ,IsProduct=false ,VatTypeId=2 });
+            list.Add(new ProductDocumentDto() { Name = "as", Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m, IsProduct = false, VatTypeId = 2 });
             model.Sales.AddRange(list);
             model.CreatedDate = DateTime.Now.ToString("dd.MM.yyyy");
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
-            this.ViewBag.SalesJson= JsonConvert.SerializeObject(list);
-            this.ViewBag.Employees =await employeeService.GetAllCompanyEmployees();
+            this.ViewBag.SalesJson = JsonConvert.SerializeObject(list);
+            this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
+            this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
+            this.ViewBag.BankAccounts =await bankAccountService.GetAllCompanyBankAccounts();
             return View(model);
         }
 
@@ -56,7 +66,7 @@ namespace WebInvoice.Controllers
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
             this.ViewBag.SalesJson = JsonConvert.SerializeObject(vatDocumentDto.Sales);
-            
+
             return View(vatDocumentDto);
         }
     }

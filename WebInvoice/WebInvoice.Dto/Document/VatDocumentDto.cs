@@ -33,8 +33,11 @@ namespace WebInvoice.Dto.Document
         [Required]
         public string VatReasonDate { get; set; }
 
+        [MaxLength(150, ErrorMessage ="Максимална дължина 150 символа")]
         public string Description { get; set; }
 
+
+        [MaxLength(150, ErrorMessage = "Максимална дължина 150 символа")]
         public string FreeText { get; set; }
 
         public int PartnerId { get; set; }
@@ -50,8 +53,6 @@ namespace WebInvoice.Dto.Document
         public int PaymentTypeId { get; set; }
 
         public int? BankAccountId { get; set; }
-
-
 
         public List<ProductDocumentDto> Sales { get; set; }
     }

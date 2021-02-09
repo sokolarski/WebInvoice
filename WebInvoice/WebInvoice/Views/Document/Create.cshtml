@@ -142,15 +142,40 @@
                 </div>
                 <div class="col-4 text-nowrap">
                     <label for="paymentType">Начин на плащане</label>
-                    <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType"></select>
+                    <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType">
+                        @foreach (var paymentType in this.ViewBag.PaymentTypes)
+                        {
+                            if (paymentType.IsActiv == true)
+                            {
+                                <option value="@paymentType.Id" data-requareBankAcount="@paymentType.RequiredBankAccount" selected>@paymentType.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@paymentType.Id" data-requareBankAcount="@paymentType.RequiredBankAccount">@paymentType.Name</option>
+                            }
+
+                        }
+                    </select>
                     <label for="bankAccount">Бакова сметка</label>
-                    <select class="form-control" asp-for="BankAccountId" type="text" id="bankAccount"></select>
+                    <select class="form-control" asp-for="BankAccountId" type="text" id="bankAccount">
+                        @foreach (var bankAccount in this.ViewBag.BankAccounts)
+                        {
+                            if (bankAccount.IsActive == true)
+                            {
+                                <option value="@bankAccount.Id"  selected>@bankAccount.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@bankAccount.Id" >@bankAccount.Name</option>
+                            }
+                        }
+                    </select>
                 </div>
             </div>
             <div class="d-flex flex-row">
                 <div class="col">
                     <label for="Description"> Описание</label>
-                    <input asp-for="Description" class="form-control" id="Description" />
+                    <textarea asp-for="Description" class="form-control" rows="2" id="Description"></textarea>
                 </div>
                 <div class="col-2">
                     <div>&nbsp;</div>
@@ -158,7 +183,7 @@
                 </div>
                 <div class="col">
                     <label for="FreeText" id="freeText"> Основание за неначисляване на ДДС</label>
-                    <input asp-for="FreeText" class="form-control" id="FreeText" disabled />
+                    <textarea asp-for="FreeText" rows="2" class="form-control" id="FreeText" disabled ></textarea>
                 </div>
             </div>
         </div>
