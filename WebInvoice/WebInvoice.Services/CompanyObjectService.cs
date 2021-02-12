@@ -154,7 +154,10 @@ namespace WebInvoice.Services
             var companyApp = appRepository.All().Where(c => c.GUID == userCompanyTemp.CompanyGUID).FirstOrDefault();
             companyApp.CompanyAppObjects.Add(companyAppObject);
 
-
+            if (companyObjectDto.StartNum == 0)
+            {
+                companyObjectDto.StartNum = 1;
+            }
             var companyObject = new CompanyObject()
             {
                 Name = companyObjectDto.Name,

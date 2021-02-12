@@ -81,6 +81,29 @@ namespace WebInvoice.Services
             await employeeRepository.SaveChangesAsync();
         }
 
+        public async Task<int?> GetOrSetEmployeeIdByNameAsync(string name, int partnerId)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+            var employee = await employeeRepository.AllAsNoTracking().Where(e => e.PartnerId == partnerId && e.FullName == name).FirstOrDefaultAsync();
+            if (employee != null)
+            {
+                return employee.Id;
+            }
+
+            var newEmployee = new Employee()
+            {
+                FullName = name,
+                PartnerId = partnerId,
+            };
+
+            await employeeRepository.AddAsync(employee);
+            await employeeRepository.SaveChangesAsync();
+            return newEmployee.Id;
+        }
+
         private void SetAllNonActive(int companyId)
         {
 

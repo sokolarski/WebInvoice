@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebInvoice.Data;
 
 namespace WebInvoice.Data.Migrations.CompanyDb
 {
     [DbContext(typeof(CompanyDbContext))]
-    partial class CompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210212165638_AddColumnToFreeProduct")]
+    partial class AddColumnToFreeProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -658,15 +660,7 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
 
-                    b.Property<decimal>("TottalWithVat")
-                        .HasPrecision(15, 5)
-                        .HasColumnType("decimal(15,5)");
-
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(15, 5)
-                        .HasColumnType("decimal(15,5)");
-
-                    b.Property<decimal?>("Vat")
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
 

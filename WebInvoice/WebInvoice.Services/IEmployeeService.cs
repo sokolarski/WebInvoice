@@ -10,5 +10,7 @@ namespace WebInvoice.Services
         Task Edit(EmployeeDto employeeDto);
         Task<ICollection<EmployeeDto>> GetAllCompanyEmployees();
         Task<EmployeeDto> GetById(int id);
+        Task<EmployeeDto> GetActiveCompanyEmployee();
+        Task<int?> GetOrSetEmployeeIdByNameAsync(string name);
     }
 }

@@ -11,9 +11,9 @@ namespace WebInvoice.Dto.Document
     public class ProductDocumentDto
     {
 
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
 
-        public int FreeProductID { get; set; }
+        public int? FreeProductID { get; set; }
 
         public bool IsProduct { get; set; }
 

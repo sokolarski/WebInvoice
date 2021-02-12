@@ -22,18 +22,21 @@ namespace WebInvoice.Controllers
         private readonly IEmployeeService employeeService;
         private readonly IPaymentTypeService paymentTypeService;
         private readonly IBankAccountService bankAccountService;
+        private readonly IVatDocumentService vatDocumentService;
 
         public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
             IVatTypeService vatTypeService,
             IEmployeeService employeeService,
             IPaymentTypeService paymentTypeService,
-            IBankAccountService bankAccountService)
+            IBankAccountService bankAccountService,
+            IVatDocumentService vatDocumentService)
         {
             this.companyRepository = companyRepository;
             this.vatTypeService = vatTypeService;
             this.employeeService = employeeService;
             this.paymentTypeService = paymentTypeService;
             this.bankAccountService = bankAccountService;
+            this.vatDocumentService = vatDocumentService;
         }
         public IActionResult Index()
         {
@@ -41,31 +44,50 @@ namespace WebInvoice.Controllers
             return Json(name);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> CreateInvoice()
         {
-            var model = new VatDocumentDto();
-            model.PartnerId = 7;
-            var list = new List<ProductDocumentDto>();
-            list.Add(new ProductDocumentDto() { Name = "test", ProductId = 1, Price = 1.2m, ProductType = "br", Quantity = 5, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
-            list.Add(new ProductDocumentDto() { Name = "fr", ProductId = 2, Price = 1.8m, ProductType = "br", Quantity = 2, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
-            list.Add(new ProductDocumentDto() { Name = "as", Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m, IsProduct = false, VatTypeId = 2 });
-            model.Sales.AddRange(list);
-            model.CreatedDate = DateTime.Now.ToString("dd.MM.yyyy");
+            //var model = new VatDocumentDto();
+            //model.PartnerId = 7;
+            //var list = new List<ProductDocumentDto>();
+            //list.Add(new ProductDocumentDto() { Name = "test", ProductId = 1, Price = 1.2m, ProductType = "br", Quantity = 5, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
+            //list.Add(new ProductDocumentDto() { Name = "fr", ProductId = 2, Price = 1.8m, ProductType = "br", Quantity = 2, TottalPrice = 6.0m, IsProduct = true, AvailableQuantity = 2, VatTypeId = 1 });
+            //list.Add(new ProductDocumentDto() { Name = "as", Price = 6.2m, ProductType = "butilka", Quantity = 1, TottalPrice = 6.2m, IsProduct = false, VatTypeId = 2 });
+            //model.Sales.AddRange(list);
+            //model.CreatedDate = DateTime.Now.ToString("dd.MM.yyyy");
+            //model.Type = dto.VatDocumentTypes.Debit;
+            //model.Id = 5005;
+            //model.SalesJson = JsonConvert.SerializeObject(list);
+            var model =await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Invoice);
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
-            this.ViewBag.SalesJson = JsonConvert.SerializeObject(list);
             this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
             this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
             this.ViewBag.BankAccounts =await bankAccountService.GetAllCompanyBankAccounts();
-            return View(model);
+            return View("Create",model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(VatDocumentDto vatDocumentDto)
         {
+            if (ModelState.IsValid)
+            {
+                await vatDocumentService.CreateVatDocumentAsync(vatDocumentDto);
+                if (vatDocumentDto.HasErrors)
+                {
+                    this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypeService.GetAll());
+                    this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
+                    this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
+                    this.ViewBag.BankAccounts = await bankAccountService.GetAllCompanyBankAccounts();
+                    return View(vatDocumentDto);
+                }
+
+                //return ok
+            }
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
-            this.ViewBag.SalesJson = JsonConvert.SerializeObject(vatDocumentDto.Sales);
+            this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
+            this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
+            this.ViewBag.BankAccounts = await bankAccountService.GetAllCompanyBankAccounts();
 
             return View(vatDocumentDto);
         }

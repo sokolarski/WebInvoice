@@ -44,6 +44,11 @@ namespace WebInvoice.Middleware
                         
                         if (currentCompany != null)
                         {
+                            userCompanyTemp.CompanyName = currentCompany.CompanyName;
+                            userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
+                            userCompanyTemp.ConnectionString = currentCompany.ConnStr;
+                            userCompanyTemp.CompanyGUID = currentCompany.GUID;
+
                             if (routeValues.Keys.Contains("companyObject"))
                             {
                                 var currentObjectSlug = routeValues["companyObject"].ToString();
@@ -56,14 +61,15 @@ namespace WebInvoice.Middleware
                                     if (currentObject is null)
                                     {
                                         currentObject = objects.FirstOrDefault();
+                                        if (currentObject != null)
+                                        {
+                                            context.Request.RouteValues["companyObject"] = currentObject.ObjectSlug;
+                                        }
                                     }
 
                                     if (currentObject != null)
                                     { 
-                                        userCompanyTemp.CompanyName = currentCompany.CompanyName;
-                                        userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
-                                        userCompanyTemp.ConnectionString = currentCompany.ConnStr;
-                                        userCompanyTemp.CompanyGUID = currentCompany.GUID;
+                                        
                                         userCompanyTemp.CompanyObjectName = currentObject.ObjectName;
                                         userCompanyTemp.CompanyObjectSlug = currentObject.ObjectSlug;
                                         userCompanyTemp.CompanyObjectGUID = currentObject.GUID;
@@ -72,38 +78,51 @@ namespace WebInvoice.Middleware
                                 }
                             }
                         }
+                        else
+                        {
+                            context.Response.Redirect("/home/index?errorUrl");
+                            return;
+                        }
                        
                     }
                     else
                     {
-                        var currentCompany = companies.Where(c => c.IsActive == true).FirstOrDefault();
-                        
-                        if (currentCompany != null)
+                        if (!context.Request.Query.ContainsKey("errorUrl"))
                         {
-                            context.Request.RouteValues.TryAdd("company", currentCompany.CompanySlug);
+                            var currentCompany = companies.Where(c => c.IsActive == true).FirstOrDefault();
 
-                            var objects = currentCompany.CompanyAppObjects;
-                            if (objects != null)
+                            if (currentCompany != null)
                             {
-                                var currentObject = objects.Where(o => o.IsActive == true).FirstOrDefault();
+                                userCompanyTemp.CompanyName = currentCompany.CompanyName;
+                                userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
+                                userCompanyTemp.ConnectionString = currentCompany.ConnStr;
+                                userCompanyTemp.CompanyGUID = currentCompany.GUID;
 
-                                if (currentObject is null)
-                                {
-                                    currentObject = objects.FirstOrDefault();
-                                }
+                                context.Request.RouteValues.TryAdd("company", currentCompany.CompanySlug);
 
-                                if (currentObject != null)
+                                var objects = currentCompany.CompanyAppObjects;
+                                if (objects != null)
                                 {
-                                    userCompanyTemp.CompanyName = currentCompany.CompanyName;
-                                    userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
-                                    userCompanyTemp.ConnectionString = currentCompany.ConnStr;
-                                    userCompanyTemp.CompanyObjectName = currentObject.ObjectName;
-                                    userCompanyTemp.CompanyObjectSlug = currentObject.ObjectSlug;
-                                    userCompanyTemp.CurrentCompanyAppObjects = currentCompany.CompanyAppObjects;
-                                    context.Request.RouteValues.TryAdd("companyObject", currentObject.ObjectSlug);
+                                    var currentObject = objects.Where(o => o.IsActive == true).FirstOrDefault();
+
+                                    if (currentObject is null)
+                                    {
+                                        currentObject = objects.FirstOrDefault();
+                                    }
+
+                                    if (currentObject != null)
+                                    {
+
+                                        userCompanyTemp.CompanyObjectName = currentObject.ObjectName;
+                                        userCompanyTemp.CompanyObjectSlug = currentObject.ObjectSlug;
+                                        userCompanyTemp.CompanyObjectGUID = currentObject.GUID;
+                                        userCompanyTemp.CurrentCompanyAppObjects = currentCompany.CompanyAppObjects;
+                                        context.Request.RouteValues.TryAdd("companyObject", currentObject.ObjectSlug);
+                                    }
                                 }
                             }
                         }
+                        
                     }
                 }
             }

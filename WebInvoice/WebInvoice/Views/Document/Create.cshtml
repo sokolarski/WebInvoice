@@ -1,9 +1,25 @@
 ﻿@using WebInvoice.Dto.Document
 @model VatDocumentDto
 @inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+
 <form asp-controller="Document" asp-action="Create" id="form1" autocomplete="off">
-    <h1 class="text-center">@userCompanyData.CompanyName </h1>
-    <h2 class="text-center">Фактура: 0000000001</h2>
+    <input type="hidden"asp-for="Id" />
+    <input type="hidden"asp-for="Type" />
+    <h1 class="text-center">@userCompanyData.CompanyName - @userCompanyData.CompanyObjectName </h1>
+    <h2 class="text-center">
+        @if (Model.Type == WebInvoice.dto.VatDocumentTypes.Invoice)
+        {
+            <text>Фактура</text>
+        }
+        else if (Model.Type == WebInvoice.dto.VatDocumentTypes.Credit)
+        {
+            <text>Кредитно известие</text>
+        }
+        else if (Model.Type == WebInvoice.dto.VatDocumentTypes.Debit)
+        {
+            <text>Дебитно известие</text>
+        }: @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
+    </h2>
 
     <div class="card">
         <div class="card-header d-flex flex-row justify-content-between p-1">
@@ -142,16 +158,16 @@
                 </div>
                 <div class="col-4 text-nowrap">
                     <label for="paymentType">Начин на плащане</label>
-                    <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType">
+                    <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType" onchange="disableBankAccount()">
                         @foreach (var paymentType in this.ViewBag.PaymentTypes)
                         {
                             if (paymentType.IsActiv == true)
                             {
-                                <option value="@paymentType.Id" data-requareBankAcount="@paymentType.RequiredBankAccount" selected>@paymentType.Name</option>
+                                <option value="@paymentType.Id" data-requareBankAccount="@paymentType.RequiredBankAccount" selected>@paymentType.Name</option>
                             }
                             else
                             {
-                                <option value="@paymentType.Id" data-requareBankAcount="@paymentType.RequiredBankAccount">@paymentType.Name</option>
+                                <option value="@paymentType.Id" data-requareBankAccount="@paymentType.RequiredBankAccount">@paymentType.Name</option>
                             }
 
                         }
@@ -162,11 +178,11 @@
                         {
                             if (bankAccount.IsActive == true)
                             {
-                                <option value="@bankAccount.Id"  selected>@bankAccount.Name</option>
+                                <option value="@bankAccount.Id" selected>@bankAccount.Name</option>
                             }
                             else
                             {
-                                <option value="@bankAccount.Id" >@bankAccount.Name</option>
+                                <option value="@bankAccount.Id">@bankAccount.Name</option>
                             }
                         }
                     </select>
@@ -183,7 +199,7 @@
                 </div>
                 <div class="col">
                     <label for="FreeText" id="freeText"> Основание за неначисляване на ДДС</label>
-                    <textarea asp-for="FreeText" rows="2" class="form-control" id="FreeText" disabled ></textarea>
+                    <textarea asp-for="FreeText" rows="2" class="form-control" id="FreeText" disabled></textarea>
                 </div>
             </div>
         </div>
@@ -244,16 +260,30 @@
 
         var vatTypes = tryParseJSON('@Html.Raw(ViewBag.VatTypes)');
             //console.log(vatTypes);
-        var salesJson = tryParseJSON('@Html.Raw(ViewBag.SalesJson)');
+        var salesJson = tryParseJSON('@Html.Raw(Model.SalesJson)');
             //console.log(salesJson);
 
-        if (salesJson != null) {
+        if (salesJson.length > 0) {
             for (var i = 0; i < salesJson.length; i++) {
                 addProductElementWithValues(salesJson[i]);
             }
             calculateDocumentTottal();
         }
+        else {
+            addProductElement();
+        }
+        disableBankAccount();
 
+        function disableBankAccount() {
+            let paymentType = document.getElementById('paymentType');
+            let requareBankAccount = paymentType.options[paymentType.selectedIndex].dataset.requarebankaccount;
+            if (requareBankAccount == 'True') {
+                document.getElementById('bankAccount').disabled = false;
+            }
+            else {
+                document.getElementById('bankAccount').disabled = true;
+            }
+        }
 
         function tryParseJSON(jsonString) {
             try {

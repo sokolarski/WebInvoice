@@ -35,6 +35,21 @@ namespace WebInvoice.Services
             return employees;
         }
 
+        public async Task<EmployeeDto> GetActiveCompanyEmployee()
+        {
+            var company = await employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
+
+            var employee = await employeeRepository.AllAsNoTracking().Where(e => e.CompanyId == company.Id && e.IsActive == true)
+                                                    .Select(e => new EmployeeDto()
+                                                    {
+                                                        Id = e.Id,
+                                                        FullName = e.FullName,
+                                                        IsActive = e.IsActive,
+                                                    }).FirstOrDefaultAsync();
+
+            return employee;
+        }
+
         public async Task<EmployeeDto> GetById(int id)
         {
             var employee = await employeeRepository.AllAsNoTracking().Where(e => e.Id == id)
@@ -66,9 +81,33 @@ namespace WebInvoice.Services
             }
         }
 
+        public async Task<int?> GetOrSetEmployeeIdByNameAsync(string name)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+            var companyId =await employeeRepository.Context.Companies.OrderBy(c => c.Id).Select(c => c.Id).LastOrDefaultAsync();
+            var employee =await employeeRepository.AllAsNoTracking().Where(e => e.CompanyId == companyId && e.FullName == name).FirstOrDefaultAsync();
+            if (employee != null)
+            {
+                return employee.Id;
+            }
+
+            var newEmployee = new Employee()
+            {
+                FullName = name,
+                CompanyId = companyId,
+            };
+
+            await employeeRepository.AddAsync(employee);
+            await employeeRepository.SaveChangesAsync();
+            return newEmployee.Id;
+        }
+
         public async Task Create(EmployeeDto employeeDto)
         {
-            var company = employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefault();
+            var company =await employeeRepository.Context.Companies.OrderBy(c => c.Id).LastOrDefaultAsync();
             if (employeeDto.IsActive == true)
             {
                 await SetAllNonActive();

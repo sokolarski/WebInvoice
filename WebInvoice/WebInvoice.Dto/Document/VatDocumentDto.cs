@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,8 +19,9 @@ namespace WebInvoice.Dto.Document
         public VatDocumentDto()
         {
             this.Sales = new List<ProductDocumentDto>();
+            this.ErrorMassages = new List<string>();
         }
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public decimal SubTottal { get; set; }
 
@@ -54,6 +56,9 @@ namespace WebInvoice.Dto.Document
 
         public int? BankAccountId { get; set; }
 
+        public string SalesJson => JsonConvert.SerializeObject(this.Sales);
+        public bool HasErrors => this.ErrorMassages.Count > 0;
+        public ICollection<string> ErrorMassages { get; set; }
         public List<ProductDocumentDto> Sales { get; set; }
     }
 }

@@ -16,10 +16,13 @@ namespace WebInvoice.Data.CompanyData.Models
 
         public string Description { get; set; }
 
+        public string QuantityType { get; set; }
+
         public decimal Quantity { get; set; }
 
         public decimal Price { get; set; }
 
-        public decimal TottalPrice { get; set; }
+        public int VatTypeId { get; set; }
+        public VatType VatType { get; set; }
     }
 }

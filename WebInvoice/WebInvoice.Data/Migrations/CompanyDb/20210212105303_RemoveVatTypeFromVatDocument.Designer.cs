@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebInvoice.Data;
 
 namespace WebInvoice.Data.Migrations.CompanyDb
 {
     [DbContext(typeof(CompanyDbContext))]
-    partial class CompanyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210212105303_RemoveVatTypeFromVatDocument")]
+    partial class RemoveVatTypeFromVatDocument
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,17 +297,13 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
 
-                    b.Property<string>("QuantityType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VatTypeId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TottalPrice")
+                        .HasPrecision(15, 5)
+                        .HasColumnType("decimal(15,5)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IsDeleted");
-
-                    b.HasIndex("VatTypeId");
 
                     b.ToTable("FreeProducts");
                 });
@@ -375,6 +373,9 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<DateTime>("VatReasonDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("VatTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("WriterEmployeeId")
                         .HasColumnType("int");
 
@@ -393,6 +394,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.HasIndex("PaymentTypeId");
 
                     b.HasIndex("RecipientEmployeeId");
+
+                    b.HasIndex("VatTypeId");
 
                     b.HasIndex("WriterEmployeeId");
 
@@ -658,15 +661,7 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
 
-                    b.Property<decimal>("TottalWithVat")
-                        .HasPrecision(15, 5)
-                        .HasColumnType("decimal(15,5)");
-
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(15, 5)
-                        .HasColumnType("decimal(15,5)");
-
-                    b.Property<decimal?>("Vat")
                         .HasPrecision(15, 5)
                         .HasColumnType("decimal(15,5)");
 
@@ -785,6 +780,9 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Property<DateTime>("VatReasonDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("VatTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("WriterEmployeeId")
                         .HasColumnType("int");
 
@@ -803,6 +801,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.HasIndex("PaymentTypeId");
 
                     b.HasIndex("RecipientEmployeeId");
+
+                    b.HasIndex("VatTypeId");
 
                     b.HasIndex("WriterEmployeeId");
 
@@ -895,17 +895,6 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("Partner");
                 });
 
-            modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.FreeProduct", b =>
-                {
-                    b.HasOne("WebInvoice.Data.CompanyData.Models.VatType", "VatType")
-                        .WithMany("FreeProducts")
-                        .HasForeignKey("VatTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("VatType");
-                });
-
             modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.NonVatDocument", b =>
                 {
                     b.HasOne("WebInvoice.Data.CompanyData.Models.BankAccount", "BankAccount")
@@ -940,6 +929,12 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .WithMany("NonVatDocumentsRecipient")
                         .HasForeignKey("RecipientEmployeeId");
 
+                    b.HasOne("WebInvoice.Data.CompanyData.Models.VatType", "VatType")
+                        .WithMany("NonVatDocuments")
+                        .HasForeignKey("VatTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("WebInvoice.Data.CompanyData.Models.Employee", "WriterEmployee")
                         .WithMany("NonVatDocumentsWriter")
                         .HasForeignKey("WriterEmployeeId");
@@ -955,6 +950,8 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                     b.Navigation("PaymentType");
 
                     b.Navigation("RecipientEmployee");
+
+                    b.Navigation("VatType");
 
                     b.Navigation("WriterEmployee");
                 });
@@ -1054,6 +1051,10 @@ namespace WebInvoice.Data.Migrations.CompanyDb
                         .WithMany("VatDocumentsRecipient")
                         .HasForeignKey("RecipientEmployeeId");
 
+                    b.HasOne("WebInvoice.Data.CompanyData.Models.VatType", null)
+                        .WithMany("VatDocuments")
+                        .HasForeignKey("VatTypeId");
+
                     b.HasOne("WebInvoice.Data.CompanyData.Models.Employee", "WriterEmployee")
                         .WithMany("VatDocumentsWriter")
                         .HasForeignKey("WriterEmployeeId");
@@ -1150,9 +1151,11 @@ namespace WebInvoice.Data.Migrations.CompanyDb
 
             modelBuilder.Entity("WebInvoice.Data.CompanyData.Models.VatType", b =>
                 {
-                    b.Navigation("FreeProducts");
+                    b.Navigation("NonVatDocuments");
 
                     b.Navigation("Products");
+
+                    b.Navigation("VatDocuments");
                 });
 #pragma warning restore 612, 618
         }
