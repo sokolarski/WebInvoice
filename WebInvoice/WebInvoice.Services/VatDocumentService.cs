@@ -48,11 +48,11 @@ namespace WebInvoice.Services
             if (documentId > vatDocumentDto.Id)
             {
                 
-                vatDocumentDto.ErrorMassages.Add($"Има вече издаден документ с {new string('0', 10 - vatDocumentDto.Id.ToString().Length) + vatDocumentDto.Id.ToString()}, документа ще бъде издаден с номер {new string('0', 10 - documentId.ToString().Length) + documentId.ToString()}");
+                vatDocumentDto.ErrorMassages.Add($"Има вече издаден документ с №{new string('0', 10 - vatDocumentDto.Id.ToString().Length) + vatDocumentDto.Id.ToString()}, документа ще бъде издаден с № {new string('0', 10 - documentId.ToString().Length) + documentId.ToString()}");
                 vatDocumentDto.Id = documentId;
                 return vatDocumentDto;
             }
-            if (vatDocumentDto.PartnerId ==0)
+            if (vatDocumentDto.PartnerId == 0)
             {
                 vatDocumentDto.ErrorMassages.Add($"Моля въведете контрагент!");
                 return vatDocumentDto;
@@ -78,6 +78,11 @@ namespace WebInvoice.Services
             document.Description = vatDocumentDto.Description;
 
             await ProcessingSales(vatDocumentDto);
+
+            document.SubTottal = vatDocumentDto.SubTottal;
+            document.Vat = vatDocumentDto.Vat;
+            document.Tottal = vatDocumentDto.Tottal;
+
             if (vatDocumentDto.HasErrors)
             {
                 return vatDocumentDto;
@@ -90,6 +95,7 @@ namespace WebInvoice.Services
 
         private async Task ProcessingSales(VatDocumentDto vatDocumentDto)
         {
+            vatDocumentDto.Vat = 0M;
             if (vatDocumentDto.Sales.Count == 0)
             {
                 vatDocumentDto.ErrorMassages.Add("Няма въведени артикули");
@@ -113,10 +119,19 @@ namespace WebInvoice.Services
                         newSale.ProductId = sale.ProductId;
                         newSale.Quantity = sale.Quantity;
                         newSale.UnitPrice = product.Price;
+
                         var tottal = sale.Quantity * product.Price;
+                        vatDocumentDto.SubTottal += tottal;
                         newSale.Total = tottal;
+
                         var vat = tottal * (product.VatType.Percantage / 100);
-                        newSale.TottalWithVat = tottal + vat;
+                        vatDocumentDto.Vat += vat;
+                        newSale.Vat = vat;
+
+                        var tottalWithVat = tottal + vat;
+                        vatDocumentDto.Tottal += tottalWithVat;
+                        newSale.TottalWithVat = tottalWithVat;
+
                         newSale.VatDocumentId = vatDocumentDto.Id;
                         product.Quantity -= sale.Quantity;
 
@@ -124,12 +139,52 @@ namespace WebInvoice.Services
                         context.Products.Update(product);
                     }
                 }
+                else if(!sale.IsProduct)
+                {
+                    var vatType =await context.VatTypes.FindAsync(sale.VatTypeId);
+                    if (String.IsNullOrEmpty(sale.Name) || String.IsNullOrEmpty(sale.ProductType))
+                    {
+                        vatDocumentDto.ErrorMassages.Add("Има грешка в продукти!");
+                        continue;
+                    }
+                    if (vatType is null)
+                    {
+                        vatDocumentDto.ErrorMassages.Add($"Продукт: {sale.Name} има грешно ДДС!");
+                    }
+                    var freeProduct = new FreeProduct();
+                    freeProduct.Name = sale.Name;
+                    freeProduct.QuantityType = sale.ProductType;
+                    freeProduct.Quantity = sale.Quantity;
+                    freeProduct.Price = sale.Price;
+                    freeProduct.VatTypeId = sale.VatTypeId;
+
+
+                    var newSale = new Sales();
+                    newSale.FreeProduct = freeProduct;
+                    newSale.Quantity = sale.Quantity;
+                    newSale.UnitPrice = sale.Price;
+
+                    var tottal = sale.Quantity * sale.Price;
+                    vatDocumentDto.SubTottal += tottal;
+                    newSale.Total = tottal;
+
+                    var vat = tottal * (vatType.Percantage / 100);
+                    vatDocumentDto.Vat += vat;
+                    newSale.Vat = vat;
+
+                    var tottalWithVat = tottal + vat;
+                    vatDocumentDto.Tottal += tottalWithVat;
+                    newSale.TottalWithVat = tottalWithVat;
+
+                    newSale.VatDocumentId = vatDocumentDto.Id;
+
+                    await context.Sales.AddAsync(newSale);
+                }
                 else
                 {
-
+                    vatDocumentDto.ErrorMassages.Add($"Има грешка в продукт {sale.Name}, {sale.ProductType}, {sale.Quantity}, {sale.Price}, {sale.TottalPrice}");
                 }
             }
-            //update Tottal values on document
         }
         private async Task<int?> GetBankAccountIdIfRequare(VatDocumentDto vatDocumentDto)
         {

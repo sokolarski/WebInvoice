@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebInvoice.dto;
 using WebInvoice.Dto.BankAccount;
@@ -35,7 +36,7 @@ namespace WebInvoice.Dto.Document
         [Required]
         public string VatReasonDate { get; set; }
 
-        [MaxLength(150, ErrorMessage ="Максимална дължина 150 символа")]
+        [MaxLength(150, ErrorMessage = "Максимална дължина 150 символа")]
         public string Description { get; set; }
 
 
@@ -47,7 +48,7 @@ namespace WebInvoice.Dto.Document
         public VatDocumentTypes Type { get; set; }
 
         public int CompanyObjectId { get; set; }
-       
+
         public string WriterEmployee { get; set; }
 
         public string RecipientEmployee { get; set; }
@@ -56,7 +57,7 @@ namespace WebInvoice.Dto.Document
 
         public int? BankAccountId { get; set; }
 
-        public string SalesJson => JsonConvert.SerializeObject(this.Sales);
+        public string SalesJson => JsonSerializer.Serialize(this.Sales);
         public bool HasErrors => this.ErrorMassages.Count > 0;
         public ICollection<string> ErrorMassages { get; set; }
         public List<ProductDocumentDto> Sales { get; set; }

@@ -99,7 +99,7 @@ namespace WebInvoice.Services
                 PartnerId = partnerId,
             };
 
-            await employeeRepository.AddAsync(employee);
+            await employeeRepository.AddAsync(newEmployee);
             await employeeRepository.SaveChangesAsync();
             return newEmployee.Id;
         }

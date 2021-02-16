@@ -2,9 +2,9 @@
 @model VatDocumentDto
 @inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 
-<form asp-controller="Document" asp-action="Create" id="form1" autocomplete="off">
-    <input type="hidden"asp-for="Id" />
-    <input type="hidden"asp-for="Type" />
+<form asp-controller="Document" asp-action="Create" id="form1" autocomplete="off" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <input type="hidden" asp-for="Type" />
     <h1 class="text-center">@userCompanyData.CompanyName - @userCompanyData.CompanyObjectName </h1>
     <h2 class="text-center">
         @if (Model.Type == WebInvoice.dto.VatDocumentTypes.Invoice)
@@ -20,7 +20,18 @@
             <text>Дебитно известие</text>
         }: @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
     </h2>
-
+    @if (Model != null)
+    {
+        @if (Model.HasErrors)
+        {
+            @foreach (var error in Model.ErrorMassages)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @error
+                </div>
+            }
+        }
+    }
     <div class="card">
         <div class="card-header d-flex flex-row justify-content-between p-1">
             <div class="col-3 d-flex flex-column justify-content-center align-items-center ">
@@ -258,9 +269,12 @@
             loadPartnerById(loadedPartner);
         }
 
-        var vatTypes = tryParseJSON('@Html.Raw(ViewBag.VatTypes)');
-            //console.log(vatTypes);
-        var salesJson = tryParseJSON('@Html.Raw(Model.SalesJson)');
+        var vatTypesStr = JSON.stringify(@Html.Raw(ViewBag.VatTypes));
+        var vatTypes = tryParseJSON(vatTypesStr);
+
+        var salesStr = JSON.stringify(@Html.Raw(Model.SalesJson));
+        var salesJson = tryParseJSON(salesStr);
+
             //console.log(salesJson);
 
         if (salesJson.length > 0) {
@@ -757,7 +771,7 @@
             freeProductId.id = `Sales_${index}__FreeProductId`;
             freeProductId.name = `Sales[${index}].FreeProductId`;
             freeProductId.classList.add('freeProductId');
-            freeProductId.value = value.FreeProductId;
+            freeProductId.value = value.FreeProductID;
             product.appendChild(freeProductId);
 
 
