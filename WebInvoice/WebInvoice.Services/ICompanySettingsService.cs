@@ -8,5 +8,6 @@ namespace WebInvoice.Services
         Task<CompanyDto> GetCompanyInfo();
         Task Edit(CompanyDto companyDto);
         Task ApplyMigration();
+        Task<CompanyDto> GetCompanyInfoById(int id);
     }
 }

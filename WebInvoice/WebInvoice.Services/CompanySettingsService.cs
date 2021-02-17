@@ -49,6 +49,27 @@ namespace WebInvoice.Services
             return companyInfo;
         }
 
+        public async Task<CompanyDto> GetCompanyInfoById(int id)
+        {
+            var company = await companyRepository.GetByIdAsync(id);
+            
+            var companyInfo = new CompanyDto()
+            {
+                Name = company.Name,
+                Address = company.Address,
+                City = company.City,
+                Country = company.Country,
+                Description = company.Description,
+                EIK = company.EIK,
+                Email = company.Email,
+                IsVatRegistered = company.IsVatRegistered,
+                LogoPath = company.LogoPath,
+                MOL = company.MOL,
+                VatId = company.VatId
+            };
+            return companyInfo;
+        }
+
         public async Task Edit(CompanyDto companyDto)
         {
             var company = await companyRepository.All().OrderBy(c => c.Id).LastAsync();
