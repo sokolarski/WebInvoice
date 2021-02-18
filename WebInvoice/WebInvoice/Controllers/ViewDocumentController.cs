@@ -18,7 +18,7 @@ namespace WebInvoice.Controllers
         public async Task<IActionResult> Index(long id)
         {
             var model = await viewDocumentService.GetDocumetnById(5000000011);
-            return View();
+            return View(model);
         }
 
     }
