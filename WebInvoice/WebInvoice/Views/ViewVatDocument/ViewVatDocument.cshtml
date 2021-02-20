@@ -1,0 +1,44 @@
+﻿@model WebInvoice.Dto.ViewDocument.DocumentView
+
+    <div class="d-flex flex-row justify-content-center">
+        <div class="dropdown m-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Принтирай
+            </button>
+            <div class="dropdown-menu" aria-labelledby="print">
+                <a class="dropdown-item" onclick="printInvoice('original')">Оригинал</a>
+                <a class="dropdown-item" href="#" onclick="printInvoice('copy')">Копие</a>
+            </div>
+        </div>
+        <div class="dropdown m-2">
+            <button class="btn btn-outline-danger dropdown-toggle" type="button" id="print" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Експорт в PDF
+            </button>
+            <div class="dropdown-menu" aria-labelledby="print">
+                <a class="dropdown-item" href="#">Оригинал</a>
+                <a class="dropdown-item" href="#">Копие</a>
+            </div>
+        </div>
+        <a href="#" class="btn btn-primary m-2">Промени</a>
+    </div>
+<partial name="_ViewDocumentPartial.cshtml" model="@Model">
+@section Scripts{ 
+    <script>
+        function printInvoice(grif) {
+            var headstr = "<html><head><title>Booking Details</title></head><body>";
+            var footstr = "</body></html>";
+            if (grif == 'copy') {
+                document.getElementById('grif').innerHTML = "КОПИЕ";
+            } else if (grif == 'original') {
+                document.getElementById('grif').innerHTML = "ОРИГИНАЛ";
+            }
+            var newstr = document.getElementById('document').innerHTML;
+            var oldstr = document.body.innerHTML;
+            var result = headstr + newstr + footstr;
+            document.body.innerHTML = result;
+            window.print();
+            document.body.innerHTML = oldstr;
+            return false;
+        }
+    </script>
+} 

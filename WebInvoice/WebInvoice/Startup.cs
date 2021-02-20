@@ -76,7 +76,7 @@ namespace WebInvoice
             services.AddTransient<IQuantityTypeService, QuantityTypeService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IVatDocumentService, VatDocumentService>();
-            services.AddTransient<IViewDocumentService, ViewDocumentService>();
+            services.AddTransient<IViewVatDocumentService, ViewVatDocumentService>();
 
           
         }

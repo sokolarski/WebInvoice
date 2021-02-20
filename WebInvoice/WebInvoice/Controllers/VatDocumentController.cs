@@ -15,7 +15,7 @@ using WebInvoice.Services;
 namespace WebInvoice.Controllers
 {
     [Authorize]
-    public class DocumentController : Controller
+    public class VatDocumentController : Controller
     {
         private readonly ICompanyDeletableEntityRepository<Company> companyRepository;
         private readonly IVatTypeService vatTypeService;
@@ -24,7 +24,7 @@ namespace WebInvoice.Controllers
         private readonly IBankAccountService bankAccountService;
         private readonly IVatDocumentService vatDocumentService;
 
-        public DocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
+        public VatDocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
             IVatTypeService vatTypeService,
             IEmployeeService employeeService,
             IPaymentTypeService paymentTypeService,
@@ -47,11 +47,7 @@ namespace WebInvoice.Controllers
         public async Task<IActionResult> CreateInvoice()
         {
             var model =await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Invoice);
-            var vatTypes = vatTypeService.GetAll();
-            this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
-            this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
-            this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
-            this.ViewBag.BankAccounts =await bankAccountService.GetAllCompanyBankAccounts();
+            await SetViewBagDataAsync();
             return View("Create",model);
         }
 
@@ -63,13 +59,11 @@ namespace WebInvoice.Controllers
                 await vatDocumentService.CreateVatDocumentAsync(vatDocumentDto);
                 if (vatDocumentDto.HasErrors)
                 {
-                    this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypeService.GetAll());
-                    this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
-                    this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
-                    this.ViewBag.BankAccounts = await bankAccountService.GetAllCompanyBankAccounts();
+                    await SetViewBagDataAsync();
                     return View(vatDocumentDto);
                 }
 
+                return RedirectToAction("ViewVatDocument", "ViewVatDocument", new { id = vatDocumentDto.Id });
                 //return ok
             }
             foreach (var modelState in ModelState.Values)
@@ -79,13 +73,18 @@ namespace WebInvoice.Controllers
                     vatDocumentDto.ErrorMassages.Add(error.ErrorMessage);
                 }
             }
+            await SetViewBagDataAsync();
+
+            return View(vatDocumentDto);
+        }
+
+        private async Task SetViewBagDataAsync()
+        {
             var vatTypes = vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
             this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
             this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();
             this.ViewBag.BankAccounts = await bankAccountService.GetAllCompanyBankAccounts();
-
-            return View(vatDocumentDto);
         }
     }
 }

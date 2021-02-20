@@ -2,7 +2,7 @@
 @model VatDocumentDto
 @inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 
-<form asp-controller="Document" asp-action="Create" id="form1" autocomplete="off" method="post">
+<form asp-controller="VatDocument" asp-action="Create" id="form1" autocomplete="off" method="post">
     <input type="hidden" asp-for="Id" value="@Model.Id" />
     <input type="hidden" asp-for="Type" />
     <h1 class="text-center">@userCompanyData.CompanyName - @userCompanyData.CompanyObjectName </h1>

@@ -25,9 +25,11 @@ namespace WebInvoice.Dto.ViewDocument
 
         public decimal SubTottal { get; set; }
 
-        public decimal? Vat { get; set; }
+        public decimal Vat { get; set; }
 
         public decimal Tottal { get; set; }
+
+        public string TottalSlovom { get; set; }
 
         public string CreatedDate { get; set; }
 

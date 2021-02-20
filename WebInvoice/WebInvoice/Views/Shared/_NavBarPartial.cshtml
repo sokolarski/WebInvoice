@@ -26,9 +26,9 @@
                 Нов документ
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" asp-controller="Document" asp-action="CreateInvoice">Фактура</a>
-                <a class="dropdown-item" href="#">Кредитно Известие</a>
-                <a class="dropdown-item" href="#">Дебитно известие</a>
+                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateInvoice">Фактура</a>
+                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateCredit">Кредитно Известие</a>
+                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateDebit">Дебитно известие</a>
                 <a class="dropdown-item" href="#">Проформа фактура</a>
                 <a class="dropdown-item" href="#">Протокол</a>
                 <a class="dropdown-item" href="#">Стокова разписка</a>

@@ -4,7 +4,7 @@ using WebInvoice.Dto.ViewDocument;
 
 namespace WebInvoice.Services
 {
-    public interface IViewDocumentService
+    public interface IViewVatDocumentService
     {
         Task<DocumentView> GetDocumetnById(long id);
     }

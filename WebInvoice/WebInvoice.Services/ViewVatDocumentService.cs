@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 using WebInvoice.Data.CompanyData.Models;
 using WebInvoice.Data.Repository.Repositories;
 using WebInvoice.Dto.ViewDocument;
+using Slovom;
 
 namespace WebInvoice.Services
 {
-    public class ViewDocumentService : IViewDocumentService
+    public class ViewVatDocumentService : IViewVatDocumentService
     {
         private readonly ICompanyDeletableEntityRepository<VatDocument> vatDocumentRepo;
         private readonly ICompanySettingsService companySettingsService;
@@ -18,7 +19,7 @@ namespace WebInvoice.Services
         private readonly IPaymentTypeService paymentTypeService;
         private readonly IBankAccountService bankAccountService;
 
-        public ViewDocumentService(
+        public ViewVatDocumentService(
             ICompanyDeletableEntityRepository<VatDocument> vatDocumentRepo,
             ICompanySettingsService companySettingsService,
             IPartnerService partnerService,
@@ -54,7 +55,7 @@ namespace WebInvoice.Services
                 CreatedDate = document.CreatedDate.ToString("dd.MM.yyyy"),
                 VatReasonDate = document.VatReasonDate.ToString("dd.MM.yyyy"),
                 SubTottal = document.SubTottal,
-                Vat = document.Vat,
+                Vat = document.Vat ?? 0,
                 Tottal = document.Tottal,
                 Description = document.Description,
                 FreeText = document.FreeText,
@@ -64,6 +65,7 @@ namespace WebInvoice.Services
                 RecipientEmployee = document.RecipientEmployee?.FullName,
 
             };
+            SetTottalSlovom(documentView);
 
             documentView.Company = await companySettingsService.GetCompanyInfoById(document.CompanyId);
             documentView.Partner = await partnerService.GetPartnerById(document.PartnerId);
@@ -161,6 +163,14 @@ namespace WebInvoice.Services
             }
             documentView.TottalByVats = tottalByVat;
             return documentView;
+        }
+
+        private void SetTottalSlovom(DocumentView documentView)
+        {
+            var TottalString = documentView.Tottal.ToString("F2").Split('.');
+            var words = new BgNumberSpeller().Spell(long.Parse(TottalString[0]));
+            var result = $"{words} лева и {TottalString[1]} ст.";
+            documentView.TottalSlovom = result;
         }
 
         private string SetType(string type)
