@@ -63,6 +63,7 @@ namespace WebInvoice.Services
                 ObjectName = document.CompanyObject.Name,
                 WriterEmployee = document.WriterEmployee?.FullName,
                 RecipientEmployee = document.RecipientEmployee?.FullName,
+                Grif="ОРИГИНАЛ",
 
             };
             SetTottalSlovom(documentView);

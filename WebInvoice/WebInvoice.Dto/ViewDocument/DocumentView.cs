@@ -29,6 +29,8 @@ namespace WebInvoice.Dto.ViewDocument
 
         public decimal Tottal { get; set; }
 
+        public string Grif { get; set; }
+
         public string TottalSlovom { get; set; }
 
         public string CreatedDate { get; set; }

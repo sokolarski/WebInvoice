@@ -15,8 +15,8 @@
                 Експорт в PDF
             </button>
             <div class="dropdown-menu" aria-labelledby="print">
-                <a class="dropdown-item" href="#">Оригинал</a>
-                <a class="dropdown-item" href="#">Копие</a>
+                <a class="dropdown-item" asp-controller="ViewVatDocument" asp-action="ExportPdfOriginal" asp-route-id="@Model.Id">Оригинал</a>
+                <a class="dropdown-item" asp-controller="ViewVatDocument" asp-action="ExportPdfCopy" asp-route-id="@Model.Id">Копие</a>
             </div>
         </div>
         <a href="#" class="btn btn-primary m-2">Промени</a>
