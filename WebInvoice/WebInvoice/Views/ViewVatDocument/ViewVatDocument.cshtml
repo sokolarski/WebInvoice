@@ -19,7 +19,7 @@
                 <a class="dropdown-item" asp-controller="ViewVatDocument" asp-action="ExportPdfCopy" asp-route-id="@Model.Id">Копие</a>
             </div>
         </div>
-        <a href="#" class="btn btn-primary m-2">Промени</a>
+        <a asp-controller="VatDocument" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary m-2">Редактирай</a>
     </div>
 <partial name="_ViewDocumentPartial.cshtml" model="@Model">
 @section Scripts{ 

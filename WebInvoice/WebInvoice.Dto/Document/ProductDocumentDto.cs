@@ -36,5 +36,7 @@ namespace WebInvoice.Dto.Document
 
         public int VatTypeId { get; set; }
 
+        public long SaleId { get; set; }
+
     }
 }

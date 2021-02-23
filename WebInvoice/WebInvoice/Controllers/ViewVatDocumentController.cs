@@ -59,5 +59,12 @@ namespace WebInvoice.Controllers
             return File(stream, "application/pdf", documentName);
         }
 
+        public async Task<IActionResult> PdfDocument(long id)
+        {
+            var model = await viewDocumentService.GetDocumetnById(id);
+
+            return View(model);
+        }
+
     }
 }

@@ -51,6 +51,54 @@ namespace WebInvoice.Controllers
             return View("Create",model);
         }
 
+        public async Task<IActionResult> CreateCredit()
+        {
+            var model = await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Credit);
+            await SetViewBagDataAsync();
+            return View("Create", model);
+        }
+
+        public async Task<IActionResult> CreateDebit()
+        {
+            var model = await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Debit);
+            await SetViewBagDataAsync();
+            return View("Create", model);
+        }
+
+        public async Task<IActionResult> Edit(long id)
+        {
+            var model = await vatDocumentService.PrepareEditVatDocumentModelAsync(id);
+            await SetViewBagDataAsync();
+            return View("Edit", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(VatDocumentDto vatDocumentDto)
+        {
+            if (ModelState.IsValid)
+            {
+                await vatDocumentService.EditVatDocumentAsync(vatDocumentDto);
+                if (vatDocumentDto.HasErrors)
+                {
+                    await SetViewBagDataAsync();
+                    return View(vatDocumentDto);
+                }
+
+                return RedirectToAction("ViewVatDocument", "ViewVatDocument", new { id = vatDocumentDto.Id });
+                //return ok
+            }
+            foreach (var modelState in ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    vatDocumentDto.ErrorMassages.Add(error.ErrorMessage);
+                }
+            }
+            await SetViewBagDataAsync();
+
+            return View(vatDocumentDto);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(VatDocumentDto vatDocumentDto)
         {

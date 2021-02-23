@@ -1,6 +1,6 @@
 ﻿@model WebInvoice.Dto.ViewDocument.DocumentView
 
-<div id="document">
+<div id="document" >
     <table width="1000px" style="font-family:sans-serif;font-size:16px; margin-left:auto; margin-right:auto; table-layout:fixed; border-collapse:separate; word-wrap: break-word;">
         <tr>
             <td style="font-size:2.2em; font-weight:bold; width:500px;">
@@ -20,7 +20,7 @@
         </tr>
         <tr style="font-size:1.2em; font-weight:700">
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;">
+                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word;">
                     <tr>
                         <td style="text-decoration:underline">
                             Получател:
@@ -57,7 +57,7 @@
                 </table>
             </td>
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;">
+                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word;">
                     <tr>
                         <td style="text-decoration:underline">
                             Доставчик:
@@ -96,9 +96,9 @@
         </tr>
         <tr>
             <td colspan="2">
-                <table style="table-layout:fixed; width:980px ; word-wrap:break-word; margin-left:auto; margin-right:auto;margin-top:25px; margin-bottom:25px;">
+                <table style="table-layout:fixed; width:980px ; word-wrap:break-word; margin-left:auto; margin-right:auto;margin-top:25px; margin-bottom:25px; border-collapse: collapse; line-height:1.5rem;">
                     <thead>
-                        <tr style="background-color:grey"><th width="30">№</th><th width="400">Артикул</th><th style="width:125px; text-align:right">Мярка</th><th style="width:125px; text-align:right">Количество</th><th style="width:125px; text-align:right">Цена</th><th style="width:125px; text-align:right">Сума</th></tr>
+                        <tr style="background-color:grey !important" class="printBgcolor"><th width="30">№</th><th width="400">Артикул</th><th style="width:125px; text-align:right">Мярка</th><th style="width:125px; text-align:right">Количество</th><th style="width:125px; text-align:right">Цена</th><th style="width:125px; text-align:right">Сума</th></tr>
                     </thead>
                     @{var count = 1;}
                     @foreach (var product in Model.Products)
@@ -111,8 +111,8 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="text-align:right; font-size:1.3em">
-                <table style="float: right; margin-right:30px">
+            <td colspan="2">
+                <table style="float: right; margin-right:30px;text-align:right; font-size:1.3em;">
                     <tr><th width="125px">ОБЩО:</th></tr>
                     <tr><th>@Model.SubTottal.ToString("F2")</th></tr>
                     <tr><th>@Model.Vat.ToString("F2")</th></tr>
@@ -120,14 +120,14 @@
                 </table>
                 @foreach (var tottalByVat in Model.TottalByVats)
                 {
-                    <table style="float: right;">
+                    <table style="float: right;text-align:right; font-size:1.3em;">
                         <tr><th width="125px">ДДС-@tottalByVat.Percentage.ToString("F2")%</th></tr>
                         <tr><td>@tottalByVat.Base.ToString("F2")</td></tr>
                         <tr><td>@tottalByVat.Vat.ToString("F2")</td></tr>
                         <tr><td>@tottalByVat.Tottal.ToString("F2")</td></tr>
                     </table>
                 }
-                <table style="float: right;">
+                <table style="float: right; text-align:right; font-size:1.3em;">
                     <tr><th width="125px">&nbsp;</th></tr>
                     <tr><th>Основа:</th></tr>
                     <tr><th>ДДС:</th></tr>
@@ -140,7 +140,7 @@
         </tr>
         <tr>
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;">
+                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;;">
                     <tr><td>Място на сделката: @Model.ObjectCity / Обект: @Model.ObjectName</td></tr>
                     <tr><td>Основание на сделката: @Model.FreeText</td></tr>
                 </table>

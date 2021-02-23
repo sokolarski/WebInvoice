@@ -8,5 +8,7 @@ namespace WebInvoice.Services
     {
         Task<VatDocumentDto> PrepareVatDocumentModelAsync(VatDocumentTypes vatDocumentType);
         Task<VatDocumentDto> CreateVatDocumentAsync(VatDocumentDto vatDocumentDto);
+        Task<VatDocumentDto> PrepareEditVatDocumentModelAsync(long id);
+        Task<VatDocumentDto> EditVatDocumentAsync(VatDocumentDto vatDocumentDto);
     }
 }
