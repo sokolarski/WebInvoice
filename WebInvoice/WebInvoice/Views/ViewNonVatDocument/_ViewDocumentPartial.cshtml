@@ -6,13 +6,14 @@
             <td style="width:1000px;" colspan="2">
                 <table style="width:1000px;">
                     <tr>
-                        <td style=" width:725px;font-size: 2.2em; font-weight: bold;">@Model.Type: №   @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString())</td>
+                        <td style=" width:725px;font-size: 2.2em; font-weight: bold;">@Model.Type: №  @Model.Id.ToString()</td>
                         <td style="font-size:1.8em; font-weight:bold; text-align:right">Дата: @Model.CreatedDate</td>
                     </tr>
                 </table>
             </td>
+           
             @*<td style="font-size:2.2em; font-weight:bold; width:500px;">
-            @Model.Type: №  @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
+            @Model.Type: №  @Model.Id.ToString()
         </td>
         <td align="right" style="font-size:1.8em; font-weight:bold">
             Дата: @Model.CreatedDate
@@ -23,7 +24,7 @@
                 @Model.Grif
             </td>
             <td align="right">
-                Дата на дан. съб.: @Model.VatReasonDate
+                @*Дата на дан. съб.: @Model.VatReasonDate*@
             </td>
         </tr>
         <tr style="font-size:1.2em; font-weight:700">

@@ -77,8 +77,10 @@ namespace WebInvoice
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IVatDocumentService, VatDocumentService>();
             services.AddTransient<IViewVatDocumentService, ViewVatDocumentService>();
+            services.AddTransient<INonVatDocumentService, NonVatDocumentService>();
+            services.AddTransient<IViewNonVatDocumentService, ViewNonVatDocumentService>();
 
-          
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

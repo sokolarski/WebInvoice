@@ -1,34 +1,35 @@
 ﻿@model WebInvoice.Dto.ViewDocument.DocumentView
-
-<div id="document" >
-    <table width="1000px" style="font-family:sans-serif;font-size:16px; margin-left:auto; margin-right:auto; table-layout:fixed; border-collapse:separate; word-wrap: break-word;">
+@{ Layout = null; }
+<div style="height:50px; width:100%">&nbsp;</div>
+<div id="document" style="line-height:1.5rem; color:#212529">
+    <table width="1000px" style="font-family:sans-serif;font-size:16px; margin-left:auto; margin-right:auto; table-layout:fixed; border-collapse:separate; word-wrap: break-word;line-height:2rem;">
         <tr>
             <td style="width:1000px;" colspan="2">
                 <table style="width:1000px;">
                     <tr>
-                        <td style=" width:725px;font-size: 2.2em; font-weight: bold;">@Model.Type: №   @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString())</td>
+                        <td style=" width:725px;font-size: 2.2em; font-weight: bold;">@Model.Type: №  @Model.Id.ToString()</td>
                         <td style="font-size:1.8em; font-weight:bold; text-align:right">Дата: @Model.CreatedDate</td>
                     </tr>
                 </table>
             </td>
             @*<td style="font-size:2.2em; font-weight:bold; width:500px;">
-            @Model.Type: №  @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
-        </td>
-        <td align="right" style="font-size:1.8em; font-weight:bold">
-            Дата: @Model.CreatedDate
-        </td>*@
+                    @Model.Type: №  @Model.Id.ToString()
+                </td>
+                <td align="right" style="font-size:1.8em; font-weight:bold">
+                    Дата: @Model.CreatedDate
+                </td>*@
         </tr>
         <tr style="font-size:1.1em;">
             <td id="grif" style="font-weight:bold">
                 @Model.Grif
             </td>
             <td align="right">
-                Дата на дан. съб.: @Model.VatReasonDate
+                @*Дата на дан. съб.: @Model.VatReasonDate*@
             </td>
         </tr>
         <tr style="font-size:1.2em; font-weight:700">
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word;">
+                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word; line-height:1.9rem;">
                     <tr>
                         <td style="text-decoration:underline">
                             Получател:
@@ -65,7 +66,7 @@
                 </table>
             </td>
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word;">
+                <table style="font-size: 1.2em; font-weight: 700;table-layout:fixed; width: 490px; word-wrap: break-word; line-height:1.9rem;">
                     <tr>
                         <td style="text-decoration:underline">
                             Доставчик:
@@ -104,9 +105,9 @@
         </tr>
         <tr>
             <td colspan="2">
-                <table style="table-layout:fixed; width:980px ; word-wrap:break-word; margin-left:auto; margin-right:auto;margin-top:25px; margin-bottom:25px; border-collapse: collapse; line-height:1.5rem;">
+                <table style="table-layout:fixed; width:980px ; word-wrap:break-word; margin-left:auto; margin-right:auto;margin-top:25px; margin-bottom:25px; border-collapse: collapse; line-height:1.4rem;">
                     <thead>
-                        <tr style="background-color:grey !important" class="printBgcolor"><th width="30">№</th><th width="400">Артикул</th><th style="width:125px; text-align:right">Мярка</th><th style="width:125px; text-align:right">Количество</th><th style="width:125px; text-align:right">Цена</th><th style="width:125px; text-align:right">Сума</th></tr>
+                        <tr style="background-color:grey"><th width="30">№</th><th width="400">Артикул</th><th style="width:125px; text-align:right">Мярка</th><th style="width:125px; text-align:right">Количество</th><th style="width:125px; text-align:right">Цена</th><th style="width:125px; text-align:right">Сума</th></tr>
                     </thead>
                     @{var count = 1;}
                     @foreach (var product in Model.Products)
@@ -120,7 +121,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <table style="float: right; margin-right:30px;text-align:right; font-size:1.3em;">
+                <table style="float: right; margin-right:30px;text-align:right; font-size:1.3em; line-height:1.7rem;">
                     <tr><th width="125px">ОБЩО:</th></tr>
                     <tr><th>@Model.SubTottal.ToString("F2")</th></tr>
                     <tr><th>@Model.Vat.ToString("F2")</th></tr>
@@ -128,14 +129,14 @@
                 </table>
                 @foreach (var tottalByVat in Model.TottalByVats)
                 {
-                    <table style="float: right;text-align:right; font-size:1.3em;">
+                    <table style="float: right;text-align:right; font-size:1.3em; line-height:1.7rem;">
                         <tr><th width="125px">ДДС-@tottalByVat.Percentage.ToString("F2")%</th></tr>
                         <tr><td>@tottalByVat.Base.ToString("F2")</td></tr>
                         <tr><td>@tottalByVat.Vat.ToString("F2")</td></tr>
                         <tr><td>@tottalByVat.Tottal.ToString("F2")</td></tr>
                     </table>
                 }
-                <table style="float: right; text-align:right; font-size:1.3em;">
+                <table style="float: right; text-align:right; font-size:1.3em; line-height:1.7rem;">
                     <tr><th width="125px">&nbsp;</th></tr>
                     <tr><th>Основа:</th></tr>
                     <tr><th>ДДС:</th></tr>
@@ -148,13 +149,13 @@
         </tr>
         <tr>
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;;">
+                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;  line-height:1.3rem;">
                     <tr><td>Място на сделката: @Model.ObjectCity / Обект: @Model.ObjectName</td></tr>
                     <tr><td>Основание на сделката: @Model.FreeText</td></tr>
                 </table>
             </td>
             <td style="border:1px solid; border-radius:16px; padding:5px 5px 5px 5px; width:500px;">
-                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;">
+                <table style="table-layout:fixed; width:490px ; word-wrap:break-word;line-height:1.3rem;">
                     <tr>
                         <td>Плащане: @Model.PaymentType.Name</td>
                     </tr>

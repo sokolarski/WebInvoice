@@ -29,9 +29,9 @@
                 <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateInvoice">Фактура</a>
                 <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateCredit">Кредитно Известие</a>
                 <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateDebit">Дебитно известие</a>
-                <a class="dropdown-item" href="#">Проформа фактура</a>
-                <a class="dropdown-item" href="#">Протокол</a>
-                <a class="dropdown-item" href="#">Стокова разписка</a>
+                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateProformaInvoice">Проформа фактура</a>
+                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateProtocol">Протокол</a>
+                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateStock">Стокова разписка</a>
             </div>
         </li>
         <li class="nav-item dropdown">
