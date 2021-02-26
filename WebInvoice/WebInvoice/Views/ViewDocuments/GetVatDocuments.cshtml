@@ -1,0 +1,210 @@
+﻿@using WebInvoice.Dto.ViewDocument
+@model WebInvoice.Services.PaginatedList<DocumentShortView>
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+<div class="justify-content-center">
+    <h3 class="text-center">@userCompanyData.CompanyName</h3>
+    <h3 class="text-center">Документи</h3>
+</div>
+<div class="d-flex justify-content-center invisible" id="loading">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<form method="get" asp-controller="ViewDocuments" asp-action="GetVatDocuments">
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th scope="col" class="align-middle">Документ №</th>
+                <th scope="col" class="align-middle">Получател</th>
+                <th scope="col" class="align-middle">Тип</th>
+                <th scope="col" class="align-middle">Начална дата</th>
+                <th scope="col" class="align-middle">Крайна дата</th>
+                <th scope="col" class="align-middle"></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <th scope="col" class="align-middle form-control-sm"><input name="documentId" value="@this.ViewBag.documentid"></th>
+                <th scope="col" class="align-middle form-control-sm"><input name="partnerName" id="findPartner" oninput="findPartnerAjax()" list="partnersDataList" value="@this.ViewBag.partnerName"><datalist id="partnersDataList"></datalist></th>
+                <th scope="col" class="align-middle form-control-sm">
+                    <select name="type" class="form-control-sm">
+                        <option value="vatDocument">Данъчни док.</option>
+                        <option value="nonVatDocument">Складови док.</option>
+                        <option value="invoice">Фактура</option>
+                        <option value="credit">Кредидно</option>
+                        <option value="debit">Дебирно</option>
+                        <option value="stock">Стокова</option>
+                        <option value="protocol">Протокол</option>
+                        <option value="proformInvoice">Проф. фактура</option>
+                    </select>
+                </th>
+                <th scope="col" class="align-middle form-control-sm"><input id="startDate" name="startDate"data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.startDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="startDate" data-valmsg-replace="true"></span></div></th>
+                <th scope="col" class="align-middle form-control-sm"><input id="endDate" name="endDate"data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.endDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="endDate" data-valmsg-replace="true"></span></div></th>
+                <th scope="col" class="align-middle form-control-sm"> <button type="submit" class="btn btn-outline-dark">Търси</button></th>
+
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<table class="table table-hover text-center">
+    <thead>
+        <tr>
+            <th scope="col" class="align-middle">№</th>
+            <th scope="col" class="align-middle">Име на получател</th>
+            <th scope="col" class="align-middle">Тип</th>
+            <th scope="col" class="align-middle">Дата</th>
+            <th scope="col" class="align-middle">Основа</th>
+            <th scope="col" class="align-middle">ДДС</th>
+            <th scope="col" class="align-middle">Общо</th>
+            <th scope="col" class="align-middle"></th>
+        </tr>
+    </thead>
+    <tbody id="table">
+        @foreach (var vatDocument in Model)
+        {
+            <tr>
+                <td class="align-middle">@(new string('0',10 - vatDocument.Id.ToString().Length) + vatDocument.Id.ToString() )</td>
+                <td class="align-middle text-left">@vatDocument.PartnerName</td>
+                <td class="align-middle">@vatDocument.DocumentType</td>
+                <td class="align-middle">@vatDocument.CreatedDate</td>
+                <td class="align-middle">@vatDocument.Base.ToString("F3")</td>
+                <td class="align-middle">@vatDocument.Vat.ToString("F3")</td>
+                <td class="align-middle">@vatDocument.Tottal.ToString("F3")</td>
+                <td class="align-middle"><a asp-controller="ViewVatDocument" asp-action="ViewVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item @prevDisabled">
+            <a asp-action="GetVatDocuments"
+               asp-route-pageNumber="@(Model.PageIndex - 1)" class="page-link " aria-label="Предишна">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Предишна</span>
+            </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">@Model.PageIndex</a></li>
+        <li class="page-item @nextDisabled">
+            <a asp-action="GetVatDocuments"
+               asp-route-pageNumber="@(Model.PageIndex + 1)" class="page-link " aria-label="Следваща">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Следваща</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#startDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+
+            $("#endDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+        });
+
+        $.validator.addMethod('custom', function (value, element, params) {
+            return validatedate(value);
+        }, "Невалидна дата!");
+
+        jQuery.validator.unobtrusive.adapters.add("custom", {}, function (options) {
+            options.rules["custom"] = true;
+            options.messages["custom"] = function () { return $(options.element).attr('data-val-custom'); };
+        });
+
+        function findPartnerAjax() {
+            var dataList = document.getElementById('partnersDataList');
+            var value = document.getElementById('findPartner').value;
+            var route = "/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/Partner/FindPartnerDataListAjax?name=";
+            if (value != '') {
+
+            var loading = document.getElementById('loading');
+            loading.classList.remove('invisible');
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    dataList.innerHTML = "";
+                    loading.classList.add('invisible');
+                    partnerDataListValues = [];
+                    result.forEach(function (item) {
+
+                        var option = document.createElement('option');
+                        option.value = item.name;
+                        option.id = item.id;
+                        dataList.appendChild(option);
+
+                    });
+                }
+            };
+            xhttp.open("GET", `${route}${value}`, true);
+                xhttp.send();
+            }
+        }
+        function validatedate(inputText) {
+            const dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\.](0?[1-9]|1[012])[\.]\d{4}$/;
+            // Match the date format through regular expression
+            let regex = new RegExp(dateformat);
+
+            if (regex.test(inputText)) {
+                //Test which seperator is used '/' or '-'
+                var opera1 = inputText.split('.');
+                lopera1 = opera1.length;
+
+                // Extract the string into month, date and year
+                if (lopera1 > 1) {
+                    var pdate = inputText.split('.');
+                }
+                else {
+                    return false;
+                }
+                var dd = parseInt(pdate[0]);
+                var mm = parseInt(pdate[1]);
+                var yy = parseInt(pdate[2]);
+                // Create list of days of a month [assume there is no leap year by default]
+                var ListofDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                if (mm == 1 || mm > 2) {
+                    if (dd > ListofDays[mm - 1]) {
+                        return false;
+                    }
+                }
+                if (mm == 2) {
+                    var lyear = false;
+                    if ((!(yy % 4) && yy % 100) || !(yy % 400)) {
+                        lyear = true;
+                    }
+                    if ((lyear == false) && (dd >= 29)) {
+                        return false;
+                    }
+                    if ((lyear == true) && (dd > 29)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+}
