@@ -141,8 +141,8 @@ namespace WebInvoice.Services
             document.CompanyId = companyId;
             document.WriterEmployeeId = await employeeService.GetOrSetEmployeeIdByNameAsync(vatDocumentDto.WriterEmployee);
             document.RecipientEmployeeId = await partnerEmployeeService.GetOrSetEmployeeIdByNameAsync(vatDocumentDto.RecipientEmployee, vatDocumentDto.PartnerId);
-            document.CreatedDate = DateTime.Parse(vatDocumentDto.CreatedDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
-            document.VatReasonDate = DateTime.Parse(vatDocumentDto.VatReasonDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
+            document.CreatedDate = SetDate(vatDocumentDto.CreatedDate, vatDocumentDto);
+            document.VatReasonDate = SetDate(vatDocumentDto.VatReasonDate, vatDocumentDto);
             document.PaymentTypeId = vatDocumentDto.PaymentTypeId;
             document.BankAccountId = await GetBankAccountIdIfRequare(vatDocumentDto);
             document.Type = (Data.CompanyData.Models.Enums.VatDocumentTypes)vatDocumentDto.Type;
@@ -372,8 +372,8 @@ namespace WebInvoice.Services
             document.CompanyId = companyId;
             document.WriterEmployeeId = await employeeService.GetOrSetEmployeeIdByNameAsync(vatDocumentDto.WriterEmployee);
             document.RecipientEmployeeId = await partnerEmployeeService.GetOrSetEmployeeIdByNameAsync(vatDocumentDto.RecipientEmployee, vatDocumentDto.PartnerId);
-            document.CreatedDate = DateTime.Parse(vatDocumentDto.CreatedDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
-            document.VatReasonDate = DateTime.Parse(vatDocumentDto.VatReasonDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
+            document.CreatedDate = SetDate(vatDocumentDto.CreatedDate,vatDocumentDto);
+            document.VatReasonDate = SetDate(vatDocumentDto.VatReasonDate, vatDocumentDto);
             document.PaymentTypeId = vatDocumentDto.PaymentTypeId;
             document.BankAccountId = await GetBankAccountIdIfRequare(vatDocumentDto);
             document.Type = (Data.CompanyData.Models.Enums.VatDocumentTypes)vatDocumentDto.Type;
@@ -513,6 +513,18 @@ namespace WebInvoice.Services
             }
 
             return documentId + 1;
+        }
+
+        private DateTime SetDate(string date , VatDocumentDto vatDocumentDto)
+        {
+            DateTime parsedDate;
+            var isValidDate = DateTime.TryParse(date, new CultureInfo("bg-BG"), DateTimeStyles.None, out parsedDate);
+            if (isValidDate)
+            {
+                return parsedDate;
+            }
+            vatDocumentDto.ErrorMassages.Add("Формата на датата е грешен!");
+            return parsedDate;
         }
     }
 }

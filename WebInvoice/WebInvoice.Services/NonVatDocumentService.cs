@@ -117,19 +117,19 @@ namespace WebInvoice.Services
             return model;
         }
 
-        public async Task<NonVatDocumentDto> EditNonVatDocumentAsync(NonVatDocumentDto NonVatDocumentDto)
+        public async Task<NonVatDocumentDto> EditNonVatDocumentAsync(NonVatDocumentDto nonVatDocumentDto)
         {
-            var document = await NonVatDocumentRepo.GetByIdAsync(NonVatDocumentDto.Id);
+            var document = await NonVatDocumentRepo.GetByIdAsync(nonVatDocumentDto.Id);
             if (document is null)
             {
 
-                NonVatDocumentDto.ErrorMassages.Add($"Грешка, не съществува документ с №{NonVatDocumentDto.Id}!");
-                return NonVatDocumentDto;
+                nonVatDocumentDto.ErrorMassages.Add($"Грешка, не съществува документ с №{nonVatDocumentDto.Id}!");
+                return nonVatDocumentDto;
             }
-            if (NonVatDocumentDto.PartnerId == 0)
+            if (nonVatDocumentDto.PartnerId == 0)
             {
-                NonVatDocumentDto.ErrorMassages.Add($"Моля въведете контрагент!");
-                return NonVatDocumentDto;
+                nonVatDocumentDto.ErrorMassages.Add($"Моля въведете контрагент!");
+                return nonVatDocumentDto;
             }
 
             var companyId = await NonVatDocumentRepo.Context.Companies.OrderBy(c => c.Id).Select(c => c.Id).LastAsync();
@@ -138,31 +138,31 @@ namespace WebInvoice.Services
                 .Where(o => o.GUID == userCompanyTemp.CompanyObjectGUID)
                 .Select(o => o.Id)
                 .FirstOrDefaultAsync();
-            document.PartnerId = NonVatDocumentDto.PartnerId;
+            document.PartnerId = nonVatDocumentDto.PartnerId;
             document.CompanyId = companyId;
-            document.WriterEmployeeId = await employeeService.GetOrSetEmployeeIdByNameAsync(NonVatDocumentDto.WriterEmployee);
-            document.RecipientEmployeeId = await partnerEmployeeService.GetOrSetEmployeeIdByNameAsync(NonVatDocumentDto.RecipientEmployee, NonVatDocumentDto.PartnerId);
-            document.CreatedDate = DateTime.Parse(NonVatDocumentDto.CreatedDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
-            document.VatReasonDate = DateTime.Parse(NonVatDocumentDto.VatReasonDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
-            document.PaymentTypeId = NonVatDocumentDto.PaymentTypeId;
-            document.BankAccountId = await GetBankAccountIdIfRequare(NonVatDocumentDto);
-            document.Type = (Data.CompanyData.Models.Enums.NonVatDocumentTypes)NonVatDocumentDto.Type;
-            document.FreeText = NonVatDocumentDto.FreeText;
-            document.Description = NonVatDocumentDto.Description;
+            document.WriterEmployeeId = await employeeService.GetOrSetEmployeeIdByNameAsync(nonVatDocumentDto.WriterEmployee);
+            document.RecipientEmployeeId = await partnerEmployeeService.GetOrSetEmployeeIdByNameAsync(nonVatDocumentDto.RecipientEmployee, nonVatDocumentDto.PartnerId);
+            document.CreatedDate = SetDate(nonVatDocumentDto.CreatedDate, nonVatDocumentDto);
+            document.VatReasonDate = SetDate(nonVatDocumentDto.VatReasonDate, nonVatDocumentDto);
+            document.PaymentTypeId = nonVatDocumentDto.PaymentTypeId;
+            document.BankAccountId = await GetBankAccountIdIfRequare(nonVatDocumentDto);
+            document.Type = (Data.CompanyData.Models.Enums.NonVatDocumentTypes)nonVatDocumentDto.Type;
+            document.FreeText = nonVatDocumentDto.FreeText;
+            document.Description = nonVatDocumentDto.Description;
 
-            await ProcessingEditSales(NonVatDocumentDto);
+            await ProcessingEditSales(nonVatDocumentDto);
 
-            document.SubTottal = NonVatDocumentDto.SubTottal;
-            document.Vat = NonVatDocumentDto.Vat;
-            document.Tottal = NonVatDocumentDto.Tottal;
+            document.SubTottal = nonVatDocumentDto.SubTottal;
+            document.Vat = nonVatDocumentDto.Vat;
+            document.Tottal = nonVatDocumentDto.Tottal;
 
-            if (NonVatDocumentDto.HasErrors)
+            if (nonVatDocumentDto.HasErrors)
             {
-                return NonVatDocumentDto;
+                return nonVatDocumentDto;
             }
             NonVatDocumentRepo.Update(document);
             await NonVatDocumentRepo.SaveChangesAsync();
-            return NonVatDocumentDto;
+            return nonVatDocumentDto;
         }
 
         private async Task ProcessingEditSales(NonVatDocumentDto nonVatDocumentDto)
@@ -373,8 +373,8 @@ namespace WebInvoice.Services
             document.CompanyId = companyId;
             document.WriterEmployeeId = await employeeService.GetOrSetEmployeeIdByNameAsync(nonVatDocumentDto.WriterEmployee);
             document.RecipientEmployeeId = await partnerEmployeeService.GetOrSetEmployeeIdByNameAsync(nonVatDocumentDto.RecipientEmployee, nonVatDocumentDto.PartnerId);
-            document.CreatedDate = DateTime.Parse(nonVatDocumentDto.CreatedDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
-            document.VatReasonDate = DateTime.Parse(nonVatDocumentDto.VatReasonDate, new CultureInfo("bg-BG"), DateTimeStyles.None);
+            document.CreatedDate = SetDate(nonVatDocumentDto.CreatedDate, nonVatDocumentDto);
+            document.VatReasonDate = SetDate(nonVatDocumentDto.VatReasonDate, nonVatDocumentDto);
             document.PaymentTypeId = nonVatDocumentDto.PaymentTypeId;
             document.BankAccountId = await GetBankAccountIdIfRequare(nonVatDocumentDto);
             document.Type = (Data.CompanyData.Models.Enums.NonVatDocumentTypes)nonVatDocumentDto.Type;
@@ -498,7 +498,7 @@ namespace WebInvoice.Services
             }
             return null;
         }
-        private async Task<long> GetNewNonVatDocumentIdAsync(NonVatDocumentDto NonVatDocumentDto)
+        private async Task<long> GetNewNonVatDocumentIdAsync(NonVatDocumentDto nonVatDocumentDto)
         {
             var companyObject = await NonVatDocumentRepo.Context.CompanyObjects
                 .Where(o => o.GUID == userCompanyTemp.CompanyObjectGUID)
@@ -511,6 +511,18 @@ namespace WebInvoice.Services
             }
 
             return documentId + 1;
+        }
+
+        private DateTime SetDate(string date, NonVatDocumentDto nonVatDocumentDto)
+        {
+            DateTime parsedDate;
+            var isValidDate = DateTime.TryParse(date, new CultureInfo("bg-BG"), DateTimeStyles.None, out parsedDate);
+            if (isValidDate)
+            {
+                return parsedDate;
+            }
+            nonVatDocumentDto.ErrorMassages.Add("Формата на датата е грешен!");
+            return parsedDate;
         }
     }
 }
