@@ -10,6 +10,8 @@ namespace WebInvoice.Dto.ViewDocument
     {
         public long Id { get; set; }
 
+        public bool IsVatDocument { get; set; }
+
         public string DocumentType { get; set; }
 
         public string PartnerName { get; set; }

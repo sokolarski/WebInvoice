@@ -10,7 +10,7 @@
         <span class="sr-only">Loading...</span>
     </div>
 </div>
-<form method="get" asp-controller="ViewDocuments" asp-action="GetVatDocuments" autocomplete="off" id="form">
+<form method="get" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" autocomplete="off" id="form">
     <table class="table table-hover text-center">
         <thead>
             <tr>
@@ -19,18 +19,7 @@
                 <th scope="col" class="align-middle">Тип</th>
                 <th scope="col" class="align-middle">Начална дата</th>
                 <th scope="col" class="align-middle">Крайна дата</th>
-                <th scope="col" class="align-middle">
-                    <div class="col">
-                        <small class="form-text">Брой резултати</small>
-                        <select name="itemPerPage" class="form-control-sm">
-                            <option value="10" selected="@(this.ViewBag.itemPerPage == 10)">10</option>
-                            <option value="20" selected="@(this.ViewBag.itemPerPage == 20)">20</option>
-                            <option value="30" selected="@(this.ViewBag.itemPerPage == 30)">30</option>
-                            <option value="40" selected="@(this.ViewBag.itemPerPage == 40)">40</option>
-                        </select>
-                    </div>
-                </th>
-
+                <th scope="col" class="align-middle">Обект</th>
             </tr>
         </thead>
         <tbody>
@@ -39,12 +28,12 @@
                 <th scope="col" class="align-middle form-control-sm"><input name="documentId" value="@this.ViewBag.documentid" id="documentId"></th>
                 <th scope="col" class="align-middle form-control-sm"><input name="partnerName" id="findPartner" oninput="findPartnerAjax()" list="partnersDataList" value="@this.ViewBag.partnerName"><datalist id="partnersDataList"></datalist></th>
                 <th scope="col" class="align-middle form-control-sm">
-                    <select name="type" class="form-control-sm">
+                    <select id="selectListType" name="type" class="form-control-sm">
                         <option value="vatDocument" id="selectListDef" selected="@(this.ViewBag.type == "vatDocument")">Данъчни док.</option>
                         <option value="nonVatDocument" selected="@(this.ViewBag.type == "nonVatDocument")">Складови док.</option>
                         <option value="invoice" selected="@(this.ViewBag.type == "invoice")">Фактура</option>
-                        <option value="credit" selected="@(this.ViewBag.type == "credit")">Кредидно</option>
-                        <option value="debit" selected="@(this.ViewBag.type == "debit")">Дебирно</option>
+                        <option value="credit" selected="@(this.ViewBag.type == "credit")">Кредитно</option>
+                        <option value="debit" selected="@(this.ViewBag.type == "debit")">Дебитно</option>
                         <option value="stock" selected="@(this.ViewBag.type == "stock")">Стокова</option>
                         <option value="protocol" selected="@(this.ViewBag.type == "protocol")">Протокол</option>
                         <option value="proformInvoice" selected="@(this.ViewBag.type == "proformInvoice")">Проф. фактура</option>
@@ -52,10 +41,39 @@
                 </th>
                 <th scope="col" class="align-middle form-control-sm"><input id="startDate" name="startDate" data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.startDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="startDate" data-valmsg-replace="true"></span></div></th>
                 <th scope="col" class="align-middle form-control-sm"><input id="endDate" name="endDate" data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.endDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="endDate" data-valmsg-replace="true"></span></div></th>
-                <th scope="col" class="align-middle form-control-sm"> <button type="button" onclick="submitOnNew()" class="btn btn-dark">Търси</button><button type="button" onclick="clearFormValues()" class="btn btn-outline-dark ml-1">Изчисти</button></th>
+                <th scope="col" class="align-middle form-control-sm">
+                    <select id="selectListObj" name="objectGuid" class="form-control-sm">
+                        <option value="" id="selectListObjDef" selected="@(this.ViewBag.objGuid == "")">Всички</option>
+                        @foreach (var obj in userCompanyData.CurrentCompanyAppObjects)
+                        {
+                            if (this.ViewBag.objGuid == obj.GUID)
+                            {
+                                <option value="@obj.GUID" selected="selected">@obj.ObjectName</option>
+                            }
+                            else
+                            {
+                                <option value="@obj.GUID">@obj.ObjectName</option>
+                            }
+
+                        }
+                    </select>
+                </th>
             </tr>
         </tbody>
     </table>
+    <div class="d-flex flex-row justify-content-center align-items-center mb-2">
+        <button onclick="submitOnNew()" class="btn btn-dark m-1">Търси</button>
+        <button type="button" onclick="clearFormValues()" class="btn btn-outline-dark m-1">Изчисти</button>
+        <div class="m-1">
+            <select name="itemPerPage" class="form-control">
+                <option value="10" selected="@(this.ViewBag.itemPerPage == 10)">10</option>
+                <option value="20" selected="@(this.ViewBag.itemPerPage == 20)">20</option>
+                <option value="30" selected="@(this.ViewBag.itemPerPage == 30)">30</option>
+                <option value="40" selected="@(this.ViewBag.itemPerPage == 40)">40</option>
+            </select>
+        </div>
+        <small class="form-text m-1">Брой резултати</small>
+    </div>
 
     @if (Model.Count == 0)
     {
@@ -87,7 +105,16 @@
                     <td class="align-middle">@vatDocument.Base.ToString("F3")</td>
                     <td class="align-middle">@vatDocument.Vat.ToString("F3")</td>
                     <td class="align-middle">@vatDocument.Tottal.ToString("F3")</td>
-                    <td class="align-middle"><a asp-controller="ViewVatDocument" asp-action="ViewVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a></td>
+                    <td class="align-middle">
+                        @if (vatDocument.IsVatDocument)
+                        {
+                            <a asp-controller="ViewVatDocument" asp-action="ViewVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="ViewNonVatDocument" asp-action="ViewNonVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -103,14 +130,14 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             <li class="page-item @prevDisabled">
-                <button onclick="submitOnPrevPage()" class="page-link " aria-label="Предишна">
+                <button type="button" onclick="submitOnPrevPage()" class="page-link " aria-label="Предишна">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Предишна</span>
                 </button>
             </li>
             <li class="page-item"><span class="page-link">@Model.PageIndex</span></li>
             <li class="page-item @nextDisabled">
-                <button onclick="submitOnNextPage()" class="page-link " aria-label="Следваща">
+                <button type="button" onclick="submitOnNextPage()" class="page-link " aria-label="Следваща">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Следваща</span>
                 </button>
@@ -126,7 +153,8 @@
             $("#findPartner").val("");
             $("#startDate").val("");
             $("#endDate").val("");
-            $("#selectListDef").attr('selected', 'selected');
+            $("#selectListType").val('vatDocument');
+            $("#selectListObj").val('');
         }
 
         function submitOnNew() {

@@ -39,15 +39,15 @@
                 Преглед
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">По номер документ</a>
-                <a class="dropdown-item" href="#">По партньор</a>
-                <a class="dropdown-item" href="#">По дата</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetVatDocuments">Фактура</a>
-                <a class="dropdown-item" href="#">Кредитно Известие</a>
-                <a class="dropdown-item" href="#">Дебитно известие</a>
-                <a class="dropdown-item" href="#">Проформа фактура</a>
-                <a class="dropdown-item" href="#">Протокол</a>
-                <a class="dropdown-item" href="#">Стокова разписка</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria">По критерии</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="invoice">Фактура</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="credit">Кредитно Известие</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="debit">Дебитно известие</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="proformInvoice">Проформа фактура</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="protocol">Протокол</a>
+                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="stock">Стокова разписка</a>
+                <a class="dropdown-item" asp-controller="ReportDocuments" asp-action="GetReportByCriteria">Справки</a>
+
             </div>
         </li>
         <li class="nav-item dropdown">

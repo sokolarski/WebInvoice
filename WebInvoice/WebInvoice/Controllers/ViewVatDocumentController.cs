@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SelectPdf;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
 {
+    [Authorize]
     public class ViewVatDocumentController : Controller
     {
         private readonly IViewVatDocumentService viewDocumentService;
@@ -31,7 +33,10 @@ namespace WebInvoice.Controllers
             var stream = new MemoryStream();
 
             HtmlToPdf converter = new HtmlToPdf(1100);
+            converter.Options.MarginTop = 15;
+            converter.Options.MarginBottom = 30;
             PdfDocument doc = converter.ConvertHtmlString(txtHtml);
+           
             doc.Save(stream);
             doc.Close();
 

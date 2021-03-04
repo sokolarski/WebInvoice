@@ -1,0 +1,300 @@
+﻿@using WebInvoice.Dto.ViewDocument
+@model WebInvoice.Services.Reports.Report
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+<div class="justify-content-center">
+    <h3 class="text-center">@userCompanyData.CompanyName</h3>
+    <h3 class="text-center">Документи</h3>
+</div>
+<div class="d-flex justify-content-center invisible" id="loading">
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<form method="get" autocomplete="off" id="form">
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th scope="col" class="align-middle">Документ №</th>
+                <th scope="col" class="align-middle">Получател</th>
+                <th scope="col" class="align-middle">Тип</th>
+                <th scope="col" class="align-middle">Начална дата</th>
+                <th scope="col" class="align-middle">Крайна дата</th>
+                <th scope="col" class="align-middle">Обект</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <th scope="col" class="align-middle form-control-sm"><input name="documentId" value="@this.ViewBag.documentid" id="documentId"></th>
+                <th scope="col" class="align-middle form-control-sm"><input name="partnerName" id="findPartner" oninput="findPartnerAjax()" list="partnersDataList" value="@this.ViewBag.partnerName"><datalist id="partnersDataList"></datalist></th>
+                <th scope="col" class="align-middle form-control-sm">
+                    <select id="selectListType" name="type" class="form-control-sm">
+                        <option value="vatDocument" id="selectListDef" selected="@(this.ViewBag.type == "vatDocument")">Данъчни док.</option>
+                        <option value="nonVatDocument" selected="@(this.ViewBag.type == "nonVatDocument")">Складови док.</option>
+                        <option value="invoice" selected="@(this.ViewBag.type == "invoice")">Фактура</option>
+                        <option value="credit" selected="@(this.ViewBag.type == "credit")">Кредитно</option>
+                        <option value="debit" selected="@(this.ViewBag.type == "debit")">Дебитно</option>
+                        <option value="stock" selected="@(this.ViewBag.type == "stock")">Стокова</option>
+                        <option value="protocol" selected="@(this.ViewBag.type == "protocol")">Протокол</option>
+                        <option value="proformInvoice" selected="@(this.ViewBag.type == "proformInvoice")">Проф. фактура</option>
+                    </select>
+                </th>
+                <th scope="col" class="align-middle form-control-sm"><input id="startDate" name="startDate" data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.startDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="startDate" data-valmsg-replace="true"></span></div></th>
+                <th scope="col" class="align-middle form-control-sm"><input id="endDate" name="endDate" data-val="true" data-val-custom="Невалидна дата!" value="@this.ViewBag.endDate"><div><span class="field-validation-valid text-danger" data-valmsg-for="endDate" data-valmsg-replace="true"></span></div></th>
+                <th scope="col" class="align-middle form-control-sm">
+                    <select id="selectListObj" name="objectGuid" class="form-control-sm">
+                        <option value="" id="selectListObjDef" selected="@(this.ViewBag.objGuid == "")">Всички</option>
+                        @foreach (var obj in userCompanyData.CurrentCompanyAppObjects)
+                        {
+                            if (this.ViewBag.objGuid == obj.GUID)
+                            {
+                                <option value="@obj.GUID" selected="selected">@obj.ObjectName</option>
+                            }
+                            else
+                            {
+                                <option value="@obj.GUID">@obj.ObjectName</option>
+                            }
+
+                        }
+                    </select>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <div class="d-flex flex-row justify-content-center align-items-center">
+        <button onclick="submitOnNew()" class="btn btn-dark m-1">Търси</button>
+        <button type="button" onclick="clearFormValues()" class="btn btn-outline-dark m-1">Изчисти</button>
+        <button onclick="exportPdf()" class="btn btn-outline-danger m-1">Експорт в PDF</button>
+    </div>
+    <div class="d-flex flex-row justify-content-center align-items-center mb-2">
+        <div class="m-1">
+            @Model.Documents.CountOfResults рез. / @Model.Documents.TotalPages стр.
+        </div>
+    </div>
+
+    @if (Model.Documents.Count == 0)
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            Няма резултати по зададените критерии!
+        </div>
+    }
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th scope="col" class="align-middle">№</th>
+                <th scope="col" class="align-middle">Име на получател</th>
+                <th scope="col" class="align-middle">Тип</th>
+                <th scope="col" class="align-middle">Дата</th>
+                <th scope="col" class="align-middle">Основа: @Model.Base.ToString("F2")</th>
+                <th scope="col" class="align-middle">ДДС: @Model.Vat.ToString("F2")</th>
+                <th scope="col" class="align-middle">Общо: @Model.Tottal.ToString("F2")</th>
+                <th scope="col" class="align-middle"></th>
+            </tr>
+        </thead>
+        <tbody id="table">
+            @foreach (var vatDocument in Model.Documents)
+            {
+                <tr>
+                    <td class="align-middle">@(new string('0',10 - vatDocument.Id.ToString().Length) + vatDocument.Id.ToString() )</td>
+                    <td class="align-middle text-left">@vatDocument.PartnerName</td>
+                    <td class="align-middle">@vatDocument.DocumentType</td>
+                    <td class="align-middle">@vatDocument.CreatedDate</td>
+                    <td class="align-middle">@vatDocument.Base.ToString("F3")</td>
+                    <td class="align-middle">@vatDocument.Vat.ToString("F3")</td>
+                    <td class="align-middle">@vatDocument.Tottal.ToString("F3")</td>
+                    <td class="align-middle">
+                        @if (vatDocument.IsVatDocument)
+                        {
+                            <a asp-controller="ViewVatDocument" asp-action="ViewVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="ViewNonVatDocument" asp-action="ViewNonVatDocument" asp-route-id="@vatDocument.Id" class="btn btn-info">Преглед</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    @{
+        var prevDisabled = !Model.Documents.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.Documents.HasNextPage ? "disabled" : "";
+    }
+
+    <input type="hidden" name="pageNumber" value="@Model.Documents.PageIndex" id="pageIndex">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item @prevDisabled">
+                <button type="button" onclick="submitOnPrevPage()" class="page-link " aria-label="Предишна">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Предишна</span>
+                </button>
+            </li>
+            <li class="page-item"><span class="page-link">@Model.Documents.PageIndex</span></li>
+            <li class="page-item @nextDisabled">
+                <button type="button" onclick="submitOnNextPage()" class="page-link " aria-label="Следваща">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Следваща</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</form>
+@section Scripts{
+    <script>
+
+        function clearFormValues() {
+            $("#documentId").val("");
+            $("#findPartner").val("");
+            $("#startDate").val("");
+            $("#endDate").val("");
+            $("#selectListType").val('vatDocument');
+            $("#selectListObj").val('');
+        }
+
+        function submitOnNew() {
+            $("#form").validate();
+            $("#form").attr('action', '/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/ReportDocuments/GetReportByCriteria');
+            if ($('#form').valid()) {
+                $("#pageIndex").val(1);
+                $('#form').submit();
+            }
+        }
+
+        function submitOnNextPage() {
+            $("#form").validate();
+            if ($('#form').valid()) {
+                $("#form").attr('action', '/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/ReportDocuments/GetReportByCriteria');
+                let pageElement = $("#pageIndex");
+                let newPage = parseInt(pageElement.val()) + 1;
+                pageElement.val(newPage);
+                $('#form').submit();
+            }
+        }
+
+        function submitOnPrevPage() {
+            $("#form").validate();
+            if ($('#form').valid()) {
+                $("#form").attr('action', '/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/ReportDocuments/GetReportByCriteria');
+                let pageElement = $("#pageIndex");
+                let newPage = parseInt(pageElement.val()) - 1;
+                pageElement.val(newPage);
+                $('#form').submit();
+            }
+        }
+        function exportPdf() {
+             $("#form").validate();
+            if ($('#form').valid()) {
+                $("#form").attr('action', '/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/ReportDocuments/GetReportPdfCriteria');
+                let pageElement = $("#pageIndex");
+                let newPage = parseInt(pageElement.val()) - 1;
+                pageElement.val(newPage);
+                $('#form').submit();
+            }
+        }
+        $(function () {
+            $("#startDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+
+            $("#endDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd.mm.yy",
+                showAnim: "clip",
+            });
+        });
+
+        $.validator.addMethod('custom', function (value, element, params) {
+            return validatedate(value);
+        }, "Невалидна дата!");
+
+        jQuery.validator.unobtrusive.adapters.add("custom", {}, function (options) {
+            options.rules["custom"] = true;
+            options.messages["custom"] = function () { return $(options.element).attr('data-val-custom'); };
+        });
+
+        function findPartnerAjax() {
+            var dataList = document.getElementById('partnersDataList');
+            var value = document.getElementById('findPartner').value;
+            var route = "/@userCompanyData.CompanySlug/@userCompanyData.CompanyObjectSlug/Partner/FindPartnerDataListAjax?name=";
+            if (value != '') {
+
+            var loading = document.getElementById('loading');
+            loading.classList.remove('invisible');
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    dataList.innerHTML = "";
+                    loading.classList.add('invisible');
+                    partnerDataListValues = [];
+                    result.forEach(function (item) {
+
+                        var option = document.createElement('option');
+                        option.value = item.name;
+                        option.id = item.id;
+                        dataList.appendChild(option);
+
+                    });
+                }
+            };
+            xhttp.open("GET", `${route}${value}`, true);
+                xhttp.send();
+            }
+        }
+        function validatedate(inputText) {
+            if (inputText == "") {
+                return true;
+            }
+            const dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\.](0?[1-9]|1[012])[\.]\d{4}$/;
+            // Match the date format through regular expression
+            let regex = new RegExp(dateformat);
+
+            if (regex.test(inputText)) {
+                //Test which seperator is used '/' or '-'
+                var opera1 = inputText.split('.');
+                lopera1 = opera1.length;
+
+                // Extract the string into month, date and year
+                if (lopera1 > 1) {
+                    var pdate = inputText.split('.');
+                }
+                else {
+                    return false;
+                }
+                var dd = parseInt(pdate[0]);
+                var mm = parseInt(pdate[1]);
+                var yy = parseInt(pdate[2]);
+                // Create list of days of a month [assume there is no leap year by default]
+                var ListofDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                if (mm == 1 || mm > 2) {
+                    if (dd > ListofDays[mm - 1]) {
+                        return false;
+                    }
+                }
+                if (mm == 2) {
+                    var lyear = false;
+                    if ((!(yy % 4) && yy % 100) || !(yy % 400)) {
+                        lyear = true;
+                    }
+                    if ((lyear == false) && (dd >= 29)) {
+                        return false;
+                    }
+                    if ((lyear == true) && (dd > 29)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+}

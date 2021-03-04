@@ -11,9 +11,11 @@ namespace WebInvoice.Services
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
+        public int CountOfResults { get; private set; }
 
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
+            CountOfResults = count;
             PageIndex = pageIndex;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
 

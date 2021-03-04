@@ -80,6 +80,9 @@ namespace WebInvoice
             services.AddTransient<INonVatDocumentService, NonVatDocumentService>();
             services.AddTransient<IViewNonVatDocumentService, ViewNonVatDocumentService>();
             services.AddTransient<ISearchVatDocumentService, SearchVatDocumentService>();
+            services.AddTransient<ISearchNonVatDocumentService, SearchNonVatDocumentService>();
+            services.AddTransient<IReportVatDocumentsService, ReportVatDocumentsService>();
+            services.AddTransient<IReportNonVatDocumentsService, ReportNonVatDocumentsService>();
 
 
         }

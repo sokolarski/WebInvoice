@@ -1,0 +1,67 @@
+﻿@model WebInvoice.Services.Reports.ReportExport
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
+<div id="document" style="line-height:1.5rem; color:#212529">&nbsp;</div>
+<table width="1000px" style="font-family:sans-serif;font-size:16px; margin-left:auto; margin-right:auto; table-layout:fixed; border-collapse:separate; word-wrap: break-word;line-height:1.5rem;">
+    <tbody>
+        <tr>
+            <th>
+                <h1>@userCompanyData.CompanyName</h1>
+            </th>
+        </tr>
+        @if (Model.DocumentsTypes != "document")
+        {
+            <tr>
+                <th>
+                    <p>Справка за издадени @Model.DocumentsTypes за периода от @Model.StartDate до @Model.EndDate </p>
+                </th>
+            </tr>
+
+            @if (!string.IsNullOrEmpty(Model.CompanyName))
+            {
+                <tr>
+                    <th>
+                        <p>към @Model.CompanyName</p>
+                    </th>
+                </tr>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Objects))
+            {
+                <tr>
+                    <th>
+                        <p>обект: @Model.Objects</p>
+                    </th>
+                </tr>
+            }
+
+        }
+        else
+        {
+            <tr>
+                <th>
+                    <p>Справка документ</p>
+                </th>
+            </tr>
+        }
+        <tr>
+            <td>
+                <table style="table-layout:fixed; width:980px ; word-wrap:break-word; margin-left:auto; margin-right:auto;margin-top:25px; margin-bottom:25px; border-collapse: collapse; line-height:1.4rem;">
+                    <thead>
+                        <tr style="background-color:silver"><th width="30">№</th><th width="120" style="text-align:left">Документ №</th><th width="280">Фирма</th><th style="width:150px; ">Тип документ</th><th style="width:100px;">Дата</th><th style="width:100px; text-align:right">Основа</th><th style="width:100px; text-align:right">ДДС</th><th style="width:100px; text-align:right">ОБЩО</th></tr>
+                    </thead>
+                    <tbody>
+                        @{var count = 1;}
+                        @foreach (var row in Model.Documents)
+                        {
+                            <tr style="border-bottom:1px solid"><td>@count</td><td>@(new string('0',10 - row.Id.ToString().Length) + row.Id.ToString())</td><td>@row.PartnerName</td><td style="text-align:center">@row.DocumentType</td><td style="text-align:right">@row.CreatedDate</td><td style="text-align:right">@row.Base.ToString("F2")</td><td style="text-align:right">@row.Vat.ToString("F2")</td><td style="text-align:right">@row.Tottal.ToString("F2")</td></tr>
+                            count++;
+                        }
+                        <tr style="background-color:silver"><th width="30"></th><th width="120" style="text-align:left"></th><th width="280"></th><th style="width:150px; "></th><th style="width:100px;"></th><th style="width:100px; text-align:right">@Model.Documents.Sum(v => v.Base).ToString("F2")</th><th style="width:100px; text-align:right">@Model.Documents.Sum(v => v.Vat).ToString("F2")</th><th style="width:100px; text-align:right">@Model.Documents.Sum(v => v.Tottal).ToString("F2")</th></tr>
+
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+

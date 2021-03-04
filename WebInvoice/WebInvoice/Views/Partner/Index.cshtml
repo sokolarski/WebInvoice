@@ -33,7 +33,7 @@
                 <td>@partner.CountOfDocuments</td>
                 <td>
                     <a asp-area="" asp-controller="PartnerSettings" asp-action="Index" asp-route-companyId="@partner.Id" class="btn btn-dark">Настройки</a>
-                    <a asp-area="" asp-controller="Partner" asp-action="Edit" asp-route-id="@partner.Id" class="btn btn-info">Документи</a>
+                    <a asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-partnerName="@partner.Name" class="btn btn-info">Документи</a>
                 </td>
             </tr>
         }

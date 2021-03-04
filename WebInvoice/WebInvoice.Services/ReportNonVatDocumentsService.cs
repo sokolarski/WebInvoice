@@ -7,25 +7,26 @@ using System.Threading.Tasks;
 using WebInvoice.Data.CompanyData.Models;
 using WebInvoice.Data.Repository.Repositories;
 using WebInvoice.Dto.ViewDocument;
+using WebInvoice.Services.Reports;
 
 namespace WebInvoice.Services
 {
-    public class SearchVatDocumentService : ISearchVatDocumentService
+    public class ReportNonVatDocumentsService : IReportNonVatDocumentsService
     {
-        private readonly ICompanyDeletableEntityRepository<VatDocument> vatDocumentRepo;
+        private readonly ICompanyDeletableEntityRepository<NonVatDocument> nonVatDocumentRepo;
         private readonly IPartnerService partnerService;
 
-        public SearchVatDocumentService(ICompanyDeletableEntityRepository<VatDocument> vatDocumentRepo ,
+        public ReportNonVatDocumentsService(ICompanyDeletableEntityRepository<NonVatDocument> nonVatDocumentRepo,
             IPartnerService partnerService)
         {
-            this.vatDocumentRepo = vatDocumentRepo;
+            this.nonVatDocumentRepo = nonVatDocumentRepo;
             this.partnerService = partnerService;
         }
 
-        public async Task<PaginatedList<DocumentShortView>> GetPaginatedVatDocumentAsync(int page, int itemPerPage)
+        public async Task<PaginatedList<DocumentShortView>> GetPaginatedNonVatDocumentAsync(int page, int itemPerPage)
         {
 
-            var query = vatDocumentRepo.AllAsNoTracking().OrderByDescending(e => e.CreatedDate).Select(e => new DocumentShortView()
+            var query = nonVatDocumentRepo.AllAsNoTracking().OrderByDescending(e => e.CreatedDate).Select(e => new DocumentShortView()
             {
                 Id = e.Id,
                 PartnerName = e.Partner.Name,
@@ -34,7 +35,7 @@ namespace WebInvoice.Services
                 Base = e.SubTottal,
                 Vat = e.Vat ?? 0,
                 Tottal = e.Tottal,
-                IsVatDocument = true,
+                IsVatDocument = false,
 
             });
             var result = await PaginatedList<DocumentShortView>.CreateAsync(query, page, itemPerPage);
@@ -45,37 +46,38 @@ namespace WebInvoice.Services
             return result;
         }
 
-        public async Task<PaginatedList<DocumentShortView>> GetPaginatedVatDocumentByCriteriaAsync(int page, int itemPerPage, long? documentId, string partnerName, string type, string startDate, string endDate, string objGuid)
-        {            
-            var query = vatDocumentRepo.AllAsNoTracking();
+        public async Task<Report> GetPaginatedNonVatDocumentByCriteriaAsync(int page, int itemPerPage, long? documentId, string partnerName, string type, string startDate, string endDate, string objGuid)
+        {
+            var report = new Report();
+            var query = nonVatDocumentRepo.AllAsNoTracking();
 
             if (documentId != null)
             {
-               query =  query.Where(e => e.Id == documentId);
+                query = query.Where(e => e.Id == documentId);
             }
-            else 
+            else
             {
                 if (!string.IsNullOrEmpty(type))
                 {
-                    if (type == "invoice")
+                    if (type == "proformInvoice")
                     {
-                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.VatDocumentTypes.Invoice);
+                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.NonVatDocumentTypes.ProformaInvoice);
                     }
-                    else if (type == "credit")
+                    else if (type == "protocol")
                     {
-                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.VatDocumentTypes.Credit);
+                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.NonVatDocumentTypes.Protocol);
 
                     }
-                    else if (type == "debit")
+                    else if (type == "stock")
                     {
-                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.VatDocumentTypes.Debit);
+                        query = query.Where(e => e.Type == Data.CompanyData.Models.Enums.NonVatDocumentTypes.Stock);
 
                     }
                 }
 
                 if (!string.IsNullOrEmpty(partnerName))
                 {
-                    var partnerId =await partnerService.GetPartnerByName(partnerName);
+                    var partnerId = await partnerService.GetPartnerByName(partnerName);
                     if (partnerId != null)
                     {
                         query = query.Where(e => e.PartnerId == partnerId.Id);
@@ -84,13 +86,13 @@ namespace WebInvoice.Services
                     {
                         query = query.Where(e => e.PartnerId == 0);
                     }
-                    
+
                 }
 
                 if (!string.IsNullOrEmpty(startDate))
                 {
                     DateTime date;
-                    var isDate = DateTime.TryParse(startDate, new CultureInfo("bg-BG"), DateTimeStyles.None , out date);
+                    var isDate = DateTime.TryParse(startDate, new CultureInfo("bg-BG"), DateTimeStyles.None, out date);
                     if (isDate)
                     {
                         query = query.Where(e => e.CreatedDate >= date);
@@ -125,28 +127,30 @@ namespace WebInvoice.Services
                 Base = e.SubTottal,
                 Vat = e.Vat ?? 0,
                 Tottal = e.Tottal,
-                IsVatDocument = true,
+                IsVatDocument = false,
+
             });
             var result = await PaginatedList<DocumentShortView>.CreateAsync(newQuery, page, itemPerPage);
             foreach (var item in result)
             {
                 item.DocumentType = SetType(item.DocumentType);
             }
-            return result;
+            report.Documents = result;
+            return report;
         }
         private string SetType(string type)
         {
-            if (type == "Invoice")
+            if (type == "ProformaInvoice")
             {
-                return "Фактура";
+                return "Проформа фактура";
             }
-            else if (type == "Credit")
+            else if (type == "Stock")
             {
-                return "Кредитно известие";
+                return "Стокова разписка";
             }
-            else if (type == "Debit")
+            else if (type == "Protocol")
             {
-                return "Дебитно известие";
+                return "Протокол";
             }
             return null;
         }
