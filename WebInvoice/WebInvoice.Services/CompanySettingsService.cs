@@ -16,14 +16,20 @@ namespace WebInvoice.Services
         private readonly Data.Repository.Repositories.ICompanyRepository<Company> companyRepository;
         private readonly IAppDeletableEntityRepository<CompanyApp> companyAppRepository;
         private readonly IStringGenerator stringGenerator;
+        private readonly IVatTypeService vatTypeService;
+        private readonly IProductService productService;
 
         public CompanySettingsService(ICompanyRepository<Company> companyRepository, 
                                         IAppDeletableEntityRepository<CompanyApp> companyAppRepository,
-                                        IStringGenerator stringGenerator)
+                                        IStringGenerator stringGenerator,
+                                        IVatTypeService vatTypeService,
+                                        IProductService productService)
         {
             this.companyRepository = companyRepository;
             this.companyAppRepository = companyAppRepository;
             this.stringGenerator = stringGenerator;
+            this.vatTypeService = vatTypeService;
+            this.productService = productService;
         }
 
         public async Task<CompanyDto> GetCompanyInfo()
@@ -74,6 +80,11 @@ namespace WebInvoice.Services
         {
             var company = await companyRepository.All().OrderBy(c => c.Id).LastAsync();
             var companyApp = this.companyAppRepository.All().Where(c => c.GUID == company.GUID).FirstOrDefault();
+            if (company.IsVatRegistered && !companyDto.IsVatRegistered)
+            {
+                var vatTypeId = await vatTypeService.SetCorrectVatTypeOnNonVatRegisteredCompanyAsync();
+                await productService.SetAllProductToVatType(vatTypeId);
+            }
 
             company.Name = companyDto.Name;
             company.Address = companyDto.Address;
@@ -105,12 +116,14 @@ namespace WebInvoice.Services
             companyApp.CompanySlug = slug;
             companyApp.Description = companyDto.Description;
             companyApp.IsActive = companyDto.IsActive;
+            companyApp.IsVatRegistered = companyDto.IsVatRegistered;
 
             companyAppRepository.Update(companyApp);
 
             await companyRepository.SaveChangesAsync();
             await companyAppRepository.SaveChangesAsync();
         }
+
         public async Task ApplyMigration()
         {
             await companyRepository.Context.Database.MigrateAsync();

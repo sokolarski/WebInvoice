@@ -19,30 +19,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var vat in Model)
+                    @if (userCompanyData.IsVatRegistered)
                     {
-                        <tr>
-                            <td>@vat.Name</td>
-                            <td>@vat.Description</td>
-                            <td>@vat.Percantage %</td>
-                            <td>
-                                @if (vat.IsActive)
-                                {
-                                    @:ДА
-                                }
-                                else
-                                {
-                                    @:НЕ
-                                }
-                            </td>
-                            <td><a asp-area="" asp-controller="VatType" asp-action="Edit" asp-route-id="@vat.Id" class="btn btn-dark">Редактирай</a></td>
-                        </tr>
+                        @foreach (var vat in Model)
+                        {
+                            <tr>
+                                <td>@vat.Name</td>
+                                <td>@vat.Description</td>
+                                <td>@vat.Percantage %</td>
+                                <td>
+                                    @if (vat.IsActive)
+                                    {
+                                        @:ДА
+                                    }
+                                    else
+                                    {
+                                        @:НЕ
+                                    }
+                                </td>
+                                <td><a asp-area="" asp-controller="VatType" asp-action="Edit" asp-route-id="@vat.Id" class="btn btn-dark">Редактирай</a></td>
+                            </tr>
+                        }
+
                     }
+                   
+
                 </tbody>
             </table>
         </div>
         <div>
-            <a asp-area="" asp-controller="VatType" asp-action="Create" class="btn btn-light">Нов тип ДДС</a>
+            @if (userCompanyData.IsVatRegistered)
+            {
+                <a asp-area="" asp-controller="VatType" asp-action="Create" class="btn btn-light">Нов тип ДДС</a>
+            }
+            else
+            {
+                <div class="text-danger text-center">Фирмата не е с ДДС регистрация и не можете да правите промени</div>
+            }
+
         </div>
     </div>
 </div>

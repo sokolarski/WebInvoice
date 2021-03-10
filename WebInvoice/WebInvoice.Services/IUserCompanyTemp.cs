@@ -5,12 +5,13 @@ namespace WebInvoice.Services
 {
     public interface IUserCompanyTemp
     {
-        
+
         string CompanyName { get; set; }
         string CompanyObjectName { get; set; }
         bool IsSetCompany { get; }
         string CompanyObjectSlug { get; set; }
         string CompanyGUID { get; set; }
+        bool IsVatRegistered { get; set; }
         bool IsSetObject { get; }
         string CompanySlug { get; set; }
         string CompanyObjectGUID { get; set; }

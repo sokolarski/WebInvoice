@@ -16,32 +16,33 @@ namespace WebInvoice.Data.SeedData
             this.companyDbContext = companyDbContext;
         }
 
-        public async Task SeedAsync()
+        public async Task SeedAsync(bool isVatRegistered)
         {
             using (companyDbContext)
             {
-                await SeedQuantityTypesAsync(companyDbContext);
-                await SeedPaymentTypesAsync(companyDbContext);
-                await SeedVatTypesAsync(companyDbContext);
+                await SeedQuantityTypesAsync();
+                await SeedPaymentTypesAsync();
+                await SeedVatTypesAsync(isVatRegistered);
                 await companyDbContext.SaveChangesAsync();
             }
         }
 
     
 
-        private async Task SeedVatTypesAsync(CompanyDbContext companyDbContext)
+        private async Task SeedVatTypesAsync(bool isVatRegistered)
         {
             var types = new[] {
                 new VatType(){ Name="А", Description="Група А", Percantage= 0, IsActive=false},
-                new VatType(){ Name="Б", Description="Група Б", Percantage= 20, IsActive=true},
+                new VatType(){ Name="Б", Description="Група Б", Percantage= 20, IsActive=isVatRegistered},
                 new VatType(){ Name="В", Description="Група В течни горива", Percantage= 20, IsActive=false},
                 new VatType(){ Name="Г", Description="Група Г", Percantage= 9, IsActive=false},
+                new VatType(){ Name="БезДДСРег", Description="Фирма не регистрирана по ДДС", Percantage= 0, IsActive=!isVatRegistered},
             };
             await companyDbContext.VatTypes.AddRangeAsync(types);
             await companyDbContext.SaveChangesAsync();
         }
 
-        private async Task SeedPaymentTypesAsync(CompanyDbContext companyDbContext)
+        private async Task SeedPaymentTypesAsync()
         {
             var types = new[] {
             new PaymentType(){ Name="Брой", Description="Брой в лева", IsActiv=true , RequireBankAccount=false },
@@ -53,7 +54,7 @@ namespace WebInvoice.Data.SeedData
             await companyDbContext.SaveChangesAsync();
         }
 
-        private async Task SeedQuantityTypesAsync(CompanyDbContext companyDbContext)
+        private async Task SeedQuantityTypesAsync()
         {
             var types = new[] {
             new QuantityType(){ Type="бр.", Description="брой", IsActive=true },

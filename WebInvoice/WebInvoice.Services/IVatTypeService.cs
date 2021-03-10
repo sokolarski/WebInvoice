@@ -8,9 +8,10 @@ namespace WebInvoice.Services
     {
         Task Create(VatTypeDto vatTypeDto);
         Task Edit(VatTypeDto vatTypeDto);
-        ICollection<VatTypeDto> GetAll();
-        VatTypeDto GetById(int id);
-        void ValidateVatType(VatTypeDto vatTypeDto);
-        ICollection<VatTypeView> GetAllView();
+        Task<ICollection<VatTypeDto>> GetAll();
+        Task<ICollection<VatTypeView>> GetAllView();
+        Task<VatTypeDto> GetById(int id);
+        Task<int> SetCorrectVatTypeOnNonVatRegisteredCompanyAsync();
+        Task ValidateVatType(VatTypeDto vatTypeDto);
     }
 }

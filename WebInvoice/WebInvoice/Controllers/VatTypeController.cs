@@ -18,9 +18,9 @@ namespace WebInvoice.Controllers
         {
             this.vatTypeService = vatTypeService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = vatTypeService.GetAll();
+            var model =await vatTypeService.GetAll();
             return View(model);
         }
 
@@ -32,7 +32,7 @@ namespace WebInvoice.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(VatTypeDto vatTypeDto)
         {
-            vatTypeService.ValidateVatType(vatTypeDto);
+            await vatTypeService.ValidateVatType(vatTypeDto);
 
             if (ModelState.IsValid && vatTypeDto.IsValidVatType)
             {
@@ -42,9 +42,9 @@ namespace WebInvoice.Controllers
             return View(vatTypeDto);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var vatType = vatTypeService.GetById(id);
+            var vatType =await vatTypeService.GetById(id);
 
             return View(vatType);
         }
@@ -52,7 +52,7 @@ namespace WebInvoice.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(VatTypeDto vatTypeDto)
         {
-            vatTypeService.ValidateVatType(vatTypeDto);
+            await vatTypeService.ValidateVatType(vatTypeDto);
 
             if (ModelState.IsValid && vatTypeDto.IsValidVatType)
             {

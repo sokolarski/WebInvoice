@@ -42,8 +42,17 @@
 
                 <div class="form-group">
                     <label>Избери група ДДС:</label>
-                    <select asp-for="VatTypeId" asp-items="this.ViewBag.SelectVatType" class="form-control">
-                    </select>
+                    @if (userCompanyData.IsVatRegistered)
+                    {
+                        <select asp-for="VatTypeId" asp-items="this.ViewBag.SelectVatType" class="form-control">
+                        </select>
+                    }
+                    else
+                    {
+                        <select asp-for="VatTypeId" asp-items="this.ViewBag.SelectVatType" class="form-control disabled" disabled>
+                        </select>
+                        <input type="hidden" asp-for="VatTypeId" value="@((this.ViewBag.SelectVatType as IEnumerable<SelectListItem>).Where(e => e.Selected).FirstOrDefault().Value)" />
+                    }
                 </div>
                 <div class="form-group">
                     <label>Избери тип количество:</label>

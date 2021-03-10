@@ -31,7 +31,7 @@ namespace WebInvoice.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var vatTypes = vatTypeService.GetAllView();
+            var vatTypes =await vatTypeService.GetAllView();
             this.ViewBag.SelectVatType = vatTypes.Select(vt => new SelectListItem(vt.Name, vt.Id.ToString(), vt.IsActive));
             var quantityTypes = await quantityTypeService.GetAllView();
             this.ViewBag.SelectQuantityType = quantityTypes.Select(qt => new SelectListItem(qt.Type,qt.Id.ToString(),qt.IsActive));
@@ -73,8 +73,8 @@ namespace WebInvoice.Controllers
         {
             var model = await productService.GetById(productId);
 
-            var vatTypes = vatTypeService.GetAllView();
-            this.ViewBag.SelectVatType = vatTypes.Select(vt => new SelectListItem(vt.Name, vt.Id.ToString()));
+            var vatTypes =await vatTypeService.GetAllView();
+            this.ViewBag.SelectVatType = vatTypes.Select(vt => new SelectListItem(vt.Name, vt.Id.ToString(), vt.Id == model.VatTypeId));
             var quantityTypes = await quantityTypeService.GetAllView();
             this.ViewBag.SelectQuantityType = quantityTypes.Select(qt => new SelectListItem(qt.Type, qt.Id.ToString()));
 
@@ -89,6 +89,12 @@ namespace WebInvoice.Controllers
                 await productService.Edit(productDto);
                 return RedirectToAction("Index");
             }
+
+            var vatTypes = await vatTypeService.GetAllView();
+            this.ViewBag.SelectVatType = vatTypes.Select(vt => new SelectListItem(vt.Name, vt.Id.ToString(), vt.Id == productDto.VatTypeId));
+            var quantityTypes = await quantityTypeService.GetAllView();
+            this.ViewBag.SelectQuantityType = quantityTypes.Select(qt => new SelectListItem(qt.Type, qt.Id.ToString()));
+            
             return View(productDto);
         }
 

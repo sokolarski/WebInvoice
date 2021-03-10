@@ -124,7 +124,7 @@ namespace WebInvoice.Controllers
 
         private async Task SetViewBagDataAsync()
         {
-            var vatTypes = vatTypeService.GetAll();
+            var vatTypes =await vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
             this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
             this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();

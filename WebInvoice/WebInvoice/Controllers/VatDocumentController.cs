@@ -23,13 +23,15 @@ namespace WebInvoice.Controllers
         private readonly IPaymentTypeService paymentTypeService;
         private readonly IBankAccountService bankAccountService;
         private readonly IVatDocumentService vatDocumentService;
+        private readonly IUserCompanyTemp userCompanyTemp;
 
         public VatDocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
             IVatTypeService vatTypeService,
             IEmployeeService employeeService,
             IPaymentTypeService paymentTypeService,
             IBankAccountService bankAccountService,
-            IVatDocumentService vatDocumentService)
+            IVatDocumentService vatDocumentService,
+            IUserCompanyTemp userCompanyTemp)
         {
             this.companyRepository = companyRepository;
             this.vatTypeService = vatTypeService;
@@ -37,6 +39,7 @@ namespace WebInvoice.Controllers
             this.paymentTypeService = paymentTypeService;
             this.bankAccountService = bankAccountService;
             this.vatDocumentService = vatDocumentService;
+            this.userCompanyTemp = userCompanyTemp;
         }
         public IActionResult Index()
         {
@@ -48,6 +51,10 @@ namespace WebInvoice.Controllers
         {
             var model =await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Invoice);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create",model);
         }
 
@@ -55,6 +62,10 @@ namespace WebInvoice.Controllers
         {
             var model = await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Credit);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create", model);
         }
 
@@ -62,6 +73,10 @@ namespace WebInvoice.Controllers
         {
             var model = await vatDocumentService.PrepareVatDocumentModelAsync(dto.VatDocumentTypes.Debit);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create", model);
         }
 
@@ -69,6 +84,10 @@ namespace WebInvoice.Controllers
         {
             var model = await vatDocumentService.PrepareEditVatDocumentModelAsync(id);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("EditWithoutVat", model);
+            }
             return View("Edit", model);
         }
 
@@ -128,7 +147,7 @@ namespace WebInvoice.Controllers
 
         private async Task SetViewBagDataAsync()
         {
-            var vatTypes = vatTypeService.GetAll();
+            var vatTypes =await vatTypeService.GetAll();
             this.ViewBag.VatTypes = JsonConvert.SerializeObject(vatTypes);
             this.ViewBag.Employees = await employeeService.GetAllCompanyEmployees();
             this.ViewBag.PaymentTypes = await paymentTypeService.GetAllCompanyPaymentTypes();

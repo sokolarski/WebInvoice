@@ -22,6 +22,8 @@ namespace WebInvoice.Data.AppData.Models
 
         public bool IsActive { get; set; }
 
+        public bool IsVatRegistered { get; set; }
+
         public string Description { get; set; }
 
         public string GUID { get; set; }

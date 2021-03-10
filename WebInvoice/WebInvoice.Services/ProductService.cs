@@ -61,6 +61,18 @@ namespace WebInvoice.Services
             return product;
         }
 
+        public async Task SetAllProductToVatType(int vatTypeId)
+        {
+            var products =await productRepositoy.All().ToListAsync();
+
+            foreach (var product in products)
+            {
+                product.VatTypeId = vatTypeId;
+                productRepositoy.Update(product);
+            }
+           await productRepositoy.SaveChangesAsync();
+        }
+
         public async Task<PaginatedList<ProductDto>> GetPaginatedProductsAsync(int page)
         {
             int itemPerPage = 10;

@@ -48,6 +48,7 @@ namespace WebInvoice.Middleware
                             userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
                             userCompanyTemp.ConnectionString = currentCompany.ConnStr;
                             userCompanyTemp.CompanyGUID = currentCompany.GUID;
+                            userCompanyTemp.IsVatRegistered = currentCompany.IsVatRegistered;
 
                             if (routeValues.Keys.Contains("companyObject"))
                             {
@@ -97,6 +98,7 @@ namespace WebInvoice.Middleware
                                 userCompanyTemp.CompanySlug = currentCompany.CompanySlug;
                                 userCompanyTemp.ConnectionString = currentCompany.ConnStr;
                                 userCompanyTemp.CompanyGUID = currentCompany.GUID;
+                                userCompanyTemp.IsVatRegistered = currentCompany.IsVatRegistered;
 
                                 context.Request.RouteValues.TryAdd("company", currentCompany.CompanySlug);
 

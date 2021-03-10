@@ -1,4 +1,5 @@
 ﻿@model WebInvoice.Dto.ViewDocument.DocumentView
+@inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 @{ Layout = null; }
 @*<div style="height:50px; width:100%">&nbsp;</div>*@
 <div id="document" style="line-height:1.5rem; color:#212529">
@@ -13,11 +14,11 @@
                 </table>
             </td>
             @*<td style="font-size:2.2em; font-weight:bold; width:500px;">
-            @Model.Type: №  @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
-        </td>
-        <td align="right" style="font-size:1.8em; font-weight:bold">
-            Дата: @Model.CreatedDate
-        </td>*@
+                    @Model.Type: №  @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
+                </td>
+                <td align="right" style="font-size:1.8em; font-weight:bold">
+                    Дата: @Model.CreatedDate
+                </td>*@
         </tr>
         <tr style="font-size:1.1em;">
             <td id="grif" style="font-weight:bold">
@@ -127,15 +128,19 @@
                     <tr><th>@Model.Vat.ToString("F2")</th></tr>
                     <tr><th>@Model.Tottal.ToString("F2")</th></tr>
                 </table>
-                @foreach (var tottalByVat in Model.TottalByVats)
+                @if (userCompanyData.IsVatRegistered)
                 {
-                    <table style="float: right;text-align:right; font-size:1.3em; line-height:1.7rem;">
-                        <tr><th width="125px">ДДС-@tottalByVat.Percentage.ToString("F2")%</th></tr>
-                        <tr><td>@tottalByVat.Base.ToString("F2")</td></tr>
-                        <tr><td>@tottalByVat.Vat.ToString("F2")</td></tr>
-                        <tr><td>@tottalByVat.Tottal.ToString("F2")</td></tr>
-                    </table>
+                    @foreach (var tottalByVat in Model.TottalByVats)
+                    {
+                        <table style="float: right;text-align:right; font-size:1.3em; line-height:1.7rem;">
+                            <tr><th width="125px">ДДС-@tottalByVat.Percentage.ToString("F2")%</th></tr>
+                            <tr><td>@tottalByVat.Base.ToString("F2")</td></tr>
+                            <tr><td>@tottalByVat.Vat.ToString("F2")</td></tr>
+                            <tr><td>@tottalByVat.Tottal.ToString("F2")</td></tr>
+                        </table>
+                    }
                 }
+
                 <table style="float: right; text-align:right; font-size:1.3em; line-height:1.7rem;">
                     <tr><th width="125px">&nbsp;</th></tr>
                     <tr><th>Основа:</th></tr>

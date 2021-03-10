@@ -55,6 +55,7 @@ namespace WebInvoice.Services
                 CompanySlug = companyAppSlug,
                 ApplicationUserId = userId,
                 IsActive = false,
+                IsVatRegistered = companyInputDto.IsVatRegistered,
             };
             companyApp.CompanyAppObjects.Add(obj);
 
@@ -109,7 +110,7 @@ namespace WebInvoice.Services
                 await companyContext.Companies.AddAsync(company);
                 await companyContext.SaveChangesAsync();
                 var seeder = new SeedData(companyContext);
-                await seeder.SeedAsync();
+                await seeder.SeedAsync(companyInputDto.IsVatRegistered);
             }
 
             return companyContext;

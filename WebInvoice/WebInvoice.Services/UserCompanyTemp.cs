@@ -23,6 +23,7 @@ namespace WebInvoice.Services
         public string CompanyGUID { get; set; }
 
         public string CompanyObjectName { get; set; }
+        public bool IsVatRegistered { get; set; }
 
         public bool IsSetObject => !string.IsNullOrEmpty(this.CompanyObjectName);
 
