@@ -85,7 +85,7 @@ namespace WebInvoice.Controllers
                 }
 
                 return RedirectToAction("ViewVatDocument", "ViewVatDocument", new { id = vatDocumentDto.Id });
-                //return ok
+                
             }
             foreach (var modelState in ModelState.Values)
             {
@@ -112,7 +112,7 @@ namespace WebInvoice.Controllers
                 }
 
                 return RedirectToAction("ViewVatDocument", "ViewVatDocument", new { id = vatDocumentDto.Id });
-                //return ok
+                
             }
             foreach (var modelState in ModelState.Values)
             {

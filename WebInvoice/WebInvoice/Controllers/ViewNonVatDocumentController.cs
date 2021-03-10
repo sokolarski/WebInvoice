@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebInvoice.Models;
 using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
@@ -22,6 +23,10 @@ namespace WebInvoice.Controllers
         public async Task<IActionResult> ViewNonVatDocument(long id)
         {
             var model = await viewDocumentService.GetDocumetnById(id);
+            if (model is null)
+            {
+                return View("NotFoundItem");
+            }
             return View(model);
         }
 
@@ -33,6 +38,8 @@ namespace WebInvoice.Controllers
             var stream = new MemoryStream();
 
             HtmlToPdf converter = new HtmlToPdf(1100);
+            converter.Options.MarginTop = 15;
+            converter.Options.MarginBottom = 30;
             PdfDocument doc = converter.ConvertHtmlString(txtHtml);
             doc.Save(stream);
             doc.Close();

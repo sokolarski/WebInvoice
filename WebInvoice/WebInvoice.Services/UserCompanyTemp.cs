@@ -40,7 +40,7 @@ namespace WebInvoice.Services
             {
                 var temp = new Dictionary<string, string>();
                 temp.Add("company", this.CompanySlug);
-                temp.Add("object", this.CompanyObjectSlug);
+                temp.Add("companyObject", this.CompanyObjectSlug);
                 return temp;
             }
             set { this.RouteData = value; }

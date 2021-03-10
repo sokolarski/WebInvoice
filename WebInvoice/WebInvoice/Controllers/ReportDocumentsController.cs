@@ -23,10 +23,7 @@ namespace WebInvoice.Controllers
             this.reportVatDocumentService = reportVatDocumentService;
             this.reportNonVatDocumentService = reportNonVatDocumentService;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+      
 
         public async Task<IActionResult> GetReportByCriteria(int? pageNumber, long? documentId, string partnerName, string type, string startDate, string endDate, string objectGuid)
         {
@@ -62,26 +59,16 @@ namespace WebInvoice.Controllers
             {
                 model = await reportVatDocumentService.ExportVatDocumentByCriteriaAsync(pageNumber ?? 1, itemPerPage ?? 10, documentId, partnerName, type, startDate, endDate, objectGuid);
             }
+            else if (type == "proformInvoice" || type == "protocol" || type == "stock" || type == "nonVatDocument")
+            {
+                model = await reportNonVatDocumentService.ExportNonVatDocumentByCriteriaAsync(pageNumber ?? 1, itemPerPage ?? 10, documentId, partnerName, type, startDate, endDate, objectGuid);
+            }
             else
             {
                 model = await reportVatDocumentService.ExportVatDocumentByCriteriaAsync(pageNumber ?? 1, itemPerPage ?? 10, documentId, partnerName, type, startDate, endDate, objectGuid);
 
             }
-            //else if (type == "proformInvoice" || type == "protocol" || type == "stock" || type == "nonVatDocument")
-            //{
-            //    model = await reportNonVatDocumentService.GetPaginatedNonVatDocumentByCriteriaAsync(pageNumber ?? 1, itemPerPage ?? 10, documentId, partnerName, type, startDate, endDate, objectGuid);
-            //}
 
-            //this.ViewBag.documentId = documentId;
-            //this.ViewBag.partnerName = partnerName;
-            //this.ViewBag.type = type;
-            //this.ViewBag.objGuid = objectGuid;
-            //this.ViewBag.startDate = startDate;
-            //this.ViewBag.endDate = endDate;
-            //this.ViewBag.itemPerPage = itemPerPage;
-            //return View(model);
-
-            //var model = await viewDocumentService.GetDocumetnById(id);
             var txtHtml = await this.RenderViewAsync("GetReportPdfCriteria", model);
             var documentName = $"Report.pdf";
             var stream = new MemoryStream();

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using WebInvoice.Models;
 using WebInvoice.Services;
 
 namespace WebInvoice.Controllers
@@ -22,6 +23,10 @@ namespace WebInvoice.Controllers
         public async Task<IActionResult> ViewVatDocument(long id)
         {
             var model = await viewDocumentService.GetDocumetnById(id);
+            if (model is null)
+            {
+                return View("NotFoundItem");
+            }
             return View(model);
         }
 

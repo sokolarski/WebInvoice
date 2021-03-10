@@ -26,12 +26,12 @@
                 Нов документ
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateInvoice">Фактура</a>
-                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateCredit">Кредитно Известие</a>
-                <a class="dropdown-item" asp-controller="VatDocument" asp-action="CreateDebit">Дебитно известие</a>
-                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateProformaInvoice">Проформа фактура</a>
-                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateProtocol">Протокол</a>
-                <a class="dropdown-item" asp-controller="NonVatDocument" asp-action="CreateStock">Стокова разписка</a>
+                <a class="dropdown-item" asp-area="" asp-controller="VatDocument" asp-action="CreateInvoice">Фактура</a>
+                <a class="dropdown-item" asp-area="" asp-controller="VatDocument" asp-action="CreateCredit">Кредитно Известие</a>
+                <a class="dropdown-item" asp-area="" asp-controller="VatDocument" asp-action="CreateDebit">Дебитно известие</a>
+                <a class="dropdown-item" asp-area="" asp-controller="NonVatDocument" asp-action="CreateProformaInvoice">Проформа фактура</a>
+                <a class="dropdown-item" asp-area="" asp-controller="NonVatDocument" asp-action="CreateProtocol">Протокол</a>
+                <a class="dropdown-item" asp-area="" asp-controller="NonVatDocument" asp-action="CreateStock">Стокова разписка</a>
             </div>
         </li>
         <li class="nav-item dropdown">
@@ -39,14 +39,14 @@
                 Преглед
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria">По критерии</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="invoice">Фактура</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="credit">Кредитно Известие</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="debit">Дебитно известие</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="proformInvoice">Проформа фактура</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="protocol">Протокол</a>
-                <a class="dropdown-item" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="stock">Стокова разписка</a>
-                <a class="dropdown-item" asp-controller="ReportDocuments" asp-action="GetReportByCriteria">Справки</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria">По критерии</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="invoice">Фактура</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="credit">Кредитно Известие</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="debit">Дебитно известие</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="proformInvoice">Проформа фактура</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="protocol">Протокол</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ViewDocuments" asp-action="GetDocumentsByCriteria" asp-route-type="stock">Стокова разписка</a>
+                <a class="dropdown-item" asp-area="" asp-controller="ReportDocuments" asp-action="GetReportByCriteria">Справки</a>
 
             </div>
         </li>
@@ -56,7 +56,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <a asp-area="" asp-controller="Product" asp-action="Index" class="dropdown-item">Преглед</a>
-                <a a asp-area="" asp-controller="Product" asp-action="Create" class="dropdown-item">Нов продукт</a>
+                <a asp-area="" asp-controller="Product" asp-action="Create" class="dropdown-item">Нов продукт</a>
                 <a asp-area="" asp-controller="QuantityType" asp-action="Index" class="dropdown-item">Настройки на продукти</a>
             </div>
         </li>
@@ -65,8 +65,8 @@
                 Партньори
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a asp-controller="Partner" asp-action="Index" class="dropdown-item">Преглед</a>
-                <a asp-controller="Partner" asp-action="Create" class="dropdown-item">Нов партньор</a>
+                <a asp-area="" asp-controller="Partner" asp-action="Index" class="dropdown-item">Преглед</a>
+                <a asp-area="" asp-controller="Partner" asp-action="Create" class="dropdown-item">Нов партньор</a>
             </div>
         </li>
     }
@@ -90,7 +90,7 @@
                     routeData.Add("companyObject", company.CompanyAppObjects.FirstOrDefault()?.ObjectSlug ?? "none");
                 }
 
-                <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@company.CompanyName</a>
+                <a class="dropdown-item"  asp-area="" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@company.CompanyName</a>
             }
 
             <a asp-area="" asp-controller="Company" asp-action="Create" class="dropdown-item">Нова фирма</a>
@@ -117,8 +117,8 @@
                     <a class="dropdown-item" asp-controller="Company" asp-action="index" asp-all-route-data="@routeData">@obj.ObjectName</a>
                 }
 
-                <a class="dropdown-item" asp-controller="CompanyObject" asp-action="Create">Нов обект</a>
-                <a class="dropdown-item" asp-controller="CompanyObject" asp-action="Index">Настройки на обект</a>
+                <a class="dropdown-item" asp-area="" asp-controller="CompanyObject" asp-action="Create">Нов обект</a>
+                <a class="dropdown-item" asp-area="" asp-controller="CompanyObject" asp-action="Index">Настройки на обект</a>
             </div>
         </li>
     }
@@ -127,7 +127,7 @@
         if (isActive)
         {
             <li class="nav-item dropdown">
-                <a class="nav-link" asp-controller="CompanyObject" asp-action="Create">Нов обект</a>
+                <a class="nav-link" asp-area="" asp-controller="CompanyObject" asp-action="Create">Нов обект</a>
             </li>
         }
 
