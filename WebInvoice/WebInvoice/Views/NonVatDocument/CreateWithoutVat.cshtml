@@ -2,22 +2,22 @@
 @model NonVatDocumentDto
 @inject WebInvoice.Services.IUserCompanyTemp userCompanyData
 
-<form asp-controller="NonVatDocument" asp-action="Edit" id="form1" autocomplete="off" method="post">
+<form asp-controller="NonVatDocument" asp-action="Create" id="form1" autocomplete="off" method="post">
     <input type="hidden" asp-for="Id" value="@Model.Id" />
     <input type="hidden" asp-for="Type" />
     <h1 class="text-center">@userCompanyData.CompanyName - @userCompanyData.CompanyObjectName </h1>
     <h2 class="text-center">
         @if (Model.Type == WebInvoice.dto.NonVatDocumentTypes.ProformaInvoice)
         {
-            <text>Редактиране на Проформа Фактура</text>
+            <text>Проформа Фактура</text>
         }
         else if (Model.Type == WebInvoice.dto.NonVatDocumentTypes.Protocol)
         {
-            <text>Редактиране на Протокол</text>
+            <text>Протокол</text>
         }
         else if (Model.Type == WebInvoice.dto.NonVatDocumentTypes.Stock)
         {
-            <text>Редактиране на Стокова разписка</text>
+            <text>Стокова разписка</text>
         }: @(Model.Id)
     </h2>
     @if (Model != null)
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="col-12 m-0 d-flex flex-row">
-                <div class="m-0 px-1 text-center" style="width:25px">№</div><div class="m-0 px-1 text-center" style="width:25px">П</div><div class="col-5 m-0 p-0">Наимование на стоката</div><div class="col m-0 p-0">Мярка</div><div class="col m-0 p-0">Количество</div><div class="col m-0 p-0">Цена</div><div class="col m-0 p-0">Сума</div><div class="col m-0 p-0">ДДС</div><div class="m-0 px-1">
+                <div class="m-0 px-1 text-center" style="width:25px">№</div><div class="m-0 px-1 text-center" style="width:25px">П</div><div class="col-5 m-0 p-0">Наимование на стоката</div><div class="col m-0 p-0">Мярка</div><div class="col m-0 p-0">Количество</div><div class="col m-0 p-0">Цена</div><div class="col m-0 p-0">Сума</div>@*<div class="col m-0 p-0">ДДС</div>*@<div class="m-0 px-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
@@ -129,7 +129,7 @@
 
                 </div>
 
-                <div id="tottalByVatType" class="d-flex flex-row">
+                <div id="tottalByVatType" class="d-flex flex-row d-none">
                 </div>
                 <div class="p-2" id="tottalCulumn">
                     <p class="p-0 m-0 font-weight-bold text-right" id="tottalCulumnTittle">ОБЩО</p>
@@ -363,8 +363,7 @@
                 items[8].name = `Sales[${i}].TottalPrice`;
                 items[9].id = `Sales_${i}__VatTypeId`;
                 items[9].name = `Sales[${i}].VatTypeId`;
-                items[10].id = `Sales_${i}__SaleId`;
-                items[10].name = `Sales[${i}].SaleId`;
+
             }
         }
 
@@ -456,9 +455,6 @@
 
                                     let tottalPrice = document.getElementById(`Sales_${rowId}__TottalPrice`);
                                     tottalPrice.value = '';
-
-                                    let saleElement = document.getElementById(`Sales_${rowId}__SaleId`);
-                                    saleElement.value = 0;
                                 }
                                 setActiveVatType(rowId, item.vatTypeId);
 
@@ -475,9 +471,6 @@
                                 price.readOnly = false;
                                 isProduct.checked = false;
                                 isProduct.value = false;
-
-                                let saleElement = document.getElementById(`Sales_${rowId}__SaleId`);
-                                saleElement.value = 0;
                             }
                             }
 
@@ -532,9 +525,6 @@
                                     price.readOnly = true;
                                     }
                                     setActiveVatType(rowId, item.vatTypeId);
-
-                                    let saleElement = document.getElementById(`Sales_${rowId}__SaleId`);
-                                    saleElement.value = 0;
                                 }
 
 
@@ -550,9 +540,6 @@
                                 price.readOnly = false;
                                 isProduct.checked = false;
                                 isProduct.value = false;
-
-                                let saleElement = document.getElementById(`Sales_${rowId}__SaleId`);
-                                saleElement.value = 0;
                             }
                             }
 
@@ -661,7 +648,6 @@
                 console.log(cell[i].id);
                 let tottalPriceElement = document.getElementById(`Sales_${getIndex(cell[i].id)}__TottalPrice`);
                 let tottalPrice = parseFloat(tottalPriceElement.value);
-                console.log(tottalPrice);
 
                 if (map.has(vatId)) {
                     map.set(vatId, map.get(vatId) + tottalPrice);
@@ -696,7 +682,7 @@
                 let vatTypeElement = document.getElementById(`vatType-${key}`);
                 if (vatTypeElement == null) {
                     let divVatTypeElement = document.createElement('div');
-                    divVatTypeElement.classList.add('p-2' );
+                    divVatTypeElement.classList.add('p-2','d-none' );
                     divVatTypeElement.id = `vatType-${key}`;
 
                     let currentVatType = vatTypes.find(x => x.Id == key);
@@ -740,6 +726,7 @@
                     let currentVatType = vatTypes.find(x => x.Id == key);
 
                     let vatTypeBasis = document.getElementById(`vatTypeBasis-${key}`);
+                    vatTypeBasis.classList.add('d-none');
                     tottalPriceBasis += value;
                     vatTypeBasis.innerHTML = value.toFixed(3);
 
@@ -878,7 +865,7 @@
             product.appendChild(productTottal);
 
             let productVatType = document.createElement('select');
-            productVatType.classList.add('col', 'm-0', 'p-0', 'VatTypeClass');
+            productVatType.classList.add('col', 'm-0', 'p-0', 'VatTypeClass','d-none');
             productVatType.id = `Sales_${index}__VatTypeId`;
             productVatType.name = `Sales[${index}].VatTypeId`;
             productVatType.setAttribute('form', 'form1');
@@ -911,22 +898,12 @@
 
             product.appendChild(productVatType);
 
-            let saleId = document.createElement('input');
-            saleId.setAttribute('type', 'hidden');
-            saleId.id = `Sales_${index}__SaleId`;
-            saleId.name = `Sales[${index}].SaleId`;
-            saleId.classList.add('saleId');
-            saleId.value = value.SaleId;
-            product.appendChild(saleId);
-
             let productDelete = document.createElement('span')
             productDelete.classList.add('m-0', 'px-1', 'close');
             productDelete.innerHTML = 'X';
             productDelete.addEventListener('click', function () { delete_row(this) });
             productDelete.classList.add('productDelete');
             product.appendChild(productDelete);
-
-           
 
 
             document.getElementById('productContainer').appendChild(product);
@@ -1048,7 +1025,7 @@
             product.appendChild(productTottal);
 
             let productVatType = document.createElement('select');
-            productVatType.classList.add('col', 'm-0', 'p-0', 'VatTypeClass');
+            productVatType.classList.add('col', 'm-0', 'p-0', 'VatTypeClass', 'd-none');
             productVatType.id = `Sales_${index}__VatTypeId`;
             productVatType.name = `Sales[${index}].VatTypeId`;
             productVatType.setAttribute('form', 'form1');
@@ -1070,13 +1047,6 @@
 
             product.appendChild(productVatType);
 
-            let saleId = document.createElement('input');
-            saleId.setAttribute('type', 'hidden');
-            saleId.id = `Sales_${index}__SaleId`;
-            saleId.name = `Sales[${index}].SaleId`;
-            saleId.classList.add('saleId');
-            product.appendChild(saleId);
-
             let productDelete = document.createElement('span')
             productDelete.classList.add( 'm-0', 'px-1', 'close');
             productDelete.innerHTML = 'X';
@@ -1084,7 +1054,6 @@
             productDelete.classList.add('productDelete');
             product.appendChild(productDelete);
 
-            
 
             document.getElementById('productContainer').appendChild(product);
             productName.focus();

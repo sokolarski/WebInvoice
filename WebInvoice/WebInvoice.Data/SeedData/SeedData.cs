@@ -18,13 +18,12 @@ namespace WebInvoice.Data.SeedData
 
         public async Task SeedAsync(bool isVatRegistered)
         {
-            using (companyDbContext)
-            {
+            
                 await SeedQuantityTypesAsync();
                 await SeedPaymentTypesAsync();
                 await SeedVatTypesAsync(isVatRegistered);
                 await companyDbContext.SaveChangesAsync();
-            }
+            
         }
 
     

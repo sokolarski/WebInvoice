@@ -47,7 +47,7 @@ namespace WebInvoice.Controllers
             var isCreated = await companyService.CreateCompanyAsync(companyInputDto, userId);
             if (!isCreated)
             {
-                return BadRequest();
+                return View("NotFoundItem");
             }
             return RedirectToAction("Created", new { companyInputDto.Name });
         }

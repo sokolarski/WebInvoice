@@ -6,7 +6,7 @@ namespace WebInvoice.Services
     public interface ICompanySettingsService
     {
         Task<CompanyDto> GetCompanyInfo();
-        Task Edit(CompanyDto companyDto);
+        Task<bool> Edit(CompanyDto companyDto);
         Task ApplyMigration();
         Task<CompanyDto> GetCompanyInfoById(int id);
     }

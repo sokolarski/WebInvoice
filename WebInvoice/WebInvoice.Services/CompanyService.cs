@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,8 +30,25 @@ namespace WebInvoice.Services
             var objectGUID = Guid.NewGuid().ToString();
             var connectionString = stringGenerator.GetConnectionString(companyInputDto.Name, companyGUID);
 
-            var companyContext = await CreateCompanyDbAsync(connectionString, companyInputDto, companyGUID, objectGUID);
-            await CreateCompanyAppAsync(connectionString, companyInputDto, companyGUID, objectGUID, userId);
+
+            try
+            {
+                using var transaction = await companyAppRepo.Context.Database.BeginTransactionAsync();
+
+                await CreateCompanyAppAsync(connectionString, companyInputDto, companyGUID, objectGUID, userId);
+                var isSuccessfullyCreated = await CreateCompanyDbAsync(connectionString, companyInputDto, companyGUID, objectGUID);
+                if (!isSuccessfullyCreated)
+                {
+                    throw new Exception();
+                }
+                await transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
 
             return true;
         }
@@ -63,57 +81,74 @@ namespace WebInvoice.Services
             await companyAppRepo.SaveChangesAsync();
         }
 
-        private async Task<CompanyDbContext> CreateCompanyDbAsync(string connectionString, CompanyDto companyInputDto, string companyGUID, string objectGUID)
+        private async Task<bool> CreateCompanyDbAsync(string connectionString, CompanyDto companyInputDto, string companyGUID, string objectGUID)
         {
             var options = new DbContextOptionsBuilder<CompanyDbContext>();
             options.UseSqlServer(connectionString);
             var companyContext = new CompanyDbContext(options.Options);
-            await companyContext.Database.MigrateAsync();
+
             using (companyContext)
             {
-
-                var company = new Company()
+                try
                 {
-                    Name = companyInputDto.Name,
-                    Address = companyInputDto.Address,
-                    City = companyInputDto.City,
-                    Country = companyInputDto.Country,
-                    EIK = companyInputDto.EIK,
-                    VatId = companyInputDto.VatId,
-                    Email = companyInputDto.Email,
-                    MOL = companyInputDto.MOL,
-                    IsVatRegistered = companyInputDto.IsVatRegistered,
-                    LogoPath = companyInputDto.LogoPath,
-                    IsActive = false,
-                    GUID = companyGUID,
-                };
 
-                var obj = new CompanyObject()
+                    await companyContext.Database.MigrateAsync();
+
+                    using var secondTransaction = await companyContext.Database.BeginTransactionAsync();
+
+                    var company = new Company()
+                    {
+                        Name = companyInputDto.Name,
+                        Address = companyInputDto.Address,
+                        City = companyInputDto.City,
+                        Country = companyInputDto.Country,
+                        EIK = companyInputDto.EIK,
+                        VatId = companyInputDto.VatId,
+                        Email = companyInputDto.Email,
+                        MOL = companyInputDto.MOL,
+                        IsVatRegistered = companyInputDto.IsVatRegistered,
+                        LogoPath = companyInputDto.LogoPath,
+                        IsActive = false,
+                        GUID = companyGUID,
+                    };
+
+                    var obj = new CompanyObject()
+                    {
+                        Name = "Стандарт",
+                        City = companyInputDto.City,
+                        StartNum = 1,
+                        EndNum = 9999999999,
+                        IsActive = true,
+                        GUID = objectGUID,
+                    };
+                    company.CompanyObjects.Add(obj);
+
+                    var employee = new Employee()
+                    {
+                        FullName = companyInputDto.MOL,
+                        IsActive = true,
+                    };
+
+                    company.Employees.Add(employee);
+
+                    await companyContext.Companies.AddAsync(company);
+                    await companyContext.SaveChangesAsync();
+
+                    var seeder = new SeedData(companyContext);
+                    await seeder.SeedAsync(companyInputDto.IsVatRegistered);
+
+                    await secondTransaction.CommitAsync();
+                }
+                catch (Exception ex)
                 {
-                    Name = "Стандарт",
-                    City = companyInputDto.City,
-                    StartNum = 1,
-                    EndNum = 9999999999,
-                    IsActive = true,
-                    GUID = objectGUID,
-                };
-                company.CompanyObjects.Add(obj);
+                    companyContext.Database.EnsureDeleted();
+                    return false;
 
-                var employee = new Employee()
-                {
-                    FullName = companyInputDto.MOL,
-                    IsActive=true,
-                };
-
-                company.Employees.Add(employee);
-
-                await companyContext.Companies.AddAsync(company);
-                await companyContext.SaveChangesAsync();
-                var seeder = new SeedData(companyContext);
-                await seeder.SeedAsync(companyInputDto.IsVatRegistered);
+                }
+               
             }
 
-            return companyContext;
+            return true;
         }
 
     }

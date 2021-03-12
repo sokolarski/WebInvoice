@@ -19,13 +19,15 @@ namespace WebInvoice.Controllers
         private readonly IPaymentTypeService paymentTypeService;
         private readonly IBankAccountService bankAccountService;
         private readonly INonVatDocumentService nonVatDocumentService;
+        private readonly IUserCompanyTemp userCompanyTemp;
 
         public NonVatDocumentController(ICompanyDeletableEntityRepository<Company> companyRepository,
             IVatTypeService vatTypeService,
             IEmployeeService employeeService,
             IPaymentTypeService paymentTypeService,
             IBankAccountService bankAccountService,
-            INonVatDocumentService nonVatDocumentService)
+            INonVatDocumentService nonVatDocumentService,
+            IUserCompanyTemp userCompanyTemp)
         {
             this.companyRepository = companyRepository;
             this.vatTypeService = vatTypeService;
@@ -33,17 +35,18 @@ namespace WebInvoice.Controllers
             this.paymentTypeService = paymentTypeService;
             this.bankAccountService = bankAccountService;
             this.nonVatDocumentService = nonVatDocumentService;
+            this.userCompanyTemp = userCompanyTemp;
         }
-        public IActionResult Index()
-        {
-            var name = companyRepository.All().FirstOrDefault();
-            return Json(name);
-        }
+      
 
         public async Task<IActionResult> CreateProformaInvoice()
         {
             var model = await nonVatDocumentService.PrepareNonVatDocumentModelAsync(dto.NonVatDocumentTypes.ProformaInvoice);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create", model);
         }
 
@@ -51,6 +54,10 @@ namespace WebInvoice.Controllers
         {
             var model = await nonVatDocumentService.PrepareNonVatDocumentModelAsync(dto.NonVatDocumentTypes.Protocol);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create", model);
         }
 
@@ -58,6 +65,10 @@ namespace WebInvoice.Controllers
         {
             var model = await nonVatDocumentService.PrepareNonVatDocumentModelAsync(dto.NonVatDocumentTypes.Stock);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", model);
+            }
             return View("Create", model);
         }
 
@@ -65,6 +76,10 @@ namespace WebInvoice.Controllers
         {
             var model = await nonVatDocumentService.PrepareEditNonVatDocumentModelAsync(id);
             await SetViewBagDataAsync();
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("EditWithoutVat", model);
+            }
             return View("Edit", model);
         }
 
@@ -77,6 +92,10 @@ namespace WebInvoice.Controllers
                 if (nonVatDocumentDto.HasErrors)
                 {
                     await SetViewBagDataAsync();
+                    if (!userCompanyTemp.IsVatRegistered)
+                    {
+                        return View("EditWithoutVat", nonVatDocumentDto);
+                    }
                     return View(nonVatDocumentDto);
                 }
 
@@ -91,7 +110,10 @@ namespace WebInvoice.Controllers
                 }
             }
             await SetViewBagDataAsync();
-
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("EditWithoutVat", nonVatDocumentDto);
+            }
             return View(nonVatDocumentDto);
         }
 
@@ -104,6 +126,10 @@ namespace WebInvoice.Controllers
                 if (nonVatDocumentDto.HasErrors)
                 {
                     await SetViewBagDataAsync();
+                    if (!userCompanyTemp.IsVatRegistered)
+                    {
+                        return View("CreateWithoutVat", nonVatDocumentDto);
+                    }
                     return View(nonVatDocumentDto);
                 }
 
@@ -118,7 +144,10 @@ namespace WebInvoice.Controllers
                 }
             }
             await SetViewBagDataAsync();
-
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", nonVatDocumentDto);
+            }
             return View(nonVatDocumentDto);
         }
 

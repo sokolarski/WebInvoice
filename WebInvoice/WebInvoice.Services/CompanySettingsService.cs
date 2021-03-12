@@ -19,7 +19,7 @@ namespace WebInvoice.Services
         private readonly IVatTypeService vatTypeService;
         private readonly IProductService productService;
 
-        public CompanySettingsService(ICompanyRepository<Company> companyRepository, 
+        public CompanySettingsService(ICompanyRepository<Company> companyRepository,
                                         IAppDeletableEntityRepository<CompanyApp> companyAppRepository,
                                         IStringGenerator stringGenerator,
                                         IVatTypeService vatTypeService,
@@ -36,7 +36,7 @@ namespace WebInvoice.Services
         {
             var company = await companyRepository.AllAsNoTracking().OrderBy(c => c.Id).LastAsync();
             var companyApp = this.companyAppRepository.AllAsNoTracking().Where(c => c.GUID == company.GUID).FirstOrDefault();
-            
+
             var companyInfo = new CompanyDto()
             {
                 Name = company.Name,
@@ -58,7 +58,7 @@ namespace WebInvoice.Services
         public async Task<CompanyDto> GetCompanyInfoById(int id)
         {
             var company = await companyRepository.GetByIdAsync(id);
-            
+
             var companyInfo = new CompanyDto()
             {
                 Name = company.Name,
@@ -76,52 +76,66 @@ namespace WebInvoice.Services
             return companyInfo;
         }
 
-        public async Task Edit(CompanyDto companyDto)
+        public async Task<bool> Edit(CompanyDto companyDto)
         {
-            var company = await companyRepository.All().OrderBy(c => c.Id).LastAsync();
-            var companyApp = this.companyAppRepository.All().Where(c => c.GUID == company.GUID).FirstOrDefault();
-            if (company.IsVatRegistered && !companyDto.IsVatRegistered)
+            try
             {
-                var vatTypeId = await vatTypeService.SetCorrectVatTypeOnNonVatRegisteredCompanyAsync();
-                await productService.SetAllProductToVatType(vatTypeId);
-            }
+                using var transaction =await companyRepository.Context.Database.BeginTransactionAsync();
 
-            company.Name = companyDto.Name;
-            company.Address = companyDto.Address;
-            company.City = companyDto.City;
-            company.Country = companyDto.Country;
-            company.Description = companyDto.Description;
-            company.EIK = companyDto.EIK;
-            company.Email = companyDto.Email;
-            company.IsVatRegistered = companyDto.IsVatRegistered;
-            company.LogoPath = companyDto.LogoPath;
-            company.MOL = companyDto.MOL;
-            company.VatId = companyDto.VatId;
+                var company = await companyRepository.All().OrderBy(c => c.Id).LastAsync();
 
-            companyRepository.Update(company);
-
-            if (companyDto.IsActive == true)
-            {
-                var allCompanyApp = this.companyAppRepository.All().Where(c => c.ApplicationUserId == companyApp.ApplicationUserId);
-                foreach (var comp in allCompanyApp)
+                if (company.IsVatRegistered && !companyDto.IsVatRegistered)
                 {
-                    comp.IsActive = false;
-                    companyAppRepository.Update(comp);
+                    var vatTypeId = await vatTypeService.SetCorrectVatTypeOnNonVatRegisteredCompanyAsync();
+                    await productService.SetAllProductToVatType(vatTypeId);
                 }
+
+                company.Name = companyDto.Name;
+                company.Address = companyDto.Address;
+                company.City = companyDto.City;
+                company.Country = companyDto.Country;
+                company.Description = companyDto.Description;
+                company.EIK = companyDto.EIK;
+                company.Email = companyDto.Email;
+                company.IsVatRegistered = companyDto.IsVatRegistered;
+                company.LogoPath = companyDto.LogoPath;
+                company.MOL = companyDto.MOL;
+                company.VatId = companyDto.VatId;
+
+                companyRepository.Update(company);
+
+
+                var companyApp = this.companyAppRepository.All().Where(c => c.GUID == company.GUID).FirstOrDefault();
+                if (companyDto.IsActive == true)
+                {
+                    var allCompanyApp = this.companyAppRepository.All().Where(c => c.ApplicationUserId == companyApp.ApplicationUserId);
+                    foreach (var comp in allCompanyApp)
+                    {
+                        comp.IsActive = false;
+                        companyAppRepository.Update(comp);
+                    }
+                }
+
+                var slug = stringGenerator.GenerateSlug(companyDto.Name);
+                companyDto.CompanySlug = slug;
+                companyApp.CompanyName = companyDto.Name;
+                companyApp.CompanySlug = slug;
+                companyApp.Description = companyDto.Description;
+                companyApp.IsActive = companyDto.IsActive;
+                companyApp.IsVatRegistered = companyDto.IsVatRegistered;
+
+                companyAppRepository.Update(companyApp);
+
+                await companyRepository.SaveChangesAsync();
+                await companyAppRepository.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
-
-            var slug = stringGenerator.GenerateSlug(companyDto.Name);
-            companyDto.CompanySlug = slug;
-            companyApp.CompanyName = companyDto.Name;
-            companyApp.CompanySlug = slug;
-            companyApp.Description = companyDto.Description;
-            companyApp.IsActive = companyDto.IsActive;
-            companyApp.IsVatRegistered = companyDto.IsVatRegistered;
-
-            companyAppRepository.Update(companyApp);
-
-            await companyRepository.SaveChangesAsync();
-            await companyAppRepository.SaveChangesAsync();
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
+            return true;
         }
 
         public async Task ApplyMigration()

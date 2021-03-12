@@ -100,6 +100,10 @@ namespace WebInvoice.Controllers
                 if (vatDocumentDto.HasErrors)
                 {
                     await SetViewBagDataAsync();
+                    if (!userCompanyTemp.IsVatRegistered)
+                    {
+                        return View("CreateWithoutVat", vatDocumentDto);
+                    }
                     return View(vatDocumentDto);
                 }
 
@@ -114,7 +118,10 @@ namespace WebInvoice.Controllers
                 }
             }
             await SetViewBagDataAsync();
-
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", vatDocumentDto);
+            }
             return View(vatDocumentDto);
         }
 
@@ -127,6 +134,10 @@ namespace WebInvoice.Controllers
                 if (vatDocumentDto.HasErrors)
                 {
                     await SetViewBagDataAsync();
+                    if (!userCompanyTemp.IsVatRegistered)
+                    {
+                        return View("CreateWithoutVat", vatDocumentDto);
+                    }
                     return View(vatDocumentDto);
                 }
 
@@ -141,7 +152,10 @@ namespace WebInvoice.Controllers
                 }
             }
             await SetViewBagDataAsync();
-
+            if (!userCompanyTemp.IsVatRegistered)
+            {
+                return View("CreateWithoutVat", vatDocumentDto);
+            }
             return View(vatDocumentDto);
         }
 

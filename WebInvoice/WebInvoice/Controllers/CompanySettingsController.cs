@@ -37,7 +37,11 @@ namespace WebInvoice.Controllers
         {
             if (ModelState.IsValid)
             {
-                await companySettingsService.Edit(companyDto);
+                var IsSuccessfully =await companySettingsService.Edit(companyDto);
+                if (!IsSuccessfully)
+                {
+                    return View("NotFoundItem");
+                }
                 return RedirectToAction("Index", new { company = companyDto.CompanySlug, companyObject = userCompanyTemp.CompanyObjectSlug });
             }
             return RedirectToAction("Index");

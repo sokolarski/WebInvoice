@@ -9,15 +9,15 @@
     <h2 class="text-center">
         @if (Model.Type == WebInvoice.dto.VatDocumentTypes.Invoice)
         {
-            <text>Фактура</text>
+            <text>Редактиране на Фактура</text>
         }
         else if (Model.Type == WebInvoice.dto.VatDocumentTypes.Credit)
         {
-            <text>Кредитно известие</text>
+            <text>Редактиране на Кредитно известие</text>
         }
         else if (Model.Type == WebInvoice.dto.VatDocumentTypes.Debit)
         {
-            <text>Дебитно известие</text>
+            <text>Редактиране на Дебитно известие</text>
         }: @(new string('0',10 - Model.Id.ToString().Length) + Model.Id.ToString() )
     </h2>
     @if (Model != null)
