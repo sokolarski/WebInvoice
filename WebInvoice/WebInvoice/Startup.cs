@@ -62,7 +62,7 @@ namespace WebInvoice
 
             //Services
             services.AddTransient<ICompanyService, CompanyService>();
-            services.AddTransient<IStringGenerator, StringGenerator>();
+            services.AddTransient<IStringGenerator>( x => new StringGenerator(Configuration.GetConnectionString("CompanyDefaultConnection")));
             services.AddTransient<ICompanyObjectService, CompanyObjectService>();
             services.AddTransient<ICompanySettingsService, CompanySettingsService>();
             services.AddTransient<IVatTypeService, VatTypeService>();

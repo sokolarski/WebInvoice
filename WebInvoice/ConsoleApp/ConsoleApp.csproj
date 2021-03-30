@@ -5,6 +5,10 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\WebInvoice.Data\WebInvoice.Data.csproj" />
     <ProjectReference Include="..\WebInvoice.Services\WebInvoice.Services.csproj" />

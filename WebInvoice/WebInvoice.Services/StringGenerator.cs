@@ -12,14 +12,20 @@ namespace WebInvoice.Services
 {
     public class StringGenerator : IStringGenerator
     {
+        private readonly string connectionString;
+
+        public StringGenerator(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
         public string GetConnectionString(string dbName, string GUID)
         {
-            var defaultConnectionString = @"Server=(localdb)\MSSQLLocalDB;Database=WebInvoice-CompanyDefaultDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+            //var defaultConnectionString = @"Server=DESKTOP-K71BNIK\SQLEXPRESS;Database=WebInvoice-CompanyDefaultDb;Trusted_Connection=false;MultipleActiveResultSets=false;User ID=webinvoice; Password=Sokolarski860514;";
 
             var name = GenerateSlug(dbName);
             var nameWithGuid =name + "-" + GUID;
-            var connectionString = defaultConnectionString.Replace("CompanyDefaultDb", nameWithGuid);
-            return connectionString;
+            var newConnectionString = connectionString.Replace("CompanyDefaultDb", nameWithGuid);
+            return newConnectionString;
         }
         public string GenerateSlug(string str)
         {
