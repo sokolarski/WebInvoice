@@ -29,7 +29,7 @@ namespace WebInvoice.Dto.BankAccount
         public string BIC { get; set; }
 
         [Required(ErrorMessage = "Полето е задължително")]
-        [MaxLength(20, ErrorMessage = "IBAN трябва да бъде до 20 символа!")]
+        [MaxLength(40, ErrorMessage = "IBAN трябва да бъде до 40 символа!")]
         [Display(Name = "IBAN")]
         public string IBAN { get; set; }
 

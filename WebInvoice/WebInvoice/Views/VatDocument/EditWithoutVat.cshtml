@@ -172,7 +172,7 @@
                     <select class="form-control" asp-for="PaymentTypeId" type="text" id="paymentType" onchange="disableBankAccount()">
                         @foreach (var paymentType in this.ViewBag.PaymentTypes)
                         {
-                            if (paymentType.IsActiv == true)
+                            if (paymentType.Id == Model.PaymentTypeId)
                             {
                                 <option value="@paymentType.Id" data-requareBankAccount="@paymentType.RequiredBankAccount" selected>@paymentType.Name</option>
                             }
@@ -187,7 +187,7 @@
                     <select class="form-control" asp-for="BankAccountId" type="text" id="bankAccount">
                         @foreach (var bankAccount in this.ViewBag.BankAccounts)
                         {
-                            if (bankAccount.IsActive == true)
+                            if (bankAccount.Id == Model.BankAccountId)
                             {
                                 <option value="@bankAccount.Id" selected>@bankAccount.Name</option>
                             }

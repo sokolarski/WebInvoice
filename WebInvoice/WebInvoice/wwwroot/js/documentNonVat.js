@@ -420,6 +420,7 @@ function addProductElement() {
     saleId.id = `Sales_${index}__SaleId`;
     saleId.name = `Sales[${index}].SaleId`;
     saleId.classList.add('saleId');
+    saleId.value = 0;
     product.appendChild(saleId);
 
     let productDelete = document.createElement('span')

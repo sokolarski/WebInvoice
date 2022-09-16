@@ -24,7 +24,7 @@ namespace WebInvoice.Data.CompanyData.Models
         [MaxLength(11)]
         public string BIC { get; set; }
 
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string IBAN { get; set; }
 
         [MaxLength(150)]

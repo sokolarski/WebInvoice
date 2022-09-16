@@ -494,7 +494,7 @@ namespace WebInvoice.Services
             var paymentType = await NonVatDocumentRepo.Context.PaymentTypes.Where(pt => pt.Id == nonVatDocumentDto.PaymentTypeId).FirstOrDefaultAsync();
             if (paymentType.RequireBankAccount)
             {
-                return nonVatDocumentDto.PaymentTypeId;
+                return nonVatDocumentDto.BankAccountId;
             }
             return null;
         }

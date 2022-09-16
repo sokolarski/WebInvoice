@@ -245,6 +245,9 @@ namespace WebInvoice.Services
                             vatDocumentDto.Tottal += tottalWithVat;
                             sale.TottalWithVat = tottalWithVat;
 
+                            sale.Quantity = newSale.Quantity;
+                            sale.UnitPrice = newSale.Price;
+
                             context.Sales.Update(sale);
                         }
                         else
@@ -493,7 +496,7 @@ namespace WebInvoice.Services
             var paymentType = await vatDocumentRepo.Context.PaymentTypes.Where(pt => pt.Id == vatDocumentDto.PaymentTypeId).FirstOrDefaultAsync();
             if (paymentType.RequireBankAccount)
             {
-                return vatDocumentDto.PaymentTypeId;
+                return vatDocumentDto.BankAccountId;
             }
             return null;
         }
